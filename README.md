@@ -1,4 +1,4 @@
-# MCAD [Multi-Cluster App Dispatcher] Dashboard integrated with ODH [Open Data Hub] Dashboard
+# Multi-Cluster App Dispatcher Dashboard
 
 A dashboard for Multi-Cluster App Dispatcher and Open Data Hub components.
 
