@@ -30,6 +30,7 @@ const CustomServingRuntimeRoutes = React.lazy(
 );
 const GroupSettingsPage = React.lazy(() => import('../pages/groupSettings/GroupSettings'));
 const LearningCenterPage = React.lazy(() => import('../pages/learningCenter/LearningCenter'));
+const MCADashboard = React.lazy(() => import('../pages/MCADashboard/MCADTabs'));
 const BYONImagesPage = React.lazy(() => import('../pages/BYONImages/BYONImages'));
 const NotFound = React.lazy(() => import('../pages/NotFound'));
 
@@ -57,6 +58,8 @@ const AppRoutes: React.FC = () => {
         <Route path="/explore" element={<ExploreApplications />} />
         <Route path="/resources" element={<LearningCenterPage />} />
 
+        <Route path="/mcad" element={<MCADashboard />} />
+        
         <Route path="/projects/*" element={<ProjectViewRoutes />} />
 
         <Route path="/notebookController/*" element={<NotebookController />} />
