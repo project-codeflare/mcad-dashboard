@@ -139,6 +139,8 @@ export const getNavBarData = (
 
   navItems.push({ id: 'resources', label: 'Resources', href: '/resources' });
 
+  navItems.push({ id: 'mcad', label: 'MCAD Dashboard', href: '/mcad' }); // path created for MCAD dashboard
+  
   const settingsNav = getSettingsNav(isAdmin, dashboardConfig);
   if (settingsNav) {
     navItems.push(settingsNav);
