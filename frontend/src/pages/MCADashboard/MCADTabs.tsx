@@ -10,7 +10,8 @@ import MCADashboard from './MCADashboard';
 import ApplicationsPage from '../ApplicationsPage';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
 
-const description = `A Dashboard for Multi-Cluster App Dispatcher`;
+const description = 'A Dashboard for Multi-Cluster App Dispatcher';
+const subDescription = '- MCAD is a Kubernetes controller providing mechanisms for applications to manage batch jobs in a single or multi-cluster environment';
 
 export const MCADTabs: React.FunctionComponent = () => {
   const { components, loaded, loadError } = useWatchComponents(true);
@@ -26,102 +27,111 @@ export const MCADTabs: React.FunctionComponent = () => {
 
   return (
     <ApplicationsPage
-        title="MCAD Dashboard"
-        description={description}
-        loaded={loaded}
-        empty={isEmpty}
-        loadError={loadError}
-      >
-        <div className='mcad-description'>
-        <p> - MCAD is a Kubernetes controller providing mechanisms for applications to manage batch jobs in a single or multi-cluster environment</p>
-        </div>
-    <Tabs
-      className='mcad-tabs'
-      activeKey={activeTabKey}
-      onSelect={handleTabClick}
-      aria-label="Tabs in the icons and text example"
-      role="region"
+      title="MCAD Dashboard"
+      description={description}
+      loaded={loaded}
+      empty={isEmpty}
+      loadError={loadError}
     >
-      <Tab
-        eventKey={0}
-        title={
-          <>
-            <TabTitleIcon>
-              <UsersIcon />
-            </TabTitleIcon>{' '}
-            <TabTitleText>Dashboard</TabTitleText>{' '}
-          </>
-        }
-        aria-label="icons and text content"
+      <div className='mcad-description'>
+        <p>{subDescription}</p>
+      </div>
+      <Tabs
+        className='mcad-tabs'
+        activeKey={activeTabKey}
+        onSelect={handleTabClick}
+        aria-label="mcad-tabs"
       >
-        <MCADashboard />
-      </Tab>
-      <Tab
-        eventKey={1}
-        title={
-          <>
-            <TabTitleIcon>
-              <BoxIcon />
-            </TabTitleIcon>{' '}
-            <TabTitleText>Resources</TabTitleText>{' '}
-          </>
-        }
-      >
-        Resources
-      </Tab>
-      <Tab
-        eventKey={2}
-        title={
-          <>
-            <TabTitleIcon>
-              <DatabaseIcon />
-            </TabTitleIcon>{' '}
-            <TabTitleText>Metrics</TabTitleText>{' '}
-          </>
-        }
-      >
-        Metrics
-      </Tab>
-      <Tab
-        eventKey={3}
-        title={
-          <>
-            <TabTitleIcon>
-              <ServerIcon />
-            </TabTitleIcon>{' '}
-            <TabTitleText>Server</TabTitleText>{' '}
-          </>
-        }
-      >
-        Server
-      </Tab>
-      <Tab
-        eventKey={4}
-        title={
-          <>
-            <TabTitleIcon>
-              <LaptopIcon />
-            </TabTitleIcon>{' '}
-            <TabTitleText>System</TabTitleText>{' '}
-          </>
-        }
-      >
-        System
-      </Tab>
-      <Tab
-        eventKey={6}
-        title={
-          <>
-            <TabTitleIcon>
-              <ProjectDiagramIcon />
-            </TabTitleIcon>{' '}
-            <TabTitleText>Stat</TabTitleText>{' '}
-          </>
-        }
-      >
-        Network
-      </Tab>
-    </Tabs>
+        <Tab
+          eventKey={0}
+          title={
+            <>
+              <TabTitleIcon>
+                <UsersIcon />
+              </TabTitleIcon>
+              <TabTitleText>Dashboard</TabTitleText>
+            </>
+          }
+          aria-label="mcad-dashboard-tab"
+        >
+          <MCADashboard />
+        </Tab>
+        <Tab
+          eventKey={1}
+          title={
+            <>
+              <TabTitleIcon>
+                <BoxIcon />
+              </TabTitleIcon>
+              <TabTitleText>Resources</TabTitleText>
+            </>
+          }
+          aria-label="resources-tab"
+        >
+          {/* Place holder */}
+          Resources
+        </Tab>
+        <Tab
+          eventKey={2}
+          title={
+            <>
+              <TabTitleIcon>
+                <DatabaseIcon />
+              </TabTitleIcon>
+              <TabTitleText>Metrics</TabTitleText>
+            </>
+          }
+          aria-label="metrics-tab"
+        >
+          {/* Place holder */}
+          Metrics
+        </Tab>
+        <Tab
+          eventKey={3}
+          title={
+            <>
+              <TabTitleIcon>
+                <ServerIcon />
+              </TabTitleIcon>
+              <TabTitleText>Server</TabTitleText>
+            </>
+          }
+          aria-label="server-tab"
+        >
+          {/* Place holder */}
+          Server
+        </Tab>
+        <Tab
+          eventKey={4}
+          title={
+            <>
+              <TabTitleIcon>
+                <LaptopIcon />
+              </TabTitleIcon>
+              <TabTitleText>System</TabTitleText>
+            </>
+          }
+          aria-label="system-tab"
+        >
+          {/* Place holder */}
+          System
+        </Tab>
+        <Tab
+          eventKey={6}
+          title={
+            <>
+              <TabTitleIcon>
+                <ProjectDiagramIcon />
+              </TabTitleIcon>
+              <TabTitleText>Stat</TabTitleText>
+            </>
+          }
+          aria-label="stat-tab"
+        >
+          {/* Place holder */}
+          Network
+        </Tab>
+      </Tabs>
     </ApplicationsPage>
   );
 };
