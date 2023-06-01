@@ -6,7 +6,7 @@ import Table from '../components/table/Table';
 import { Data } from '../types';
 import SearchFieldAppwrappers, { SearchType } from './SearchFieldAppwrappers';
 
-interface Repository {
+interface AppWrapperSummaryData {
   name: string;
   namespace: string;
   createdon: string;
@@ -21,144 +21,139 @@ type AppWrapperViewProps = {
   data: Data;
 };
 
-export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps> = 
-({ data: unfilteredProjects}) => {
-  const [isExpanded, setIsExpanded] = React.useState(true);
-  const [selectedRepoName, setSelectedRepoName] = React.useState('');
-  const [searchType, setSearchType] = React.useState<SearchType>(SearchType.NAME);
-  const [search, setSearch] = React.useState('');
-  const searchTypes = React.useMemo(() => Object.keys(SearchType), []);
+export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps> =
+  ({ data: unfilteredProjects }) => {
+    const [isExpanded, setIsExpanded] = React.useState(true);
+    const [selectedRepoName, setSelectedRepoName] = React.useState('');
+    const [searchType, setSearchType] = React.useState<SearchType>(SearchType.NAME);
+    const [search, setSearch] = React.useState('');
+    const searchTypes = React.useMemo(() => Object.keys(SearchType), []);
 
-  const onToggle = (isExpanded: boolean) => {
-    setIsExpanded(isExpanded);
-  };
-  const repositories: Repository[] = [];
-  for (const appWrapper of Object.values(unfilteredProjects.appwrappers)) {
-    const { metadata, status } = appWrapper;
-    const repository: Repository = {
-      name: metadata.name,
-      namespace: metadata.namespace,
-      createdon: metadata.creationTimestamp,
-      age: metadata.calculatedTimeSpent,
-      priority: status.systempriority.toString(),
-      state: status.state,
-      timesreenqueued: status.numRequeuings.toString(),
-      latestmessage: status.constructed_message,
+    const onToggle = (isExpanded: boolean) => {
+      setIsExpanded(isExpanded);
     };
-    repositories.push(repository);
-  }
+    const appwrapperSummaryData: AppWrapperSummaryData[] = [];
+    for (const appWrapper of Object.values(unfilteredProjects.appwrappers)) {
+      const { metadata, status } = appWrapper;
+      const appwrapperSummary: AppWrapperSummaryData = {
+        name: metadata.name,
+        namespace: metadata.namespace,
+        createdon: metadata.creationTimestamp,
+        age: metadata.calculatedTimeSpent,
+        priority: status.systempriority.toString(),
+        state: status.state,
+        timesreenqueued: status.numRequeuings.toString(),
+        latestmessage: status.constructed_message,
+      };
+      appwrapperSummaryData.push(appwrapperSummary);
+    }
 
-  const columns: SortableData<Repository>[] = [
-    {
-      field: 'name',
-      label: 'Name',
-      sortable: true,
-    },
-    {
-      field: 'namespace',
-      label: 'Namespace',
-      sortable: true,
-    },
-    {
-      field: 'createdon',
-      label: 'Created On',
-      sortable: true,
-    },
-    {
-      field: 'age',
-      label: 'Age',
-      sortable: true,
-    },
-    {
-      field: 'priority',
-      label: 'Priority',
-      sortable: true,
-    },
-    {
-      field: 'state',
-      label: 'State',
-      sortable: false,
-    },
-    {
-      field: 'timesreenqueued',
-      label: 'Times Re-enqueued',
-      sortable: false,
-    },
-    {
-      field: 'latestmessage',
-      label: 'Latest Message',
-      sortable: false,
-    },
-  ];
-  
-  return (
-    <ExpandableSection
-      displaySize={"large"}
-      onToggle={onToggle}
-      isExpanded={isExpanded}
-      toggleContent={
-        <div>
-          <TextContent>
-            <Text component={TextVariants.h2}>Appwrapper Summary</Text>
-          </TextContent>
-        </div>}
-    >
-      <PageSection isFilled data-id="page-content">
-        {/* <Gallery maxWidths={{ default: '330px' }} role="list" hasGutter>
-            {components.map((c) => (
-              <OdhAppCard key={c.metadata.name} odhApp={c} />
-            ))}
-          </Gallery> */}
-        <Table
-          aria-label="Appwrapper Summary"
-          variant="compact"
-          enablePagination
-          data={repositories}
-          columns={columns}
-          emptyTableView={
-            <>
-              No projects match your filters.{' '}
-            </>
-          }
-          rowRenderer={(repository) => (
-            <Tr
-              key={repository.name}
-              onRowClick={() => setSelectedRepoName(repository.name)}
-              isSelectable
-              isHoverable
-              isRowSelected={selectedRepoName === repository.name}
-            >
-              <Td dataLabel={repository.name}>{repository.name}</Td>
-              <Td dataLabel={repository.namespace}>{repository.namespace}</Td>
-              <Td dataLabel={repository.createdon}>{repository.createdon}</Td>
-              <Td dataLabel={repository.age}>{repository.age}</Td>
-              <Td dataLabel={repository.priority}>{repository.priority}</Td>
-              <Td dataLabel={repository.state}>{repository.state}</Td>
-              <Td dataLabel={repository.timesreenqueued}>{repository.timesreenqueued}</Td>
-              <Td dataLabel={repository.latestmessage}>{repository.latestmessage}</Td>
-            </Tr>
-          )}
-          toolbarContent={
-            <React.Fragment>
-              <ToolbarItem>
-                <SearchFieldAppwrappers
-                  types={searchTypes}
-                  searchType={searchType}
-                  searchValue={search}
-                  onSearchTypeChange={(searchType) => {
-                    setSearchType(searchType);
-                  }}
-                  onSearchValueChange={(searchValue) => {
-                    setSearch(searchValue);
-                  }}
-                />
-              </ToolbarItem>
-            </React.Fragment>
-          }
-        />
-      </PageSection>
-    </ExpandableSection>
-  );
-};
+    const columns: SortableData<AppWrapperSummaryData>[] = [
+      {
+        field: 'name',
+        label: 'Name',
+        sortable: true,
+      },
+      {
+        field: 'namespace',
+        label: 'Namespace',
+        sortable: true,
+      },
+      {
+        field: 'createdon',
+        label: 'Created On',
+        sortable: true,
+      },
+      {
+        field: 'age',
+        label: 'Age',
+        sortable: true,
+      },
+      {
+        field: 'priority',
+        label: 'Priority',
+        sortable: true,
+      },
+      {
+        field: 'state',
+        label: 'State',
+        sortable: false,
+      },
+      {
+        field: 'timesreenqueued',
+        label: 'Times Re-enqueued',
+        sortable: false,
+      },
+      {
+        field: 'latestmessage',
+        label: 'Latest Message',
+        sortable: false,
+      },
+    ];
+
+    return (
+      <ExpandableSection
+        displaySize={"large"}
+        onToggle={onToggle}
+        isExpanded={isExpanded}
+        toggleContent={
+          <div>
+            <TextContent>
+              <Text component={TextVariants.h2}>Appwrapper Summary</Text>
+            </TextContent>
+          </div>}
+      >
+        <PageSection isFilled data-id="page-content">
+          <Table
+            aria-label="Appwrapper Summary"
+            variant="compact"
+            enablePagination
+            data={appwrapperSummaryData}
+            columns={columns}
+            emptyTableView={
+              <>
+                No appwrappers match your filters.{' '}
+              </>
+            }
+            rowRenderer={(appwrapperSummary) => (
+              <Tr
+                key={appwrapperSummary.name}
+                onRowClick={() => setSelectedRepoName(appwrapperSummary.name)}
+                isSelectable
+                isHoverable
+                isRowSelected={selectedRepoName === appwrapperSummary.name}
+              >
+                <Td dataLabel={appwrapperSummary.name}>{appwrapperSummary.name}</Td>
+                <Td dataLabel={appwrapperSummary.namespace}>{appwrapperSummary.namespace}</Td>
+                <Td dataLabel={appwrapperSummary.createdon}>{appwrapperSummary.createdon}</Td>
+                <Td dataLabel={appwrapperSummary.age}>{appwrapperSummary.age}</Td>
+                <Td dataLabel={appwrapperSummary.priority}>{appwrapperSummary.priority}</Td>
+                <Td dataLabel={appwrapperSummary.state}>{appwrapperSummary.state}</Td>
+                <Td dataLabel={appwrapperSummary.timesreenqueued}>{appwrapperSummary.timesreenqueued}</Td>
+                <Td dataLabel={appwrapperSummary.latestmessage}>{appwrapperSummary.latestmessage}</Td>
+              </Tr>
+            )}
+            toolbarContent={
+              <React.Fragment>
+                <ToolbarItem>
+                  <SearchFieldAppwrappers
+                    types={searchTypes}
+                    searchType={searchType}
+                    searchValue={search}
+                    onSearchTypeChange={(searchType) => {
+                      setSearchType(searchType);
+                    }}
+                    onSearchValueChange={(searchValue) => {
+                      setSearch(searchValue);
+                    }}
+                  />
+                </ToolbarItem>
+              </React.Fragment>
+            }
+          />
+        </PageSection>
+      </ExpandableSection>
+    );
+  };
 
 export default AppWrapperSummaryTable;
