@@ -17,8 +17,6 @@ import fetchData from './app-wrapper-data';
 import { Data } from './types';
 //const description = `A Dashboard for Multi-Cluster App Dispatcher`;
 
-
-
 type MCADashboardInnerProps = {
   loaded: boolean;
   loadError?: Error;
@@ -46,33 +44,49 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       stats: {
         // initial values for the stats object
         status_counts: {
-          Dispatched: "-",
-          Queued: "-",
-          "Re-enqueued": "-",
-          Other: "-",
-        }
+          Dispatched: '-',
+          Queued: '-',
+          'Re-enqueued': '-',
+          Other: '-',
+        },
       },
       appwrappers: {
         // initial values for the appwrappers object
       },
     });
+
     React.useEffect(() => {
       const initialFetch = async () => {
         const newData = await fetchData();
         setData(newData);
+        sessionStorage.setItem('appwrapper-data', JSON.stringify(newData));
       };
-  
-      initialFetch(); // initial fetch
-  
+
+      const getData = () => {
+        const dataFromStorage = sessionStorage.getItem('appwrapper-data');
+        if (dataFromStorage) {
+          const parsedData = JSON.parse(dataFromStorage);
+          if (parsedData.appwrappers && parsedData.stats) {
+            setData(parsedData);
+          } else {
+            initialFetch(); // fetch data
+          }
+        } else {
+          initialFetch(); // fetch data
+        }
+      };
+
+      getData();
+
       const interval = setInterval(async () => {
         const newData = await fetchData();
         setData(newData);
-        console.log("refrashRate: ", refreshRate)
+        console.log('refrashRate: ', refreshRate);
       }, refreshRate); // fetching data every X seconds after the inital fetch
-  
+
       return () => clearInterval(interval);
     }, [refreshRate]);
-    console.log("data", data);
+    console.log('data', data);
 
     return (
       <ApplicationsPage
@@ -83,15 +97,12 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
         loadError={loadError}
       >
         <div className="dropdowns-container">
-          <RefreshRateDropDown 
-            onSelected={handleSelection}/>
+          <RefreshRateDropDown onSelected={handleSelection} />
           <div className="spacer" />
           <TimeRangeDropDown />
         </div>
-        <StatusSummaryTable 
-          data={data}/>
-        <AppWrapperSummaryTable
-          data={data} />
+        <StatusSummaryTable data={data} />
+        <AppWrapperSummaryTable data={data} />
       </ApplicationsPage>
     );
   },
@@ -129,11 +140,7 @@ const MCADashboard: React.FC = () => {
 
   return (
     <QuickStarts>
-      <MCADashboardInner
-        loaded={loaded}
-        components={sortedComponents}
-        loadError={loadError}
-      />
+      <MCADashboardInner loaded={loaded} components={sortedComponents} loadError={loadError} />
     </QuickStarts>
   );
 };
