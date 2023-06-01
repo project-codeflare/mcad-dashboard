@@ -1,7 +1,7 @@
 const { spawn } = require('child_process');
 const http = require('http');
 
-class AllNamespaces {
+class AllAppwrappers {
   async get() {
     const dtNow = new Date(Date.now());
 
@@ -168,7 +168,7 @@ class AllNamespaces {
   pullJobs(): Promise<string> {
     return new Promise((resolve, reject) => {
       let jsonString: string = '';
-      const child = spawn('sh', ['./backend/src/appwrapper_puller.sh'], {
+      const child = spawn('sh', ['./src/appwrapper_puller.sh'], {
         stdio: 'pipe',
         buffer: true,
       });
@@ -193,4 +193,11 @@ class AllNamespaces {
   }
 }
 
-export { AllNamespaces };
+async function get() {
+  const wrappers = await new AllAppwrappers().get();
+  console.log(wrappers);
+}
+
+get();
+
+export { AllAppwrappers };
