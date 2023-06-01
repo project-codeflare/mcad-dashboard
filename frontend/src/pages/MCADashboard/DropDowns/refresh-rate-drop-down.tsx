@@ -36,7 +36,7 @@ const RefreshRateDropDown: React.FunctionComponent<RefreshRateDropDownProps> = (
                 break;
             case 'days':
             case 'day':
-                conversionFactor = 24* 1000 * 60 * 60;
+                conversionFactor = 24 * 1000 * 60 * 60;
                 break;
             default:
                 conversionFactor = 1;
@@ -48,7 +48,6 @@ const RefreshRateDropDown: React.FunctionComponent<RefreshRateDropDownProps> = (
     const onSelect = (_event: React.MouseEvent<Element, MouseEvent> | undefined, itemId: string | number | undefined) => {
         // eslint-disable-next-line no-console
         console.log('selected', itemId);
-
         onSelected(convertDurationToMilliseconds(itemId));
         setSelected(itemId as string);
         setIsOpen(false);
@@ -73,7 +72,7 @@ const RefreshRateDropDown: React.FunctionComponent<RefreshRateDropDownProps> = (
         <div>
             <h3>Refresh Rate</h3>
             <Select
-                id="single-select"
+                id="refresh-rate-drop-down"
                 ref={menuRef}
                 isOpen={isOpen}
                 selected={selected}

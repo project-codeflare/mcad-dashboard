@@ -14,7 +14,7 @@ import { Data } from '../types';
 import SearchFieldAppwrappers, { SearchType } from './SearchFieldAppwrappers';
 import useTableColumnSort from '../components/table/useTableColumnSort';
 
-interface Repository {
+interface AppWrapperSummaryData {
   name: string;
   namespace: string;
   createdon: string;
