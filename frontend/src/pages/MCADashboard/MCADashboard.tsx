@@ -1,17 +1,18 @@
-import * as React from 'react';
-import * as _ from 'lodash';
-import { useWatchComponents } from '~/utilities/useWatchComponents';
-import { OdhApplication } from '~/types';
-import ApplicationsPage from '~/pages/ApplicationsPage';
-import QuickStarts from '~/app/QuickStarts';
-import { fireTrackingEvent } from '~/utilities/segmentIOUtils';
-import AppWrapperSummaryTable from './Tables/app-wrapper-summary-table';
-import StatusSummaryTable from './Tables/status-summary-table';
-import TimeRangeDropDown from './DropDowns/time-range-drop-down';
-import RefreshRateDropDown from './DropDowns/refresh-rate-drop-down';
-import './MCADashboard.css';
-import fetchData from './app-wrapper-data';
-import { Data } from './types';
+import * as React from "react";
+import * as _ from "lodash";
+import { useWatchComponents } from "~/utilities/useWatchComponents";
+import { OdhApplication } from "~/types";
+import ApplicationsPage from "~/pages/ApplicationsPage";
+import QuickStarts from "~/app/QuickStarts";
+import { fireTrackingEvent } from "~/utilities/segmentIOUtils";
+import AppWrapperSummaryTable from "./Tables/app-wrapper-summary-table";
+import StatusSummaryTable from "./Tables/status-summary-table";
+import TimeRangeDropDown from "./DropDowns/time-range-drop-down";
+import RefreshRateDropDown from "./DropDowns/refresh-rate-drop-down";
+import "./MCADashboard.css";
+import fetchData from "./app-wrapper-data";
+import { Data } from "./types";
+//const description = `A Dashboard for Multi-Cluster App Dispatcher`;
 
 type MCADashboardInnerProps = {
   loaded: boolean;
@@ -38,29 +39,45 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
           Queued: "-",
           "Re-enqueued": "-",
           Other: "-",
-        }
+        },
       },
       appwrappers: {
         // initial values for the appwrappers object
       },
     });
+
     React.useEffect(() => {
       const initialFetch = async () => {
         const newData = await fetchData();
         setData(newData);
+        sessionStorage.setItem("appwrapper-data", JSON.stringify(newData));
       };
 
-      initialFetch(); // initial fetch
+      const getData = () => {
+        const dataFromStorage = sessionStorage.getItem("appwrapper-data");
+        if (dataFromStorage) {
+          const parsedData = JSON.parse(dataFromStorage);
+          if (parsedData.appwrappers && parsedData.stats) {
+            setData(parsedData);
+          } else {
+            initialFetch(); // fetch data
+          }
+        } else {
+          initialFetch(); // fetch data
+        }
+      };
+
+      getData();
 
       const interval = setInterval(async () => {
         const newData = await fetchData();
         setData(newData);
-        console.log("refrashRate: ", refreshRate)
+        console.log("refrashRate: ", refreshRate);
       }, refreshRate); // fetching data every X seconds after the inital fetch
 
       return () => clearInterval(interval);
     }, [refreshRate]);
-    console.log("data", data); // for debugging purposes
+    console.log("data", data);
 
     return (
       <ApplicationsPage
@@ -71,28 +88,27 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
         loadError={loadError}
       >
         <div className="dropdowns-container">
-          <RefreshRateDropDown
-            onSelected={handleSelection} />
+          <RefreshRateDropDown onSelected={handleSelection} />
           <div className="spacer" />
           <TimeRangeDropDown />
         </div>
-        <StatusSummaryTable
-          data={data} />
-        <AppWrapperSummaryTable
-          data={data} />
+        <StatusSummaryTable data={data} />
+        <AppWrapperSummaryTable data={data} />
       </ApplicationsPage>
     );
-  },
+  }
 );
-MCADashboardInner.displayName = 'MCADashboardInner';
+MCADashboardInner.displayName = "MCADashboardInner";
 
 const MCADashboard: React.FC = () => {
   const { components, loaded, loadError } = useWatchComponents(true);
 
   const sortedComponents = React.useMemo(
     () =>
-      _.cloneDeep(components).sort((a, b) => a.spec.displayName.localeCompare(b.spec.displayName)),
-    [components],
+      _.cloneDeep(components).sort((a, b) =>
+        a.spec.displayName.localeCompare(b.spec.displayName)
+      ),
+    [components]
   );
 
   React.useEffect(() => {
@@ -102,14 +118,16 @@ const MCADashboard: React.FC = () => {
      */
     if (loaded && components.length) {
       _.difference(
-        components.filter((component) => component.spec.isEnabled).map((c) => c.metadata.name),
-        enabledComponents
+        components
           .filter((component) => component.spec.isEnabled)
           .map((c) => c.metadata.name),
+        enabledComponents
+          .filter((component) => component.spec.isEnabled)
+          .map((c) => c.metadata.name)
       ).forEach((name) =>
-        fireTrackingEvent('Application Enabled', {
+        fireTrackingEvent("Application Enabled", {
           name,
-        }),
+        })
       );
       enabledComponents = components;
     }
