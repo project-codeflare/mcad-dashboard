@@ -33,12 +33,12 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
     const [data, setData] = React.useState<Data>({
       stats: {
         // initial values for the stats object
-        status_counts: {
-          Dispatched: "-",
-          Queued: "-",
-          "Re-enqueued": "-",
-          Other: "-",
-        }
+        statusCounts: {
+          Dispatched: '-',
+          Queued: '-',
+          'Re-enqueued': '-',
+          Other: '-',
+        },
       },
       appwrappers: {
         // initial values for the appwrappers object
@@ -55,12 +55,12 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       const interval = setInterval(async () => {
         const newData = await fetchData();
         setData(newData);
-        console.log("refrashRate: ", refreshRate)
+        console.log('refrashRate: ', refreshRate);
       }, refreshRate); // fetching data every X seconds after the inital fetch
 
       return () => clearInterval(interval);
     }, [refreshRate]);
-    console.log("data", data); // for debugging purposes
+    console.log('data', data); // for debugging purposes
 
     return (
       <ApplicationsPage
@@ -71,15 +71,12 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
         loadError={loadError}
       >
         <div className="dropdowns-container">
-          <RefreshRateDropDown
-            onSelected={handleSelection} />
+          <RefreshRateDropDown onSelected={handleSelection} />
           <div className="spacer" />
           <TimeRangeDropDown />
         </div>
-        <StatusSummaryTable
-          data={data} />
-        <AppWrapperSummaryTable
-          data={data} />
+        <StatusSummaryTable data={data} />
+        <AppWrapperSummaryTable data={data} />
       </ApplicationsPage>
     );
   },
@@ -117,11 +114,7 @@ const MCADashboard: React.FC = () => {
 
   return (
     <QuickStarts>
-      <MCADashboardInner
-        loaded={loaded}
-        components={sortedComponents}
-        loadError={loadError}
-      />
+      <MCADashboardInner loaded={loaded} components={sortedComponents} loadError={loadError} />
     </QuickStarts>
   );
 };
