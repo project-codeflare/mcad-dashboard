@@ -9,9 +9,11 @@ import ProjectDiagramIcon from '@patternfly/react-icons/dist/esm/icons/project-d
 import MCADashboard from './MCADashboard';
 import ApplicationsPage from '../ApplicationsPage';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
+import Metrics from '../Metrics/Metrics';
 
 const description = 'A Dashboard for Multi-Cluster App Dispatcher';
-const subDescription = '- MCAD is a Kubernetes controller providing mechanisms for applications to manage batch jobs in a single or multi-cluster environment';
+const subDescription =
+  '- MCAD is a Kubernetes controller providing mechanisms for applications to manage batch jobs in a single or multi-cluster environment';
 
 export const MCADTabs: React.FunctionComponent = () => {
   const { components, loaded, loadError } = useWatchComponents(true);
@@ -20,7 +22,7 @@ export const MCADTabs: React.FunctionComponent = () => {
   // Toggle currently active tab
   const handleTabClick = (
     event: React.MouseEvent<any> | React.KeyboardEvent | MouseEvent,
-    tabIndex: string | number
+    tabIndex: string | number,
   ) => {
     setActiveTabKey(tabIndex);
   };
@@ -33,11 +35,11 @@ export const MCADTabs: React.FunctionComponent = () => {
       empty={isEmpty}
       loadError={loadError}
     >
-      <div className='mcad-description'>
+      <div className="mcad-description">
         <p>{subDescription}</p>
       </div>
       <Tabs
-        className='mcad-tabs'
+        className="mcad-tabs"
         activeKey={activeTabKey}
         onSelect={handleTabClick}
         aria-label="mcad-tabs"
@@ -85,6 +87,7 @@ export const MCADTabs: React.FunctionComponent = () => {
         >
           {/* Place holder */}
           Metrics
+          <Metrics />
         </Tab>
         <Tab
           eventKey={3}
