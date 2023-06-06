@@ -12,11 +12,9 @@ const fetchPrometheusData = async (host: string, query: string) => {
   });
 
   const url = `${host}?${params.toString()}`;
-  console.log(url);
   return axiosInstance
     .post(url)
     .then((res) => {
-      console.log('res', res);
       return res.data.data.result;
     })
     .catch((err) => {
@@ -26,7 +24,6 @@ const fetchPrometheusData = async (host: string, query: string) => {
 
 const fetchMetric = async (host: string, query: string) => {
   const fetchedData: any = await fetchPrometheusData(host, query);
-  console.log('fetchedData', fetchedData);
   const valueAsDecimal = parseFloat(fetchedData[0].value[1]);
   const valueAsPercent = valueAsDecimal * 100;
   return valueAsPercent;
@@ -66,5 +63,7 @@ const getMetricsData = async () => {
   console.log('metricsdata', data);
   return data;
 };
+
+getMetricsData();
 
 export default getMetricsData;

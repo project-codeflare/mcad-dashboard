@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import RefreshRateDropDown from '../MCADashboard/DropDowns/refresh-rate-drop-down';
-
+import getMetricsData from '~/api/k8s/metricsData';
 import MetricsTyles from './MetricsCards';
 import '../MCADashboard/MCADashboard.css';
 import './Metrics.css';
 import MetricGraph from './MetricGraph';
-
-const getMetricsData = () => {
-  const data = {
-    cpuUtilization: 43,
-    cpuLimit: 24.3,
-  };
-  return data;
-};
 
 const Metrics = () => {
   const [refreshRate, setRefreshRate] = React.useState(30000);
@@ -31,7 +23,7 @@ const Metrics = () => {
   }, []);
 
   React.useEffect(() => {
-    console.log(metricsData);
+    console.log('metrics', metricsData);
   }, [metricsData]);
 
   return (
