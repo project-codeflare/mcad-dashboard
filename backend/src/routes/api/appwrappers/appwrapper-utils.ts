@@ -18,8 +18,8 @@ class AllAppwrappers {
       jsonData = JSON.parse(jsonStringList[i]);
 
       //Verify and set system priority
-      if (jsonData.status.systempriority) {
-        if (jsonData.spec.priority) {
+      if (!jsonData.status.systempriority) {
+        if (!jsonData.spec.priority) {
           jsonData.status.systempriority = 'Not found';
         } else {
           jsonData.status.systempriority = jsonData.spec.priority;
