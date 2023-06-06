@@ -193,11 +193,4 @@ class AllAppwrappers {
   }
 }
 
-async function get() {
-  const wrappers = await new AllAppwrappers().get();
-  console.log(wrappers);
-}
-
-get();
-
 export { AllAppwrappers };
