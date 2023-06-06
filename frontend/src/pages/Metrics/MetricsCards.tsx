@@ -10,14 +10,14 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-import MetricTyle from './MetricCard';
+import MetricCard from './MetricCard';
 import { dataEntryToRecord } from '~/utilities/dataEntryToRecord';
 
 type MetricsData = {
   data: any;
 };
 
-const MetricsTyles: React.FunctionComponent<MetricsData> = ({ data: metricsData }) => {
+const MetricsCards: React.FunctionComponent<MetricsData> = ({ data: metricsData }) => {
   const [isExpanded, setIsExpanded] = React.useState(true);
 
   const onToggle = (isExpanded: boolean) => {
@@ -31,32 +31,31 @@ const MetricsTyles: React.FunctionComponent<MetricsData> = ({ data: metricsData 
       toggleContent={
         <div>
           <TextContent>
-            <Text component={TextVariants.h2}>Appwrapper Summary</Text>
+            <Text component={TextVariants.h2}>Metrics Summary</Text>
           </TextContent>
         </div>
       }
     >
       <PageSection isFilled data-id="page-content">
         <div>
-          here
           <Grid role="list" hasGutter>
             <GridItem span={12} md={6} lg={4}>
-              <MetricTyle data={metricsData.cpuLimit} name={'bruh'} />
+              <MetricCard data={metricsData.cpuLimit} name={'bruh'} />
             </GridItem>
             <GridItem span={12} md={6} lg={4}>
-              <MetricTyle data={metricsData.cpuLimit} name={'bruh'} />
+              <MetricCard data={metricsData.cpuLimit} name={'bruh'} />
             </GridItem>
             <GridItem span={12} md={6} lg={4}>
-              <MetricTyle data={metricsData.cpuLimit} name={'bruh'} />
+              <MetricCard data={metricsData.cpuLimit} name={'bruh'} />
             </GridItem>
             <GridItem span={12} md={6} lg={4}>
-              <MetricTyle data={metricsData.cpuLimit} name={'bruh'} />
+              <MetricCard data={metricsData.cpuLimit} name={'bruh'} />
             </GridItem>
             <GridItem span={12} md={6} lg={4}>
-              <MetricTyle data={metricsData.cpuLimit} name={'bruh'} />
+              <MetricCard data={metricsData.cpuLimit} name={'bruh'} />
             </GridItem>
             <GridItem span={12} md={6} lg={4}>
-              <MetricTyle data={metricsData.cpuLimit} name={'bruh'} />
+              <MetricCard data={metricsData.cpuLimit} name={'bruh'} />
             </GridItem>
           </Grid>
         </div>
@@ -65,4 +64,4 @@ const MetricsTyles: React.FunctionComponent<MetricsData> = ({ data: metricsData 
   );
 };
 
-export default MetricsTyles;
+export default MetricsCards;
