@@ -12,6 +12,7 @@ import RefreshRateDropDown from './DropDowns/refresh-rate-drop-down';
 import './MCADashboard.css';
 import fetchData from './app-wrapper-data';
 import { Data } from './types';
+//const description = `A Dashboard for Multi-Cluster App Dispatcher`;
 
 type MCADashboardInnerProps = {
   loaded: boolean;
@@ -44,13 +45,29 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
         // initial values for the appwrappers object
       },
     });
+
     React.useEffect(() => {
       const initialFetch = async () => {
         const newData = await fetchData();
         setData(newData);
+        sessionStorage.setItem('appwrapper-data', JSON.stringify(newData));
       };
 
-      initialFetch(); // initial fetch
+      const getData = () => {
+        const dataFromStorage = sessionStorage.getItem('appwrapper-data');
+        if (dataFromStorage) {
+          const parsedData = JSON.parse(dataFromStorage);
+          if (parsedData.appwrappers && parsedData.stats) {
+            setData(parsedData);
+          } else {
+            initialFetch(); // fetch data
+          }
+        } else {
+          initialFetch(); // fetch data
+        }
+      };
+
+      getData();
 
       const interval = setInterval(async () => {
         const newData = await fetchData();
@@ -72,9 +89,12 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       >
         <div className="dropdowns-container">
           <RefreshRateDropDown onSelected={handleSelection} />
+          <RefreshRateDropDown onSelected={handleSelection} />
           <div className="spacer" />
           <TimeRangeDropDown />
         </div>
+        <StatusSummaryTable data={data} />
+        <AppWrapperSummaryTable data={data} />
         <StatusSummaryTable data={data} />
         <AppWrapperSummaryTable data={data} />
       </ApplicationsPage>
