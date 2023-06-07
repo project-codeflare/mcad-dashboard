@@ -9,16 +9,16 @@ module.exports = module.exports = async (fastify: KubeFastifyInstance) => {
     secureRoute(fastify)(
       async (
         request: OauthFastifyRequest<{
-          Body: { host: string; query: string; range: number[] };
+          Body: { query: string; range: number[] };
         }>,
       ) => {
-        const { host, query, range } = request.body;
+        const { query, range } = request.body;
         try {
           if (!range) {
-            const data = await getMetric(host, query);
+            const data = await getMetric(query);
             return data;
           } else {
-            const data = await getMetricRange(host, query, range);
+            const data = await getMetricRange(query, range);
             return data;
           }
         } catch (err) {
