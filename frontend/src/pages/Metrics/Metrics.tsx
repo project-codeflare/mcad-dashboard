@@ -20,7 +20,13 @@ const Metrics: React.FC = (): React.ReactElement => {
         {/* <TimeRangeDropDown /> */}
       </div>
       <MetricsCards />
-      <MetricGraph />
+      <MetricGraph
+        name={'CPU Usage'}
+        query={
+          'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""}) by (namespace)'
+        }
+        time={'5m'}
+      />
     </>
   );
 };
