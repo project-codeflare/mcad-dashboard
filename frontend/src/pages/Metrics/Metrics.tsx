@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import RefreshRateDropDown from '../MCADashboard/DropDowns/refresh-rate-drop-down';
-import getMetricsData from '~/api/k8s/metricsData';
+import { getMetricData } from '~/api/k8s/metricsData';
 import MetricsTyles from './MetricsCards';
 import '../MCADashboard/MCADashboard.css';
 import './Metrics.css';
@@ -15,7 +15,10 @@ const Metrics = () => {
   const [metricsData, setMetricsData] = React.useState({});
   React.useEffect(() => {
     const getData = async () => {
-      const data = await getMetricsData();
+      const data = await getMetricData(
+        'https://thanos-querier-openshift-monitoring.mcad-dev-us-south-1-bx2-4-d9216b613387d80bef1a9d1d5bfb1331-0000.us-south.containers.appdomain.cloud/api/v1/',
+        'cluster:node_cpu:ratio_rate5m{cluster=""}',
+      );
       setMetricsData(data);
     };
 
@@ -23,7 +26,7 @@ const Metrics = () => {
   }, []);
 
   React.useEffect(() => {
-    console.log('metrics', metricsData);
+    console.log(metricsData);
   }, [metricsData]);
 
   return (
