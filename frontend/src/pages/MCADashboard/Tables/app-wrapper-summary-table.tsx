@@ -145,7 +145,7 @@ export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps
           emptyTableView={<>No appwrappers match your filters. </>}
           rowRenderer={(appwrapperSummary) => (
             <Tr
-              key={appwrapperSummary.name}
+              key={appwrapperSummary.name+appwrapperSummary.namespace}
               onRowClick={() => setSelectedRepoName(appwrapperSummary.name)}
               isSelectable
               isHoverable

@@ -115,7 +115,7 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
                 columns={columns}
                 emptyTableView={
                   <>
-                    No projects match your filters.{' '}
+                    No data.{' '}
                   </>
                 }
                 rowRenderer={(statusSummary) => (
