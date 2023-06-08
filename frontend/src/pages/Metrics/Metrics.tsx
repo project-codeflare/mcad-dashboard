@@ -5,12 +5,32 @@ import MetricsCards from './MetricsCards';
 import '../MCADashboard/MCADashboard.css';
 import './Metrics.css';
 import MetricGraph from './MetricGraph';
+import { useAppSelector } from '~/redux/hooks';
+import { useWatchConsoleLinks } from '~/utilities/useWatchConsoleLinks';
+import { ODH_PRODUCT_NAME } from '~/utilities/const';
+import { getOpenShiftConsoleServerURL } from '~/utilities/clusterUtils';
+import { useClusterInfo } from '~/redux/selectors/clusterInfo';
+import { useAppContext } from '../../app/AppContext';
 
-const Metrics: React.FC = (): React.ReactElement => {
+type MetricsProps = {
+  activeTabKey: number;
+};
+
+const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.ReactElement => {
   const [refreshRate, setRefreshRate] = React.useState(30000);
   const handleSelection = (selectedItemId: number) => {
     setRefreshRate(selectedItemId);
   };
+
+  const [clusterID, clusterBranding] = useAppSelector((state) => [
+    state.clusterID,
+    state.clusterBranding,
+  ]);
+  const { consoleLinks } = useWatchConsoleLinks();
+  const { dashboardConfig } = useAppContext();
+  const { serverURL } = useClusterInfo();
+
+  // console.log(clusterID, clusterBranding, consoleLinks, dashboardConfig, serverURL);
 
   return (
     <>
@@ -26,6 +46,7 @@ const Metrics: React.FC = (): React.ReactElement => {
           'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""}) by (namespace)'
         }
         time={'5m'}
+        activeTabKey={activeTabKey}
       />
     </>
   );

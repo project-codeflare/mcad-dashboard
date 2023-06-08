@@ -12,3 +12,12 @@
   justify-content: center;
   font-weight: 800;
 }
+
+.metric-graph {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  height: 300px;
+}

@@ -19,11 +19,13 @@ import {
 } from '@patternfly/react-charts';
 
 import { getMetricDataRange } from '~/api/k8s/metricsData';
+import './Metrics.css';
 
 type MetricGraphProps = {
   name: string;
   query: string;
   time: string;
+  activeTabKey: number;
 };
 
 type MetricData = {
@@ -35,9 +37,27 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   name,
   query,
   time,
+  activeTabKey,
 }: MetricGraphProps): React.ReactElement => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
-  const [metricData, setMetricData] = React.useState<MetricData>();
+  const [metricData, setMetricData] = React.useState<MetricData[]>();
+  const containerRef: any = React.useRef(null);
+  const [width, setWidth] = React.useState<number>();
+  const handleResize = () => {
+    console.log('handling');
+    if (containerRef.current && containerRef.current.clientWidth) {
+      setWidth(containerRef.current.clientWidth);
+    }
+  };
+
+  React.useEffect(() => {
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [containerRef, activeTabKey]);
 
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);
@@ -46,7 +66,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   React.useEffect(() => {
     const getData = async () => {
       const response = await getMetricDataRange(query, time);
-      const data: MetricData = response.data;
+      const data: MetricData[] = response.data;
       setMetricData(data);
     };
 
@@ -54,7 +74,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   }, []);
 
   React.useEffect(() => {
-    console.log(metricData ? metricData[0] : 'none');
+    console.log(metricData);
   }, [metricData]);
 
   return (
@@ -71,45 +91,55 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
       }
     >
       <PageSection isFilled data-id="page-content">
-        <Chart
-          ariaDesc="Average number of pets"
-          ariaTitle="Line chart example"
-          containerComponent={
-            <ChartVoronoiContainer
-              labels={({ datum }) => `${datum.x}: ${datum.y}`}
-              constrainToVisibleArea
-            />
-          }
-          legendData={[{ name: 'Cats' }]}
-          legendOrientation="vertical"
-          legendPosition="right"
-          height={250}
-          maxDomain={{ y: 1 }}
-          minDomain={{ y: 0 }}
-          name="chart1"
-          padding={{
-            bottom: 50,
-            left: 50,
-            right: 200, // Adjusted to accommodate legend
-            top: 50,
-          }}
-          width={600}
-        >
-          <ChartAxis tickFormat={(tick) => new Date(tick * 1000).toLocaleString()} />
-          <ChartAxis dependentAxis showGrid tickFormat={(tick) => Number(tick).toFixed(2)} />
-          <ChartGroup>
-            <ChartLine
-              data={
-                metricData
-                  ? metricData[0].values.map(([timestamp, value]) => ({
-                      x: timestamp,
-                      y: Number(value),
-                    }))
-                  : null
+        <div className="metric-graph" ref={containerRef}>
+          <Chart
+            ariaDesc="Average number of pets"
+            ariaTitle="Line chart example"
+            containerComponent={
+              <ChartVoronoiContainer
+                labels={({ datum }) => `${datum.x}: ${datum.y}`}
+                constrainToVisibleArea
+              />
+            }
+            legendOrientation="vertical"
+            legendPosition="right"
+            height={300}
+            maxDomain={{ y: 1 }}
+            minDomain={{ y: 0 }}
+            name="chart1"
+            padding={{
+              bottom: 50,
+              left: 50,
+              right: 50,
+              top: 50,
+            }}
+            width={width}
+          >
+            <ChartAxis
+              tickCount={6}
+              tickFormat={(tick) =>
+                new Date(tick * 1000).toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' })
               }
             />
-          </ChartGroup>
-        </Chart>
+            <ChartAxis dependentAxis showGrid tickFormat={(tick) => Number(tick).toFixed(2)} />
+            <ChartGroup>
+              {metricData ? (
+                metricData.map((obj, index) => {
+                  return (
+                    <ChartLine
+                      data={metricData[index].values.map(([timestamp, value]) => ({
+                        x: timestamp,
+                        y: Number(value),
+                      }))}
+                    />
+                  );
+                })
+              ) : (
+                <></>
+              )}
+            </ChartGroup>
+          </Chart>
+        </div>
       </PageSection>
     </ExpandableSection>
   );

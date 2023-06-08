@@ -86,7 +86,7 @@ export const MCADTabs: React.FunctionComponent = () => {
           aria-label="metrics-tab"
         >
           {/* Place holder */}
-          <Metrics />
+          <Metrics activeTabKey={Number(activeTabKey)} />
         </Tab>
         <Tab
           eventKey={3}
