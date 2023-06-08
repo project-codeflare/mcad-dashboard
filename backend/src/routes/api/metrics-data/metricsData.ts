@@ -2,12 +2,22 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   headers: {
-    Authorization: 'Bearer sha256~BM2thN4XpaYR07JaIq0Fv8J5LXAMOKeOVpieNTdYzY0',
+    Authorization: 'Bearer sha256~TqjC1xK1UHZ9GcbcwPRnectKO-TxNeXCrImSInReYeo',
   },
 });
 
 const host =
   'https://thanos-querier-openshift-monitoring.mcad-dev-us-south-1-bx2-4-d9216b613387d80bef1a9d1d5bfb1331-0000.us-south.containers.appdomain.cloud/api/v1/';
+
+// const host =
+// https://c100-e.us-south.containers.cloud.ibm.com:31370
+// 'https://c100-e.us-south.containers.cloud.ibm.com:31370/api/v1/namespaces/openshift-monitoring/services/thanos-querier/';
+//   'https://thanos-querier-openshift-monitoring.c100-e.us-south.containers.cloud.ibm.com';
+// const getData = () => {
+//   axiosInstance.get(host).then((res: any) => console.log(res.data));
+// };
+
+// getData();
 
 const fetchPrometheusData = async (host: string, query: string) => {
   const params = new URLSearchParams({
