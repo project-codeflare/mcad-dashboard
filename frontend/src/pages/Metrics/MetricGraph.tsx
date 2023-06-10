@@ -12,14 +12,30 @@ import {
 } from '@patternfly/react-core';
 import {
   Chart,
-  ChartVoronoiContainer,
   ChartAxis,
   ChartLine,
+  ChartLegendTooltip,
+  ChartLegend,
+  createContainer,
   ChartGroup,
+  ChartVoronoiContainer,
+  ChartTooltip,
 } from '@patternfly/react-charts';
 
 import { getMetricDataRange } from '~/api/k8s/metricsData';
-import './Metrics.css';
+import './Metrics.scss';
+
+const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
+  // The first child should be a <rect> with a `width` prop giving the legend's content width
+  const width = children?.[0]?.[0]?.props?.width ?? '100%';
+  return (
+    <foreignObject height={75} width={'100%'} y={245}>
+      <div className="monitoring-dashboards__legend-wrap horizontal-scroll">
+        <svg width={width}>{children}</svg>
+      </div>
+    </foreignObject>
+  );
+};
 
 type MetricGraphProps = {
   name: string;
@@ -73,10 +89,14 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     getData();
   }, []);
 
-  React.useEffect(() => {
-    console.log(metricData);
-  }, [metricData]);
+  const legendData = metricData?.map((obj) => {
+    return {
+      childName: obj.metric.namespace,
+      name: obj.metric.namespace,
+    };
+  });
 
+  console.log(legendData);
   return (
     <ExpandableSection
       displaySize={'large'}
@@ -91,54 +111,73 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
       }
     >
       <PageSection isFilled data-id="page-content">
-        <div className="metric-graph" ref={containerRef}>
-          <Chart
-            ariaDesc="Average number of pets"
-            ariaTitle="Line chart example"
-            containerComponent={
-              <ChartVoronoiContainer
-                labels={({ datum }) => `${datum.x}: ${datum.y}`}
-                constrainToVisibleArea
-              />
-            }
-            legendOrientation="vertical"
-            legendPosition="right"
-            height={300}
-            maxDomain={{ y: 1 }}
-            minDomain={{ y: 0 }}
-            name="chart1"
-            padding={{
-              bottom: 50,
-              left: 50,
-              right: 50,
-              top: 50,
-            }}
-            width={width}
-          >
-            <ChartAxis
-              tickCount={6}
-              tickFormat={(tick) =>
-                new Date(tick * 1000).toLocaleTimeString([], { hour: 'numeric', minute: 'numeric' })
+        <div className="metric-graph-outer">
+          <div className="metric-graph" ref={containerRef}>
+            <Chart
+              ariaDesc="Average number of pets"
+              ariaTitle="Line chart example"
+              containerComponent={
+                <ChartVoronoiContainer
+                  labels={({ datum }) => `${datum.childName}: ${datum.y.toFixed(2)}`}
+                  constrainToVisibleArea
+                />
               }
-            />
-            <ChartAxis dependentAxis showGrid tickFormat={(tick) => Number(tick).toFixed(2)} />
-            <ChartGroup>
-              {metricData ? (
-                metricData.map((obj, index) => {
-                  return (
-                    <ChartLine
-                      data={metricData[index].values.map(([timestamp, value]) => ({
-                        x: timestamp,
-                        y: Number(value),
-                      }))}
-                    />
-                  );
-                })
-              ) : (
-                <></>
+              height={250}
+              maxDomain={{ y: 1.5 }}
+              minDomain={{ y: 0 }}
+              name="chart1"
+              padding={
+                {
+                  // bottom: 50,
+                  // left: 50,
+                  // right: 50,
+                  // top: 50,
+                }
+              }
+              width={width}
+            >
+              <ChartAxis
+                tickCount={6}
+                tickFormat={(tick) =>
+                  new Date(tick * 1000).toLocaleTimeString([], {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                  })
+                }
+              />
+              <ChartAxis dependentAxis showGrid tickFormat={(tick) => Number(tick).toFixed(2)} />
+              <ChartGroup>
+                {metricData ? (
+                  metricData.map((obj, index) => {
+                    return (
+                      <ChartLine
+                        name={obj.metric.namespace}
+                        data={metricData[index].values.map(([timestamp, value]) => ({
+                          x: timestamp,
+                          y: Number(value),
+                        }))}
+                      />
+                    );
+                  })
+                ) : (
+                  <></> // CPU utilization, memory requests, appwrapper stuff
+                )}
+              </ChartGroup>
+              {legendData && (
+                <ChartLegend
+                  data={legendData}
+                  groupComponent={<LegendContainer />}
+                  gutter={30}
+                  itemsPerRow={3}
+                  orientation="vertical"
+                  style={{
+                    labels: { fontSize: 11, fill: 'var(--pf-global--Color--100)' },
+                  }}
+                  symbolSpacer={4}
+                />
               )}
-            </ChartGroup>
-          </Chart>
+            </Chart>
+          </div>
         </div>
       </PageSection>
     </ExpandableSection>

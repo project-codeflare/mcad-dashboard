@@ -1,0 +1,90 @@
+.metric-card {
+}
+
+.metric-card-data {
+  display: flex;
+  justify-content: center;
+  font-size: 200%;
+}
+
+.metric-card-header {
+  display: flex;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.metric-graph {
+  width: 100%;
+}
+
+.metric-graph-outer {
+  background: white;
+  padding: 5px 15px 15px 60px;
+  min-height: 350px;
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  margin-top: 0;
+  overflow: visible; // Tooltips may overflow
+  padding-top: 15px; // So graph title doesn't abut border
+  width: 100%;
+
+  .cos-status-box {
+    height: 100%; // Loading box should be approximately same height as graph
+    position: relative; // .co-m-loader uses position: absolute, needs position: relative wrapper for correct placement
+  }
+}
+
+.metric-graph-outer svg {
+  overflow: visible !important; // Tooltips may overflow
+}
+
+.custom-tooltip {
+  max-width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.monitoring-dashboards__legend-wrap {
+  $legend-content-height: 65px;
+  height: $legend-content-height + 10px; // Add space for the horizontal scrollbar
+  padding-top: 1px;
+  svg {
+    max-height: $legend-content-height; // Required for Chrome to prevent vertical scrolling
+  }
+}
+
+.horizontal-scroll {
+  overflow-x: auto;
+  padding-left: var(--pf-global--spacer--md);
+  padding-right: var(--pf-global--spacer--md);
+
+  &:before,
+  &:after {
+    bottom: 0;
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: var(--pf-global--spacer--md);
+    z-index: 1;
+  }
+  &:before {
+    background: linear-gradient(
+      to right,
+      var(--pf-global--BackgroundColor--100),
+      rgba(255, 255, 255, 0)
+    );
+    left: 0;
+  }
+  &:after {
+    background: linear-gradient(
+      to left,
+      var(--pf-global--BackgroundColor--100),
+      rgba(255, 255, 255, 0)
+    );
+    right: 0;
+  }
+}

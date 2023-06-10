@@ -2,7 +2,8 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   headers: {
-    Authorization: 'Bearer sha256~TqjC1xK1UHZ9GcbcwPRnectKO-TxNeXCrImSInReYeo',
+    Authorization: 'Bearer sha256~7jydA-9s6dOX1bEM0dXdJyeEpk31V5v6M0rPlHQP8Bg',
+    rejectUnauthorized: false,
   },
 });
 

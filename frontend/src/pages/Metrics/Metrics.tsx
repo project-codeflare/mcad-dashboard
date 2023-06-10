@@ -3,7 +3,7 @@ import RefreshRateDropDown from '../MCADashboard/DropDowns/refresh-rate-drop-dow
 import { getMetricData, getMetricDataRange } from '~/api/k8s/metricsData';
 import MetricsCards from './MetricsCards';
 import '../MCADashboard/MCADashboard.css';
-import './Metrics.css';
+import './Metrics.scss';
 import MetricGraph from './MetricGraph';
 import { useAppSelector } from '~/redux/hooks';
 import { useWatchConsoleLinks } from '~/utilities/useWatchConsoleLinks';
@@ -22,15 +22,14 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
     setRefreshRate(selectedItemId);
   };
 
-  const [clusterID, clusterBranding] = useAppSelector((state) => [
-    state.clusterID,
-    state.clusterBranding,
-  ]);
-  const { consoleLinks } = useWatchConsoleLinks();
-  const { dashboardConfig } = useAppContext();
-  const { serverURL } = useClusterInfo();
-
-  // console.log(clusterID, clusterBranding, consoleLinks, dashboardConfig, serverURL);
+  const state = useAppSelector((state) => state);
+  const links = useWatchConsoleLinks();
+  const config = useAppContext();
+  const data = useClusterInfo();
+  console.log(data);
+  console.log(state);
+  console.log(links);
+  console.log(config);
 
   return (
     <>
