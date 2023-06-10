@@ -129,7 +129,7 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
                 enablePagination
                 data={repositories}
                 columns={columns}
-                emptyTableView={<>No projects match your filters. </>}
+                emptyTableView={<>No data. </>}
                 rowRenderer={(statusSummary) => (
                   <Tr key={statusSummary.dispatched}>
                     <Td dataLabel={statusSummary.dispatched}>{statusSummary.dispatched}</Td>

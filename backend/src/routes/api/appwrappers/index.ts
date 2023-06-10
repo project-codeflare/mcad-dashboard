@@ -9,6 +9,7 @@ module.exports = module.exports = async (fastify: KubeFastifyInstance) => {
     secureRoute(fastify)(async () => {
       try {
         const wrappers = await new AllAppwrappers().get();
+        console.log('wrappers', wrappers);
         return wrappers;
       } catch (err) {
         return err;
