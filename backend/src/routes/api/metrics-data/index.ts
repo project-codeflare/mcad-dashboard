@@ -1,7 +1,8 @@
 import { secureRoute } from '../../../utils/route-security';
 import { KubeFastifyInstance, OauthFastifyRequest } from '../../../types';
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { getMetric, getMetricRange, getHost } from './metricsData';
+import { metricsData } from './metricsData';
+import { getDirectCallOptions } from '../../../utils/directCallUtils';
 
 module.exports = module.exports = async (fastify: KubeFastifyInstance) => {
   fastify.post(
@@ -13,22 +14,9 @@ module.exports = module.exports = async (fastify: KubeFastifyInstance) => {
         }>,
       ) => {
         const { query, range } = request.body;
-        let host: string;
 
         try {
-          host = await getHost();
-        } catch (err) {
-          return err;
-        }
-
-        try {
-          if (!range) {
-            const data = await getMetric(host, query);
-            return data;
-          } else {
-            const data = await getMetricRange(host, query, range);
-            return data;
-          }
+          return await metricsData(fastify, request, query, range);
         } catch (err) {
           return err;
         }

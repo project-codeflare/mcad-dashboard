@@ -1,14 +1,9 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { exec } from 'child_process';
+import { OauthFastifyRequest, KubeFastifyInstance } from '../../../types';
+import { getDirectCallOptions } from '../../../utils/directCallUtils';
 
-const axiosInstance = axios.create({
-  headers: {
-    Authorization: `Bearer sha256~K8Sbr1t1fTC3IKwQ5tSLAaiIBFS419FhPoBRx57GWNk`,
-    rejectUnauthorized: false,
-  },
-});
-
-const fetchPrometheusData = async (host: string, query: string) => {
+const fetchPrometheusData = async (host: string, query: string, axiosInstance: AxiosInstance) => {
   const params = new URLSearchParams({
     query: query,
   });
@@ -30,6 +25,7 @@ const fetchPrometheusDataRange = async (
   start: number,
   end: number,
   step: number,
+  axiosInstance: AxiosInstance,
 ) => {
   const params = new URLSearchParams({
     start: start.toString(),
@@ -48,15 +44,27 @@ const fetchPrometheusDataRange = async (
     });
 };
 
-const getMetric = async (host: string, query: string) => {
-  const fetchedData: any = await fetchPrometheusData(host, query);
+const getMetric = async (host: string, query: string, axiosInstance: AxiosInstance) => {
+  const fetchedData: any = await fetchPrometheusData(host, query, axiosInstance);
   const valueAsDecimal = parseFloat(fetchedData[0].value[1]);
   const valueAsPercent = valueAsDecimal * 100;
   return valueAsPercent;
 };
 
-const getMetricRange = async (host: string, query: string, range: number[]) => {
-  const fetchedData: any = await fetchPrometheusDataRange(host, query, range[0], range[1], 6);
+const getMetricRange = async (
+  host: string,
+  query: string,
+  range: number[],
+  axiosInstance: AxiosInstance,
+) => {
+  const fetchedData: any = await fetchPrometheusDataRange(
+    host,
+    query,
+    range[0],
+    range[1],
+    6,
+    axiosInstance,
+  );
   return fetchedData;
 };
 
@@ -74,4 +82,31 @@ const getHost = (): Promise<string> => {
   });
 };
 
-export { getMetric, getMetricRange, getHost };
+const metricsData = async (
+  fastify: KubeFastifyInstance,
+  request: OauthFastifyRequest,
+  query: string,
+  range: number[] | null,
+) => {
+  const host = await getHost();
+  const res = await getDirectCallOptions(fastify, request, host);
+  const auth = res.headers.Authorization.toString();
+  if (auth.substring(0, 6) !== 'Bearer') {
+    return new Error('auth not found');
+  }
+  const axiosInstance = axios.create({
+    headers: {
+      Authorization: auth,
+      rejectUnauthorized: false,
+    },
+  });
+  if (!range) {
+    const data = await getMetric(host, query, axiosInstance);
+    return data;
+  } else {
+    const data = await getMetricRange(host, query, range, axiosInstance);
+    return data;
+  }
+};
+
+export { metricsData };
