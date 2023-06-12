@@ -72,19 +72,20 @@
     z-index: 1;
   }
   &:before {
-    background: linear-gradient(
-      to right,
-      var(--pf-global--BackgroundColor--100),
-      rgba(255, 255, 255, 0)
-    );
     left: 0;
   }
   &:after {
-    background: linear-gradient(
-      to left,
-      var(--pf-global--BackgroundColor--100),
-      rgba(255, 255, 255, 0)
-    );
     right: 0;
+  }
+}
+
+.query-browser__span {
+  $width: 130px;
+  max-width: $width;
+  justify-self: right;
+  margin-left: auto;
+  margin-right: 0;
+  .query-browser__span-dropdown-item {
+    width: $width - 1px;
   }
 }

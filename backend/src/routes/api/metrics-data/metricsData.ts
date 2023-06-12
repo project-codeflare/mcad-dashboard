@@ -56,13 +56,14 @@ const getMetricRange = async (
   query: string,
   range: number[],
   axiosInstance: AxiosInstance,
+  step: number,
 ) => {
   const fetchedData: any = await fetchPrometheusDataRange(
     host,
     query,
     range[0],
     range[1],
-    6,
+    step,
     axiosInstance,
   );
   return fetchedData;
@@ -87,8 +88,12 @@ const metricsData = async (
   request: OauthFastifyRequest,
   query: string,
   range: number[] | null,
+  step: number | null,
 ) => {
   const host = await getHost();
+  if (!host) {
+    return new Error('host not found');
+  }
   const res = await getDirectCallOptions(fastify, request, host);
   const auth = res.headers.Authorization.toString();
   if (auth.substring(0, 6) !== 'Bearer') {
@@ -104,7 +109,7 @@ const metricsData = async (
     const data = await getMetric(host, query, axiosInstance);
     return data;
   } else {
-    const data = await getMetricRange(host, query, range, axiosInstance);
+    const data = await getMetricRange(host, query, range, axiosInstance, step);
     return data;
   }
 };

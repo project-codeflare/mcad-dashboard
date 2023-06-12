@@ -11,7 +11,6 @@ import {
 } from '@patternfly/react-core';
 
 import MetricCard from './MetricCard';
-import { dataEntryToRecord } from '~/utilities/dataEntryToRecord';
 
 const queries = [
   { name: 'CPU Utilization', query: 'cluster:node_cpu:ratio_rate5m{cluster=""}' },
@@ -60,7 +59,7 @@ const MetricsCards: React.FunctionComponent = () => {
       <PageSection isFilled data-id="page-content">
         <div>
           <Grid role="list" hasGutter>
-            {queries.map(function (queryItem) {
+            {queries.map((queryItem) => {
               return (
                 <GridItem lg={4} md={6} sm={12}>
                   <MetricCard name={queryItem.name} query={queryItem.query} />

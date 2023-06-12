@@ -20,6 +20,7 @@ import {
   ChartGroup,
   ChartVoronoiContainer,
   ChartTooltip,
+  ChartThemeColor,
 } from '@patternfly/react-charts';
 
 import { getMetricDataRange } from '~/api/k8s/metricsData';
@@ -49,6 +50,8 @@ type MetricData = {
   values: [number, string][];
 };
 
+type DataItems = MetricData[];
+
 const MetricGraph: React.FC<MetricGraphProps> = ({
   name,
   query,
@@ -60,10 +63,29 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   const containerRef: any = React.useRef(null);
   const [width, setWidth] = React.useState<number>();
   const handleResize = () => {
-    console.log('handling');
     if (containerRef.current && containerRef.current.clientWidth) {
       setWidth(containerRef.current.clientWidth);
     }
+  };
+
+  const getMaxValue = (data: DataItems | undefined) => {
+    if (!data) {
+      return 0;
+    }
+    let maxValue = 0;
+
+    for (const item of data) {
+      const { values } = item;
+
+      for (const [_, value] of values) {
+        const parsedValue = parseFloat(value);
+        if (parsedValue > maxValue) {
+          maxValue = parsedValue;
+        }
+      }
+    }
+
+    return maxValue;
   };
 
   React.useEffect(() => {
@@ -82,12 +104,18 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   React.useEffect(() => {
     const getData = async () => {
       const response = await getMetricDataRange(query, time);
-      const data: MetricData[] = response.data;
-      setMetricData(data);
+      if (response.data) {
+        const data: MetricData[] = response.data;
+        setMetricData(data);
+      }
     };
 
     getData();
-  }, []);
+  }, [time]);
+
+  React.useEffect(() => {
+    console.log(metricData);
+  }, [metricData]);
 
   const legendData = metricData?.map((obj) => {
     return {
@@ -96,7 +124,6 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     };
   });
 
-  console.log(legendData);
   return (
     <ExpandableSection
       displaySize={'large'}
@@ -105,17 +132,17 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
       toggleContent={
         <div>
           <TextContent>
-            <Text component={TextVariants.h2}>Example graph</Text>
+            <Text component={TextVariants.h2}>{name}</Text>
           </TextContent>
         </div>
       }
     >
       <PageSection isFilled data-id="page-content">
-        <div className="metric-graph-outer">
-          <div className="metric-graph" ref={containerRef}>
+        <div className="metric-graph-outer" ref={containerRef}>
+          <div className="metric-graph">
             <Chart
-              ariaDesc="Average number of pets"
-              ariaTitle="Line chart example"
+              ariaDesc={name}
+              ariaTitle={name}
               containerComponent={
                 <ChartVoronoiContainer
                   labels={({ datum }) => `${datum.childName}: ${datum.y.toFixed(2)}`}
@@ -123,18 +150,11 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
                 />
               }
               height={250}
-              maxDomain={{ y: 1.5 }}
+              maxDomain={{ y: getMaxValue(metricData) }}
               minDomain={{ y: 0 }}
-              name="chart1"
-              padding={
-                {
-                  // bottom: 50,
-                  // left: 50,
-                  // right: 50,
-                  // top: 50,
-                }
-              }
+              name={name}
               width={width}
+              themeColor={ChartThemeColor.multiUnordered}
             >
               <ChartAxis
                 tickCount={6}
@@ -147,21 +167,17 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
               />
               <ChartAxis dependentAxis showGrid tickFormat={(tick) => Number(tick).toFixed(2)} />
               <ChartGroup>
-                {metricData ? (
-                  metricData.map((obj, index) => {
-                    return (
-                      <ChartLine
-                        name={obj.metric.namespace}
-                        data={metricData[index].values.map(([timestamp, value]) => ({
-                          x: timestamp,
-                          y: Number(value),
-                        }))}
-                      />
-                    );
-                  })
-                ) : (
-                  <></> // CPU utilization, memory requests, appwrapper stuff
-                )}
+                {metricData?.map((obj, index) => {
+                  return (
+                    <ChartLine
+                      name={obj.metric.namespace}
+                      data={metricData[index].values.map(([timestamp, value]) => ({
+                        x: timestamp,
+                        y: Number(value),
+                      }))}
+                    />
+                  );
+                })}
               </ChartGroup>
               {legendData && (
                 <ChartLegend
