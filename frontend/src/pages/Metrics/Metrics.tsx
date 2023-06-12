@@ -6,6 +6,8 @@ import '../MCADashboard/MCADashboard.css';
 import './Metrics.scss';
 import MetricGraph from './MetricGraph';
 import TimeRangeDropDown from './time-range-dropdown';
+import { useWatchComponents } from '~/utilities/useWatchComponents';
+import ApplicationsPage from '../ApplicationsPage';
 
 type MetricsProps = {
   activeTabKey: number;
@@ -21,6 +23,9 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
   const handleTimeRangeSelection = (item: string) => {
     setSpan(item);
   };
+
+  const { components, loaded, loadError } = useWatchComponents(true);
+  const isEmpty = !components || components.length === 0;
 
   const convertRangeToTime = (timeRange: string) => {
     switch (timeRange) {
@@ -51,23 +56,31 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
 
   return (
     <>
-      <div className="dropdowns-container">
-        <RefreshRateDropDown onSelected={handleRefreshSelection} />
-        <div className="spacer" />
-        <TimeRangeDropDown
-          onSelected={handleTimeRangeSelection}
-          dateFormatter={convertRangeToTime}
+      <ApplicationsPage
+        title={undefined}
+        description={undefined}
+        loaded={loaded}
+        empty={isEmpty}
+        loadError={loadError}
+      >
+        <div className="dropdowns-container">
+          <RefreshRateDropDown onSelected={handleRefreshSelection} />
+          <div className="spacer" />
+          <TimeRangeDropDown
+            onSelected={handleTimeRangeSelection}
+            dateFormatter={convertRangeToTime}
+          />
+        </div>
+        <MetricsCards />
+        <MetricGraph
+          name={'CPU Usage'}
+          query={
+            'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""}) by (namespace)'
+          }
+          time={span}
+          activeTabKey={activeTabKey}
         />
-      </div>
-      <MetricsCards />
-      <MetricGraph
-        name={'CPU Usage'}
-        query={
-          'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""}) by (namespace)'
-        }
-        time={span}
-        activeTabKey={activeTabKey}
-      />
+      </ApplicationsPage>
     </>
   );
 };
