@@ -168,7 +168,7 @@ class AllAppwrappers {
   pullJobs(): Promise<string> {
     return new Promise((resolve, reject) => {
       let jsonString: string = '';
-      const child = spawn('sh', ['./src/appwrapper_puller.sh'], {
+      const child = spawn('sh', ['./src/routes/api/appwrappers/appwrapper_puller.sh'], {
         stdio: 'pipe',
         buffer: true,
       });
