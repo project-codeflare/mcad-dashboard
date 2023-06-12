@@ -13,7 +13,7 @@ const fetchPrometheusData = async (host: string, query: string) => {
     query: query,
   });
 
-  const url = `${host}query?${params.toString()}`;
+  const url = `https://${host}/api/v1/query?${params.toString()}`;
   return axiosInstance
     .post(url)
     .then((res) => {
@@ -37,7 +37,7 @@ const fetchPrometheusDataRange = async (
     step: step.toString(),
     query: query,
   });
-  const url = `${host}query_range?${params.toString()}`;
+  const url = `https://${host}/api/v1/query_range?${params.toString()}`;
   return axiosInstance
     .get(url)
     .then((res) => {
