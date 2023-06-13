@@ -19,12 +19,12 @@ const app = fastify({
 
 app.register(initializeApp);
 
-app.listen({ port: PORT, host: IP }, (err) => {
+app.listen(PORT, IP, (err) => {
   if (err) {
     app.log.error(err);
-    process.exit(1);
+    process.exit(1); // eslint-disable-line
   }
-  const address = app.server.address() as AddressInfo;
+  const address: AddressInfo = app.server.address() as AddressInfo;
   console.log('Fastify Connected...');
-  console.log(`Server listening on >>> ${address.address}:${address.port}`);
+  console.log(`Server listening on >>>  ${address.address}:${address.port}`);
 });
