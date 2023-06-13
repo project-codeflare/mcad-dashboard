@@ -31,7 +31,7 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       setRefreshRate(selectedItemId);
     };
 
-    const [data, setData] = React.useState<Data>({
+    const emptyDataObject: Data = {
       stats: {
         // initial values for the stats object
         statusCounts: {
@@ -44,13 +44,16 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       appwrappers: {
         // initial values for the appwrappers object
       },
-    });
+    };
+    const [data, setData] = React.useState<Data>(emptyDataObject);
 
     React.useEffect(() => {
       const initialFetch = async () => {
         const newData = await fetchData();
-        setData(newData);
-        sessionStorage.setItem('appwrapper-data', JSON.stringify(newData));
+        if (newData && newData.stats && newData.appwrappers) {
+          setData(newData);
+          sessionStorage.setItem('appwrapper-data', JSON.stringify(newData));
+        }
       };
 
       const getData = () => {
@@ -70,9 +73,7 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       getData();
 
       const interval = setInterval(async () => {
-        const newData = await fetchData();
-        setData(newData);
-        console.log('refrashRate: ', refreshRate);
+        initialFetch();
       }, refreshRate); // fetching data every X seconds after the inital fetch
 
       return () => clearInterval(interval);
@@ -92,8 +93,8 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
           <div className="spacer" />
           <TimeRangeDropDown />
         </div>
-        <StatusSummaryTable data={data} />
-        <AppWrapperSummaryTable data={data} />
+        <StatusSummaryTable data={data ? data : emptyDataObject} />
+        <AppWrapperSummaryTable data={data ? data : emptyDataObject} />
       </ApplicationsPage>
     );
   },

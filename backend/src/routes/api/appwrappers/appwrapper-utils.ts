@@ -121,7 +121,7 @@ class AllAppwrappers {
 
     stats['statusCounts'] = statusCounts;
     const finalJson = { stats: stats, appwrappers: wrappersLite };
-    // maybe just return finalJson?
+
     const allNamespacesJson = JSON.stringify(finalJson);
     const headers = {
       'Content-Type': 'application/json',
