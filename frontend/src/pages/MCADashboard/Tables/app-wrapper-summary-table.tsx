@@ -96,7 +96,7 @@ export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps
       priority: status.systempriority.toString(),
       state: status.state,
       timesreenqueued: status.numRequeuings.toString(),
-      latestmessage: status.constructed_message,
+      latestmessage: status.constructedMessage,
     };
     appwrapperSummaryData.push(repository);
   }
@@ -145,7 +145,7 @@ export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps
           emptyTableView={<>No appwrappers match your filters. </>}
           rowRenderer={(appwrapperSummary) => (
             <Tr
-              key={appwrapperSummary.name+appwrapperSummary.namespace}
+              key={appwrapperSummary.name + appwrapperSummary.namespace}
               onRowClick={() => setSelectedRepoName(appwrapperSummary.name)}
               isSelectable
               isHoverable

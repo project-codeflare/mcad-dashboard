@@ -9,7 +9,7 @@ export interface Data {
       };
       status: {
         state: string;
-        constructed_message: string;
+        constructedMessage: string;
         numRequeuings: number;
         systempriority: number;
         rephrased_state: string;
