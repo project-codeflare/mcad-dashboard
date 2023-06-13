@@ -89,12 +89,9 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       >
         <div className="dropdowns-container">
           <RefreshRateDropDown onSelected={handleSelection} />
-          <RefreshRateDropDown onSelected={handleSelection} />
           <div className="spacer" />
           <TimeRangeDropDown />
         </div>
-        <StatusSummaryTable data={data} />
-        <AppWrapperSummaryTable data={data} />
         <StatusSummaryTable data={data} />
         <AppWrapperSummaryTable data={data} />
       </ApplicationsPage>
