@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { PageSection, ExpandableSection, TextContent, Text, TextVariants } from '@patternfly/react-core';
+import {
+  PageSection,
+  ExpandableSection,
+  TextContent,
+  Text,
+  TextVariants,
+} from '@patternfly/react-core';
 import { Td, Tr } from '@patternfly/react-table';
 import { SortableData } from '../components/table/useTableColumnSort';
 import Table from '../components/table/Table';
@@ -20,7 +26,6 @@ interface PieChartData {
 }
 
 export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ data }) => {
-
   const [isExpanded, setIsExpanded] = React.useState(true);
 
   const onToggle = (isExpanded: boolean) => {
@@ -28,20 +33,25 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
   };
 
   const repositories: StatusSummaryData[] = [
-    { dispatched: data.stats.status_counts.Dispatched.toString(), queued: data.stats.status_counts.Queued.toString(), reenqueued: data.stats.status_counts['Re-enqueued'].toString(), other: data.stats.status_counts.Other.toString() }
+    {
+      dispatched: data.stats.statusCounts.Dispatched.toString(),
+      queued: data.stats.statusCounts.Queued.toString(),
+      reenqueued: data.stats.statusCounts['Re-enqueued'].toString(),
+      other: data.stats.statusCounts.Other.toString(),
+    },
   ];
 
   const pieChartData: PieChartData[] = [
-    { x: 'Dispatched', y: data.stats.status_counts.Dispatched },
-    { x: 'Queued', y: data.stats.status_counts.Queued },
-    { x: 'Re-enqueued', y: data.stats.status_counts['Re-enqueued'] },
-    { x: 'Other', y: data.stats.status_counts.Other }
+    { x: 'Dispatched', y: data.stats.statusCounts.Dispatched },
+    { x: 'Queued', y: data.stats.statusCounts.Queued },
+    { x: 'Re-enqueued', y: data.stats.statusCounts['Re-enqueued'] },
+    { x: 'Other', y: data.stats.statusCounts.Other },
   ];
 
   let totalAppWrappers = 0;
-  for (const key in data.stats.status_counts) {
-    if (typeof data.stats.status_counts[key] === 'number') {
-      totalAppWrappers += data.stats.status_counts[key] as number;
+  for (const key in data.stats.statusCounts) {
+    if (typeof data.stats.statusCounts[key] === 'number') {
+      totalAppWrappers += data.stats.statusCounts[key] as number;
     }
   }
 
@@ -65,13 +75,13 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
       field: 'other',
       label: 'Other',
       sortable: false,
-    }
+    },
   ];
 
   return (
-    <div className='status-summary-wrapper'>
+    <div className="status-summary-wrapper">
       <ExpandableSection
-        displaySize={"large"}
+        displaySize={'large'}
         onToggle={onToggle}
         isExpanded={isExpanded}
         toggleContent={
@@ -79,18 +89,24 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
             <TextContent>
               <Text component={TextVariants.h2}>Status Summary</Text>
             </TextContent>
-          </div>}
+          </div>
+        }
       >
         <PageSection isFilled data-id="page-content">
-          <div className='status-summary-container'>
-            <div className='chart-donut-status-summary'>
+          <div className="status-summary-container">
+            <div className="chart-donut-status-summary">
               <ChartDonut
                 ariaDesc="Average number of pets"
                 ariaTitle="Donut chart example"
                 constrainToVisibleArea
                 data={pieChartData}
                 labels={({ datum }) => `${datum.x}: ${datum.y}`}
-                legendData={[{ name: 'Dispatched: ' + data.stats.status_counts.Dispatched }, { name: 'Queued: ' + data.stats.status_counts.Queued }, { name: 'Re-enqueued: ' + data.stats.status_counts['Re-enqueued'] }, { name: 'Other: ' + data.stats.status_counts.Other }]}
+                legendData={[
+                  { name: 'Dispatched: ' + data.stats.statusCounts.Dispatched },
+                  { name: 'Queued: ' + data.stats.statusCounts.Queued },
+                  { name: 'Re-enqueued: ' + data.stats.statusCounts['Re-enqueued'] },
+                  { name: 'Other: ' + data.stats.statusCounts.Other },
+                ]}
                 legendOrientation="vertical"
                 legendPosition="right"
                 name="chart3"
@@ -98,7 +114,7 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
                   bottom: 20,
                   left: 20,
                   right: 140, // Adjusted to accommodate legend
-                  top: 20
+                  top: 20,
                 }}
                 subTitle="App Warappers"
                 title={totalAppWrappers.toString()}
@@ -106,18 +122,14 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
                 width={350}
               />
             </div>
-            <div className='status-summary-table'>
+            <div className="status-summary-table">
               <Table
                 aria-label="Appwrapper Summary"
                 variant="compact"
                 enablePagination
                 data={repositories}
                 columns={columns}
-                emptyTableView={
-                  <>
-                    No data.{' '}
-                  </>
-                }
+                emptyTableView={<>No data. </>}
                 rowRenderer={(statusSummary) => (
                   <Tr key={statusSummary.dispatched}>
                     <Td dataLabel={statusSummary.dispatched}>{statusSummary.dispatched}</Td>
