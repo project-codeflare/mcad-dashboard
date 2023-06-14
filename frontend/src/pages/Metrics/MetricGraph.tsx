@@ -113,10 +113,6 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     getData();
   }, [time]);
 
-  React.useEffect(() => {
-    console.log(metricData);
-  }, [metricData]);
-
   const legendData = metricData?.map((obj) => {
     return {
       childName: obj.metric.namespace,
@@ -159,10 +155,17 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
               <ChartAxis
                 tickCount={6}
                 tickFormat={(tick) =>
-                  new Date(tick * 1000).toLocaleTimeString([], {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  })
+                  time.charAt(time.length - 1) === 'h' || time.charAt(time.length - 1) === 'm'
+                    ? new Date(tick * 1000).toLocaleTimeString([], {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                      })
+                    : new Date(tick * 1000).toLocaleDateString([], {
+                        day: 'numeric',
+                        month: 'numeric',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                      })
                 }
               />
               <ChartAxis dependentAxis showGrid tickFormat={(tick) => Number(tick).toFixed(2)} />
