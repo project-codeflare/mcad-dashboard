@@ -145,12 +145,19 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
               ariaDesc={query.name}
               ariaTitle={query.name}
               containerComponent={graphContainer}
-              height={250}
+              height={200}
               maxDomain={{ y: getMaxValue(metricData) * 1.1 }}
               minDomain={{ y: 0 }}
               name={query.name}
               width={width}
               themeColor={ChartThemeColor.multiUnordered}
+              domainPadding={{ y: 1 }}
+              padding={{
+                bottom: 0,
+                left: 0,
+                right: 0,
+                top: 0,
+              }}
             >
               <ChartAxis
                 tickCount={6}
@@ -171,7 +178,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
               <ChartAxis
                 dependentAxis
                 showGrid
-                tickFormat={(tick) => formatData(Number(tick), query.queryReturnType).toFixed(2)}
+                tickFormat={(tick) => formatData(Number(tick), query.queryReturnType)}
               />
               <ChartGroup>
                 {metricData?.map((obj, index) => {

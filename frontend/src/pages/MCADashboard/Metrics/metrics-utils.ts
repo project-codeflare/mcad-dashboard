@@ -4,11 +4,11 @@ import fetchData from '../app-wrapper-data';
 export const formatData = (data: number, queryReturnType: QueryReturnType) => {
   switch (queryReturnType) {
     case QueryReturnType.PERCENT:
-      return data * 100;
+      return Math.round(data * 100 * 100) / 100;
     case QueryReturnType.BYTES:
-      return data / 1000000;
+      return Math.round(data / 1000000);
     default:
-      return data;
+      return Math.round(data * 100) / 100;
   }
 };
 

@@ -24,7 +24,7 @@
 
 .metric-graph-outer {
   background: white;
-  padding: 5px 15px 15px 60px;
+  padding: 5px 45px 5px 60px;
   min-height: 350px;
   align-items: stretch;
   display: flex;
@@ -32,7 +32,7 @@
   margin-bottom: 16px;
   margin-top: 0;
   overflow: visible; // Tooltips may overflow
-  padding-top: 15px; // So graph title doesn't abut border
+  padding-top: 45px;
   width: 100%;
 
   .cos-status-box {
