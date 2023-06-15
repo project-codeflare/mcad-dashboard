@@ -50,12 +50,6 @@ const Tooltip: React.FC<TooltipProps> = ({
   const sortedActivePoints = activePoints!.sort((a, b) => b.y - a.y);
   const allSeries = sortedActivePoints.slice(0, TOOLTIP_MAX_ENTRIES);
 
-  // For each series we are displaying in the tooltip, create a name based on its labels. We have
-  // limited space, so sort the labels to try to show the most useful first since later labels will
-  // likely be cut off. Sort first by the number of unique values for the label (prefer to show
-  // labels with more values because they are more helpful in identifying the series), then by the
-  // length of the label (prefer to show sorter labels because space is limited).ss
-
   return (
     <>
       <VictoryPortal>
