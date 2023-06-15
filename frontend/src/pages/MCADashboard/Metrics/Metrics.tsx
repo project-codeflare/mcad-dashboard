@@ -8,6 +8,23 @@ import MetricGraph from './MetricGraph';
 import TimeRangeDropDown from './time-range-dropdown';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
 import ApplicationsPage from '../../ApplicationsPage';
+import QuotaTable from '../Tables/quota-table';
+import { Data } from '../types';
+
+const emptyDataObject: Data = {
+  stats: {
+    // initial values for the stats object
+    statusCounts: {
+      Dispatched: '-',
+      Queued: '-',
+      'Re-enqueued': '-',
+      Other: '-',
+    },
+  },
+  appwrappers: {
+    // initial values for the appwrappers object
+  },
+};
 
 type MetricsProps = {
   activeTabKey: number;
@@ -26,6 +43,27 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
 
   const { components, loaded, loadError } = useWatchComponents(true);
   const isEmpty = !components || components.length === 0;
+
+  const [data, setData] = React.useState<Data>(emptyDataObject);
+
+  React.useEffect(() => {
+    const getData = () => {
+      const dataFromStorage = sessionStorage.getItem('appwrapper-data');
+      if (dataFromStorage) {
+        try {
+          const parsedData = JSON.parse(dataFromStorage);
+          if (parsedData.appwrappers && parsedData.stats) {
+            setData(parsedData);
+          }
+        } catch (err) {
+          console.log("ERROR Pulling Data from local storage")
+        }
+      }
+    };
+    getData();
+  }, [refreshRate]);
+
+
 
   const convertRangeToTime = (timeRange: string) => {
     switch (timeRange) {
@@ -80,6 +118,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
           time={span}
           activeTabKey={activeTabKey}
         />
+        <QuotaTable data={data ? data : emptyDataObject} />
       </ApplicationsPage>
     </>
   );

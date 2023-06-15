@@ -82,8 +82,6 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
 
       return () => clearInterval(interval);
     }, [refreshRate]);
-    console.log('data', data);
-    console.log('data', data);
 
     return (
       <ApplicationsPage
