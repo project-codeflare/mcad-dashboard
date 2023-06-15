@@ -9,6 +9,8 @@ import {
   Gallery,
   Grid,
   GridItem,
+  Tooltip,
+  TooltipPosition,
 } from '@patternfly/react-core';
 import {
   Chart,
@@ -28,12 +30,13 @@ import './Metrics.scss';
 import fetchData from '../app-wrapper-data';
 import { formatData, getAllAppwrapperNamespaces } from './metrics-utils';
 import { MetricData, DataItems, Query, QueryReturnType } from './types';
+import { graphContainer } from './tooltip';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
   const width = children?.[0]?.[0]?.props?.width ?? '100%';
   return (
-    <foreignObject height={75} width={'100%'} y={245}>
+    <foreignObject height={75} width="100%" y={245}>
       <div className="monitoring-dashboards__legend-wrap horizontal-scroll">
         <svg width={width}>{children}</svg>
       </div>
@@ -65,8 +68,6 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
       setWidth(containerRef.current.clientWidth);
     }
   };
-
-  const CursorVoronoiContainer = createContainer('voronoi', 'cursor');
 
   const getMaxValue = (data: DataItems | undefined) => {
     if (!data) {
@@ -143,29 +144,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
             <Chart
               ariaDesc={query.name}
               ariaTitle={query.name}
-              containerComponent={
-                <ChartVoronoiContainer
-                  labels={({ datum }) =>
-                    `${datum.childName}: ${formatData(datum.y, query.queryReturnType).toFixed(2)}`
-                  }
-                  constrainToVisibleArea
-                  voronoiDimension="x"
-                />
-              }
-              // containerComponent={
-              //   <CursorVoronoiContainer
-              //     cursorDimension="x"
-              //     labels={({ datum }) =>
-              //       `${datum.childName}: ${formatData(datum.y, query.queryReturnType).toFixed(2)}`
-              //     }
-              //     labelComponent={
-              //       <ChartLegendTooltip legendData={legendData} title={(datum) => datum.x} />
-              //     }
-              //     mouseFollowTooltips
-              //     voronoiDimension="x"
-              //     voronoiPadding={50}
-              //   />
-              // }
+              containerComponent={graphContainer}
               height={250}
               maxDomain={{ y: getMaxValue(metricData) * 1.1 }}
               minDomain={{ y: 0 }}
@@ -196,6 +175,14 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
               />
               <ChartGroup>
                 {metricData?.map((obj, index) => {
+                  // const style = {
+                  //   data: { fill: 'blue' },
+                  //   labels: {
+                  //     fill: 'black',
+                  //     labels: 'bruh',
+                  //     name: 'bruh',
+                  //   },
+                  // };
                   return (
                     <ChartLine
                       key={index}

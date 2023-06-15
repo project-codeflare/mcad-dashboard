@@ -2,7 +2,7 @@ import React from 'react';
 import RefreshRateDropDown from '../DropDowns/refresh-rate-drop-down';
 import { getMetricData, getMetricDataRange } from '~/api/k8s/metricsData';
 import MetricsCards from './MetricsCards';
-import '../MCADashboard/MCADashboard.css';
+import '../../MCADashboard/MCADashboard.css';
 import './Metrics.scss';
 import MetricGraph from './MetricGraph';
 import TimeRangeDropDown from './time-range-dropdown';
