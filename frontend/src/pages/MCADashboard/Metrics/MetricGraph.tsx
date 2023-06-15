@@ -173,6 +173,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
                 {metricData?.map((obj, index) => {
                   return (
                     <ChartLine
+                      key={index}
                       name={obj.metric.namespace}
                       data={metricData[index].values.map(([timestamp, value]) => ({
                         x: timestamp,

@@ -1,13 +1,13 @@
 import React from 'react';
-import RefreshRateDropDown from '../MCADashboard/DropDowns/refresh-rate-drop-down';
+import RefreshRateDropDown from '../DropDowns/refresh-rate-drop-down';
 import { getMetricData, getMetricDataRange } from '~/api/k8s/metricsData';
 import MetricsCards from './MetricsCards';
-import '../MCADashboard/MCADashboard.css';
+import '../MCADashboard.css';
 import './Metrics.scss';
 import MetricGraph from './MetricGraph';
 import TimeRangeDropDown from './time-range-dropdown';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
-import ApplicationsPage from '../ApplicationsPage';
+import ApplicationsPage from '../../ApplicationsPage';
 
 type MetricsProps = {
   activeTabKey: number;
