@@ -10,7 +10,7 @@ const getMetricData = async (query: string) => {
 };
 const getMetricDataRange = async (query: string, range: string) => {
   const body: any = { query: query };
-  const dtNow = new Date().getTime() / 1000; // prometheus must use seconds
+  const dtNow = new Date().getTime() / 1000; // prometheus uses seconds
   const rangeArr: number[] = [];
   const timeBeforeSeconds: number = timeStringToSeconds(range); // getting the # seconds before dtNow
   const step = timeBeforeSeconds / 60;

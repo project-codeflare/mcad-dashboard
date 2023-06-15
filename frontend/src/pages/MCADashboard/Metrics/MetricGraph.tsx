@@ -25,8 +25,8 @@ import {
 
 import { getMetricDataRange } from '~/api/k8s/metricsData';
 import './Metrics.scss';
-import fetchData from '../MCADashboard/app-wrapper-data';
-import { formatData } from './metrics-utils';
+import fetchData from '../app-wrapper-data';
+import { formatData, getAllAppwrapperNamespaces } from './metrics-utils';
 import { MetricData, DataItems, Query, QueryReturnType } from './types';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
@@ -66,6 +66,8 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     }
   };
 
+  const CursorVoronoiContainer = createContainer('voronoi', 'cursor');
+
   const getMaxValue = (data: DataItems | undefined) => {
     if (!data) {
       return 0;
@@ -101,28 +103,12 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
 
   React.useEffect(() => {
     const getData = async () => {
-      let appwrapperData;
-      const namespaces = new Set<string>();
-      const dataFromStorage = sessionStorage.getItem('appwrapper-data');
-      try {
-        const parsedData = JSON.parse(dataFromStorage ? dataFromStorage : '');
-        if (parsedData.appwrappers && parsedData.stats) {
-          appwrapperData = parsedData;
-        } else {
-          appwrapperData = await fetchData();
-        }
-      } catch (err) {
-        appwrapperData = await fetchData();
-      }
-      appwrapperData = appwrapperData.appwrappers;
-      for (const key in appwrapperData) {
-        namespaces.add(appwrapperData[key].metadata.namespace);
-      }
+      const validNamespaces = await getAllAppwrapperNamespaces();
       const response = await getMetricDataRange(query.query, time);
       if (response.data) {
         const data: MetricData[] = response.data;
         const filteredData = data.filter((data) => {
-          return namespaces.has(data.metric.namespace);
+          return validNamespaces.has(data.metric.namespace);
         });
         setMetricData(filteredData);
       }
@@ -163,10 +149,25 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
                     `${datum.childName}: ${formatData(datum.y, query.queryReturnType).toFixed(2)}`
                   }
                   constrainToVisibleArea
+                  voronoiDimension="x"
                 />
               }
+              // containerComponent={
+              //   <CursorVoronoiContainer
+              //     cursorDimension="x"
+              //     labels={({ datum }) =>
+              //       `${datum.childName}: ${formatData(datum.y, query.queryReturnType).toFixed(2)}`
+              //     }
+              //     labelComponent={
+              //       <ChartLegendTooltip legendData={legendData} title={(datum) => datum.x} />
+              //     }
+              //     mouseFollowTooltips
+              //     voronoiDimension="x"
+              //     voronoiPadding={50}
+              //   />
+              // }
               height={250}
-              maxDomain={{ y: getMaxValue(metricData) }}
+              maxDomain={{ y: getMaxValue(metricData) * 1.1 }}
               minDomain={{ y: 0 }}
               name={query.name}
               width={width}
@@ -198,7 +199,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
                   return (
                     <ChartLine
                       key={index}
-                      name={obj.metric.namespace}
+                      name={obj.metric.pod}
                       data={metricData[index].values.map(([timestamp, value]) => ({
                         x: timestamp,
                         y: Number(value),

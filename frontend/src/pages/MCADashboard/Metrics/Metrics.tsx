@@ -1,5 +1,5 @@
 import React from 'react';
-import RefreshRateDropDown from '../MCADashboard/DropDowns/refresh-rate-drop-down';
+import RefreshRateDropDown from '../DropDowns/refresh-rate-drop-down';
 import { getMetricData, getMetricDataRange } from '~/api/k8s/metricsData';
 import MetricsCards from './MetricsCards';
 import '../MCADashboard/MCADashboard.css';
@@ -7,21 +7,11 @@ import './Metrics.scss';
 import MetricGraph from './MetricGraph';
 import TimeRangeDropDown from './time-range-dropdown';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
-import ApplicationsPage from '../ApplicationsPage';
+import ApplicationsPage from '../../ApplicationsPage';
+import { Query, QueryReturnType } from './types';
+import { convertRangeToTime } from './metrics-utils';
 
-export enum QueryReturnType {
-  PERCENT = 'percent',
-  CORES = 'cores',
-  BYTES = 'bytes',
-}
-
-type query = {
-  name: string;
-  query: string;
-  queryReturnType: QueryReturnType;
-};
-
-const statusSummaryQueries: query[] = [
+const statusSummaryQueries: Query[] = [
   {
     name: 'CPU Utilization',
     query: 'cluster:node_cpu:ratio_rate5m{cluster=""}',
@@ -59,10 +49,15 @@ const statusSummaryQueries: query[] = [
   },
 ];
 
-const availableResourceQueries: query[] = [
+const availableResourceQueries: Query[] = [
   {
     name: 'Available CPU %',
     query: '1 - cluster:node_cpu:ratio{cluster=""}',
+    queryReturnType: QueryReturnType.PERCENT,
+  },
+  {
+    name: 'Used CPU %',
+    query: 'cluster:node_cpu:ratio{cluster=""}',
     queryReturnType: QueryReturnType.PERCENT,
   },
   {
@@ -74,6 +69,11 @@ const availableResourceQueries: query[] = [
   {
     name: 'Available Memory %',
     query: '1 - cluster:memory_usage:ratio{cluster=""}',
+    queryReturnType: QueryReturnType.PERCENT,
+  },
+  {
+    name: 'Used Memory %',
+    query: 'cluster:memory_usage:ratio{cluster=""}',
     queryReturnType: QueryReturnType.PERCENT,
   },
   {
@@ -102,33 +102,6 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
   const { components, loaded, loadError } = useWatchComponents(true);
   const isEmpty = !components || components.length === 0;
 
-  const convertRangeToTime = (timeRange: string) => {
-    switch (timeRange) {
-      case 'Custom Time Range':
-        return '5m';
-      case 'Last 5 minutes':
-        return '5m';
-      case 'Last 10 minutes':
-        return '10m';
-      case 'Last 30 minutes':
-        return '30m';
-      case 'Last 1 hour':
-        return '1h';
-      case 'Last 2 hours':
-        return '2h';
-      case 'Last 1 day':
-        return '1d';
-      case 'Last 2 days':
-        return '2d';
-      case 'Last 1 week':
-        return '1w';
-      case 'Last 2 weeks':
-        return '2w';
-      default:
-        throw new Error('invalid input');
-    }
-  };
-
   return (
     <>
       <ApplicationsPage
@@ -146,13 +119,25 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
             dateFormatter={convertRangeToTime}
           />
         </div>
-        <MetricsCards queries={statusSummaryQueries} name={'Status Summary'} />
-        <MetricsCards queries={availableResourceQueries} name={'Available Resources'} />
+        <MetricsCards queries={statusSummaryQueries} name={'Cluster Status Summary'} />
+        <MetricsCards queries={availableResourceQueries} name={'Cluster Available Resources'} />
         <MetricGraph
-          name={'CPU Usage'}
-          query={
-            'sum by (namespace, pod) (node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""})'
-          }
+          query={{
+            name: 'Appwrapper CPU Usage',
+            query:
+              'sum by (pod, namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="cpu"})',
+            queryReturnType: QueryReturnType.CORES,
+          }}
+          time={span}
+          activeTabKey={activeTabKey}
+        />
+        <MetricGraph
+          query={{
+            name: 'Appwrapper Memory Usage',
+            query:
+              'sum by (pod, namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="memory"})',
+            queryReturnType: QueryReturnType.BYTES,
+          }}
           time={span}
           activeTabKey={activeTabKey}
         />
@@ -160,5 +145,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
     </>
   );
 };
+
+// sum by (namespace) (node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""})
 
 export default Metrics;

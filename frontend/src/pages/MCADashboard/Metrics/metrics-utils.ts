@@ -1,4 +1,5 @@
 import { QueryReturnType } from './types';
+import fetchData from '../app-wrapper-data';
 
 export const formatData = (data: number, queryReturnType: QueryReturnType) => {
   switch (queryReturnType) {
@@ -36,4 +37,25 @@ export const convertRangeToTime = (timeRange: string) => {
     default:
       throw new Error('invalid input');
   }
+};
+
+export const getAllAppwrapperNamespaces = async () => {
+  let appwrapperData;
+  const namespaces = new Set<string>();
+  const dataFromStorage = sessionStorage.getItem('appwrapper-data');
+  try {
+    const parsedData = JSON.parse(dataFromStorage ? dataFromStorage : '');
+    if (parsedData.appwrappers && parsedData.stats) {
+      appwrapperData = parsedData;
+    } else {
+      appwrapperData = await fetchData();
+    }
+  } catch (err) {
+    appwrapperData = await fetchData();
+  }
+  appwrapperData = appwrapperData.appwrappers;
+  for (const key in appwrapperData) {
+    namespaces.add(appwrapperData[key].metadata.namespace);
+  }
+  return namespaces;
 };

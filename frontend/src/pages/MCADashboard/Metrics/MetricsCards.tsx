@@ -10,7 +10,7 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-import { QueryReturnType } from './Metrics';
+import { QueryReturnType } from './types';
 
 import MetricCard from './MetricCard';
 
@@ -44,9 +44,9 @@ const MetricsCards: React.FunctionComponent<MetricsCardsProps> = ({
       <PageSection isFilled data-id="page-content">
         <div>
           <Grid role="list" hasGutter>
-            {queries.map((queryItem) => {
+            {queries.map((queryItem, index) => {
               return (
-                <GridItem lg={4} md={6} sm={12}>
+                <GridItem key={index} lg={4} md={6} sm={12}>
                   <MetricCard
                     name={queryItem.name}
                     query={queryItem.query}
