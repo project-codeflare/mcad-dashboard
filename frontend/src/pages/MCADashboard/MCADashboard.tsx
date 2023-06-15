@@ -59,11 +59,15 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       const getData = () => {
         const dataFromStorage = sessionStorage.getItem('appwrapper-data');
         if (dataFromStorage) {
-          const parsedData = JSON.parse(dataFromStorage);
-          if (parsedData.appwrappers && parsedData.stats) {
-            setData(parsedData);
-          } else {
-            initialFetch(); // fetch data
+          try {
+            const parsedData = JSON.parse(dataFromStorage);
+            if (parsedData.appwrappers && parsedData.stats) {
+              setData(parsedData);
+            } else {
+              initialFetch(); // fetch data
+            }
+          } catch (err) {
+            initialFetch();
           }
         } else {
           initialFetch(); // fetch data
@@ -78,7 +82,8 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
 
       return () => clearInterval(interval);
     }, [refreshRate]);
-    console.log('data', data); // for debugging purposes
+    console.log('data', data);
+    console.log('data', data);
 
     return (
       <ApplicationsPage

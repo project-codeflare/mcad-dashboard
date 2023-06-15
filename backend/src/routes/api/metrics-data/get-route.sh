@@ -1,0 +1,1 @@
+oc get route thanos-querier -n openshift-monitoring -o jsonpath="{.spec.host}"

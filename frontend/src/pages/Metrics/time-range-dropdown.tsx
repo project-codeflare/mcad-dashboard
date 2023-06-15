@@ -2,9 +2,17 @@ import React from 'react';
 import { Select, SelectOption, SelectList } from '@patternfly/react-core/next';
 import { MenuToggle, MenuToggleElement } from '@patternfly/react-core';
 
-const TimeRangeDropDown: React.FunctionComponent = () => {
+type TimeRangeDropDownProps = {
+  onSelected: (itemId: string) => void;
+  dateFormatter: (str: string) => string;
+};
+
+const TimeRangeDropDown: React.FunctionComponent<TimeRangeDropDownProps> = ({
+  onSelected,
+  dateFormatter,
+}) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<string>('Last 6 months');
+  const [selected, setSelected] = React.useState<string>('Last 2 weeks');
   const menuRef = React.useRef<HTMLDivElement>(null);
 
   const onToggleClick = () => {
@@ -20,6 +28,8 @@ const TimeRangeDropDown: React.FunctionComponent = () => {
 
     setSelected(itemId as string);
     setIsOpen(false);
+
+    onSelected(dateFormatter(itemId as string));
   };
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
@@ -57,8 +67,9 @@ const TimeRangeDropDown: React.FunctionComponent = () => {
           <SelectOption itemId="Last 1 hour">Last 1 hour</SelectOption>
           <SelectOption itemId="Last 2 hours">Last 2 hours</SelectOption>
           <SelectOption itemId="Last 1 day">Last 1 day</SelectOption>
-          <SelectOption itemId="Last 1 month">Last 1 month</SelectOption>
-          <SelectOption itemId="Last 6 months">Last 6 months</SelectOption>
+          <SelectOption itemId="Last 2 days">Last 2 days</SelectOption>
+          <SelectOption itemId="Last 1 week">Last 1 week</SelectOption>
+          <SelectOption itemId="Last 2 weeks">Last 2 weeks</SelectOption>
         </SelectList>
       </Select>
     </div>

@@ -1,42 +1,42 @@
 .dropdowns-container {
-    display: flex;
-    justify-content: right;
-    margin-right: 25px;
+  display: flex;
+  justify-content: right;
+  margin-right: 25px;
 }
 
 .spacer {
-    width: 10px;
-    /* adjust the size of the space as needed */
+  width: 10px;
+  /* adjust the size of the space as needed */
 }
 
 .mcad-tabs {
-    min-height: 40px;
+  min-height: 40px;
 }
 
 .status-summary-wrapper {
-    min-width: 1400px;
+  min-width: 1400px;
 }
 .chart-donut-status-summary {
-    min-height: 300px;
-    min-width: 400px;
-    margin: auto;
+  min-height: 300px;
+  min-width: 400px;
+  margin: auto;
 }
 
 .status-summary-container {
-    /* margin: auto; */
-    display: flex;
-    min-width: 500px;
+  /* margin: auto; */
+  display: flex;
+  min-width: 500px;
 }
 
 .status-summary-table {
-    margin-right: 30px;
-    margin-left: 40px;
-    margin-top: 100px;
-    min-width: 700px;
+  margin-right: 30px;
+  margin-left: 40px;
+  margin-top: 100px;
+  min-width: 700px;
 }
 
 .mcad-description {
-    margin-top: -10px;
-    margin-left: 10px;
-    margin-bottom: 20px;
+  margin-top: -10px;
+  margin-left: 10px;
+  margin-bottom: 20px;
 }
