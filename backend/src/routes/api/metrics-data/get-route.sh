@@ -1,1 +1,1 @@
-oc get route thanos-querier -n openshift-monitoring -o jsonpath="{.spec.host}"
+oc get route prometheus-k8s -n openshift-monitoring -o jsonpath="{.spec.host}"

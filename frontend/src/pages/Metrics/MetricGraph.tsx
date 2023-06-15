@@ -25,6 +25,9 @@ import {
 
 import { getMetricDataRange } from '~/api/k8s/metricsData';
 import './Metrics.scss';
+import fetchData from '../MCADashboard/app-wrapper-data';
+import { formatData } from './metrics-utils';
+import { MetricData, DataItems, Query, QueryReturnType } from './types';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
@@ -38,22 +41,17 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
+// sum by (pod, namespace) (
+// kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="cpu"}
+// )
+
 type MetricGraphProps = {
-  name: string;
-  query: string;
+  query: Query;
   time: string;
   activeTabKey: number;
 };
 
-type MetricData = {
-  metric: { namespace: string };
-  values: [number, string][];
-};
-
-type DataItems = MetricData[];
-
 const MetricGraph: React.FC<MetricGraphProps> = ({
-  name,
   query,
   time,
   activeTabKey,
@@ -103,10 +101,30 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
 
   React.useEffect(() => {
     const getData = async () => {
-      const response = await getMetricDataRange(query, time);
+      let appwrapperData;
+      const namespaces = new Set<string>();
+      const dataFromStorage = sessionStorage.getItem('appwrapper-data');
+      try {
+        const parsedData = JSON.parse(dataFromStorage ? dataFromStorage : '');
+        if (parsedData.appwrappers && parsedData.stats) {
+          appwrapperData = parsedData;
+        } else {
+          appwrapperData = await fetchData();
+        }
+      } catch (err) {
+        appwrapperData = await fetchData();
+      }
+      appwrapperData = appwrapperData.appwrappers;
+      for (const key in appwrapperData) {
+        namespaces.add(appwrapperData[key].metadata.namespace);
+      }
+      const response = await getMetricDataRange(query.query, time);
       if (response.data) {
         const data: MetricData[] = response.data;
-        setMetricData(data);
+        const filteredData = data.filter((data) => {
+          return namespaces.has(data.metric.namespace);
+        });
+        setMetricData(filteredData);
       }
     };
 
@@ -115,8 +133,8 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
 
   const legendData = metricData?.map((obj) => {
     return {
-      childName: obj.metric.namespace,
-      name: obj.metric.namespace,
+      childName: obj.metric.pod,
+      name: obj.metric.pod,
     };
   });
 
@@ -128,7 +146,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
       toggleContent={
         <div>
           <TextContent>
-            <Text component={TextVariants.h2}>{name}</Text>
+            <Text component={TextVariants.h2}>{query.name}</Text>
           </TextContent>
         </div>
       }
@@ -137,18 +155,20 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
         <div className="metric-graph-outer" ref={containerRef}>
           <div className="metric-graph">
             <Chart
-              ariaDesc={name}
-              ariaTitle={name}
+              ariaDesc={query.name}
+              ariaTitle={query.name}
               containerComponent={
                 <ChartVoronoiContainer
-                  labels={({ datum }) => `${datum.childName}: ${datum.y.toFixed(2)}`}
+                  labels={({ datum }) =>
+                    `${datum.childName}: ${formatData(datum.y, query.queryReturnType).toFixed(2)}`
+                  }
                   constrainToVisibleArea
                 />
               }
               height={250}
               maxDomain={{ y: getMaxValue(metricData) }}
               minDomain={{ y: 0 }}
-              name={name}
+              name={query.name}
               width={width}
               themeColor={ChartThemeColor.multiUnordered}
             >
@@ -168,11 +188,16 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
                       })
                 }
               />
-              <ChartAxis dependentAxis showGrid tickFormat={(tick) => Number(tick).toFixed(2)} />
+              <ChartAxis
+                dependentAxis
+                showGrid
+                tickFormat={(tick) => formatData(Number(tick), query.queryReturnType).toFixed(2)}
+              />
               <ChartGroup>
                 {metricData?.map((obj, index) => {
                   return (
                     <ChartLine
+                      key={index}
                       name={obj.metric.namespace}
                       data={metricData[index].values.map(([timestamp, value]) => ({
                         x: timestamp,
