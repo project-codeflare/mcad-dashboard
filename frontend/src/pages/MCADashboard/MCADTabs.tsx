@@ -9,7 +9,7 @@ import ProjectDiagramIcon from '@patternfly/react-icons/dist/esm/icons/project-d
 import MCADashboard from './MCADashboard';
 import ApplicationsPage from '../ApplicationsPage';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
-import Metrics from '../Metrics/Metrics';
+import Metrics from './Metrics/Metrics';
 
 const description = 'A Dashboard for Multi-Cluster App Dispatcher';
 const subDescription =

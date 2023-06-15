@@ -12,6 +12,7 @@ import {
 
 import MetricCard from './MetricCard';
 
+// TODO: Update the queries for Memory
 const queries = [
   { name: 'CPU Utilization', query: 'cluster:node_cpu:ratio_rate5m{cluster=""}' },
   {
@@ -24,14 +25,14 @@ const queries = [
     query:
       'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="cpu",cluster=""})',
   },
-  { name: 'CPU Utilization', query: 'cluster:node_cpu:ratio_rate5m{cluster=""}' },
+  { name: 'Memory Utilization', query: 'cluster:node_cpu:ratio_rate5m{cluster=""}' },
   {
-    name: 'CPU Requests Commitment',
+    name: 'Memory Requests Commitment',
     query:
       'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster=""}) / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="cpu",cluster=""})',
   },
   {
-    name: 'CPU Limits Commitment',
+    name: 'Memory Limits Commitment',
     query:
       'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="cpu",cluster=""})',
   },
@@ -61,8 +62,8 @@ const MetricsCards: React.FunctionComponent = () => {
           <Grid role="list" hasGutter>
             {queries.map((queryItem) => {
               return (
-                <GridItem lg={4} md={6} sm={12}>
-                  <MetricCard name={queryItem.name} query={queryItem.query} />
+                <GridItem key={queryItem.name} lg={4} md={6} sm={12}>
+                  <MetricCard key={queryItem.name} name={queryItem.name} query={queryItem.query} />
                 </GridItem>
               );
             })}
