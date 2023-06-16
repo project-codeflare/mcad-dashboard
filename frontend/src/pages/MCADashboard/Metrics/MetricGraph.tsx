@@ -68,26 +68,6 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     }
   };
 
-  const getMaxValue = (data: DataItems | undefined) => {
-    if (!data) {
-      return 0;
-    }
-    let maxValue = 0;
-
-    for (const item of data) {
-      const { values } = item;
-
-      for (const [_, value] of values) {
-        const parsedValue = parseFloat(value);
-        if (parsedValue > maxValue) {
-          maxValue = parsedValue;
-        }
-      }
-    }
-
-    return maxValue;
-  };
-
   React.useEffect(() => {
     handleResize();
     window.addEventListener('resize', handleResize);

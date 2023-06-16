@@ -24,6 +24,7 @@ type TooltipProps = {
   width?: number;
   x?: number;
 };
+
 const Tooltip: React.FC<TooltipProps> = ({
   activePoints,
   center,
@@ -48,16 +49,6 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   // const sortedActivePoints = activePoints!.sort((a, b) => b.y - a.y);
   const allSeries = activePoints!.slice(0, TOOLTIP_MAX_ENTRIES);
-
-  const dateTime = (timeInSeconds: number | undefined) => {
-    if (!timeInSeconds) {
-      return '';
-    }
-
-    const timestamp = timeInSeconds * 1000;
-    const date = new Date(timestamp);
-    return date.toLocaleString();
-  };
 
   const dateTime = (timeInSeconds: number | undefined) => {
     if (!timeInSeconds) {
