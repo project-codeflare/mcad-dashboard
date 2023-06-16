@@ -17,17 +17,20 @@ import MetricCard from './MetricCard';
 type MetricsCardsProps = {
   queries: { name: string; query: string; queryReturnType: QueryReturnType }[];
   name: string;
+  refreshRate: number;
 };
 
 const MetricsCards: React.FunctionComponent<MetricsCardsProps> = ({
   queries,
   name,
+  refreshRate,
 }: MetricsCardsProps) => {
   const [isExpanded, setIsExpanded] = React.useState(true);
 
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);
   };
+
   return (
     <ExpandableSection
       displaySize={'large'}
@@ -51,6 +54,7 @@ const MetricsCards: React.FunctionComponent<MetricsCardsProps> = ({
                     name={queryItem.name}
                     query={queryItem.query}
                     queryReturnType={queryItem.queryReturnType}
+                    refreshRate={refreshRate}
                   />
                 </GridItem>
               );

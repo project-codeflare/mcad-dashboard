@@ -9,12 +9,14 @@ type MetricCardProps = {
   name: string;
   query: string;
   queryReturnType: QueryReturnType;
+  refreshRate: number;
 };
 
 const MetricCard: React.FC<MetricCardProps> = ({
   name,
   query,
   queryReturnType,
+  refreshRate,
 }: MetricCardProps): React.ReactElement => {
   const [percentage, setPercentage] = React.useState(0.0);
 
@@ -25,6 +27,12 @@ const MetricCard: React.FC<MetricCardProps> = ({
     };
 
     getData();
+
+    const interval = setInterval(async () => {
+      getData();
+    }, refreshRate);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (

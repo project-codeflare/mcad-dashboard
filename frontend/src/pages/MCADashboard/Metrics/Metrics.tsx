@@ -119,8 +119,16 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
             dateFormatter={convertRangeToTime}
           />
         </div>
-        <MetricsCards queries={statusSummaryQueries} name={'Cluster Status Summary'} />
-        <MetricsCards queries={availableResourceQueries} name={'Cluster Available Resources'} />
+        <MetricsCards
+          queries={statusSummaryQueries}
+          name={'Cluster Status Summary'}
+          refreshRate={refreshRate}
+        />
+        <MetricsCards
+          queries={availableResourceQueries}
+          name={'Cluster Available Resources'}
+          refreshRate={refreshRate}
+        />
         <MetricGraph
           query={{
             name: 'Appwrapper CPU Usage',
@@ -130,6 +138,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
           }}
           time={span}
           activeTabKey={activeTabKey}
+          refreshRate={refreshRate}
         />
         <MetricGraph
           query={{
@@ -140,6 +149,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
           }}
           time={span}
           activeTabKey={activeTabKey}
+          refreshRate={refreshRate}
         />
       </ApplicationsPage>
     </>

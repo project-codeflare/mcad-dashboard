@@ -52,12 +52,14 @@ type MetricGraphProps = {
   query: Query;
   time: string;
   activeTabKey: number;
+  refreshRate: number;
 };
 
 const MetricGraph: React.FC<MetricGraphProps> = ({
   query,
   time,
   activeTabKey,
+  refreshRate,
 }: MetricGraphProps): React.ReactElement => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
   const [metricData, setMetricData] = React.useState<MetricData[]>();
@@ -103,6 +105,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   };
 
   React.useEffect(() => {
+    setMetricData([]);
     const getData = async () => {
       const validNamespaces = await getAllAppwrapperNamespaces();
       const response = await getMetricDataRange(query.query, time);
@@ -116,6 +119,12 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     };
 
     getData();
+
+    const interval = setInterval(async () => {
+      getData();
+    }, refreshRate);
+
+    return () => clearInterval(interval);
   }, [time]);
 
   const legendData = metricData?.map((obj) => {
@@ -182,14 +191,6 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
               />
               <ChartGroup>
                 {metricData?.map((obj, index) => {
-                  // const style = {
-                  //   data: { fill: 'blue' },
-                  //   labels: {
-                  //     fill: 'black',
-                  //     labels: 'bruh',
-                  //     name: 'bruh',
-                  //   },
-                  // };
                   return (
                     <ChartLine
                       key={index}
