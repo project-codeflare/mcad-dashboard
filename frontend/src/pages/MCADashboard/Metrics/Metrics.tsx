@@ -82,6 +82,19 @@ const availableResourceQueries: Query[] = [
   },
 ];
 
+const graphQueries: Query[] = [
+  {
+    name: 'Appwrapper CPU Usage',
+    query:
+      'sum by (pod, namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="cpu"})',
+  },
+  {
+    name: 'Appwrapper Memory Usage',
+    query:
+      'sum by (pod, namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="memory"} / 1000000)',
+  },
+];
+
 type MetricsProps = {
   activeTabKey: number;
 };
