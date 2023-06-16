@@ -59,6 +59,16 @@ const Tooltip: React.FC<TooltipProps> = ({
     return date.toLocaleString();
   };
 
+  const dateTime = (timeInSeconds: number | undefined) => {
+    if (!timeInSeconds) {
+      return '';
+    }
+
+    const timestamp = timeInSeconds * 1000;
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  };
+
   return (
     <>
       <VictoryPortal>
