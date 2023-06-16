@@ -44,10 +44,6 @@ const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
-// sum by (pod, namespace) (
-// kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="cpu"}
-// )
-
 type MetricGraphProps = {
   query: Query;
   time: string;
@@ -197,7 +193,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
                       name={obj.metric.pod}
                       data={metricData[index].values.map(([timestamp, value]) => ({
                         x: timestamp,
-                        y: Number(value),
+                        y: formatData(Number(value), query.queryReturnType),
                       }))}
                     />
                   );
