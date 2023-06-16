@@ -33,7 +33,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   width,
   x,
 }: TooltipProps) => {
-  const time = activePoints?.[0]?.x;
+  const timeInSeconds = activePoints?.[0]?.x;
 
   // Don't show the tooltip if the cursor is too far from the active points (can happen when the
   // graph's timespan includes a range with no data)
@@ -49,6 +49,16 @@ const Tooltip: React.FC<TooltipProps> = ({
 
   const sortedActivePoints = activePoints!.sort((a, b) => b.y - a.y);
   const allSeries = sortedActivePoints.slice(0, TOOLTIP_MAX_ENTRIES);
+
+  const dateTime = (timeInSeconds: number | undefined) => {
+    if (!timeInSeconds) {
+      return '';
+    }
+
+    const timestamp = timeInSeconds * 1000;
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  };
 
   return (
     <>
@@ -66,12 +76,12 @@ const Tooltip: React.FC<TooltipProps> = ({
           >
             <div className="query-browser__tooltip-arrow" />
             <div className="query-browser__tooltip">
-              <div className="query-browser__tooltip-time">{'date'}</div>
+              <div className="query-browser__tooltip-time">{dateTime(timeInSeconds)}</div>
               {allSeries.map((s, i) => (
                 <div className="query-browser__tooltip-series" key={i}>
                   <div className="query-browser__series-btn" style={{ backgroundColor: 'black' }} />
                   <div className="co-nowrap co-truncate">{s.childName}</div>
-                  <div className="query-browser__tooltip-value">{s.y}</div>
+                  <div className="query-browser__tooltip-value">{Math.round(s.y * 100) / 100}</div>
                 </div>
               ))}
             </div>

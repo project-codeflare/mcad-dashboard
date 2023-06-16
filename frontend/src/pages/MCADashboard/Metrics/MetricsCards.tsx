@@ -10,12 +10,11 @@ import {
   GridItem,
 } from '@patternfly/react-core';
 
-import { QueryReturnType } from './types';
-
 import MetricCard from './MetricCard';
+import { Unit } from './types';
 
 type MetricsCardsProps = {
-  queries: { name: string; query: string; queryReturnType: QueryReturnType }[];
+  queries: { name: string; query: string; unit?: Unit }[];
   name: string;
   refreshRate: number;
 };
@@ -53,8 +52,8 @@ const MetricsCards: React.FunctionComponent<MetricsCardsProps> = ({
                   <MetricCard
                     name={queryItem.name}
                     query={queryItem.query}
-                    queryReturnType={queryItem.queryReturnType}
                     refreshRate={refreshRate}
+                    unit={queryItem.unit}
                   />
                 </GridItem>
               );

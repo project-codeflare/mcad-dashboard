@@ -28,8 +28,8 @@ import {
 import { getMetricDataRange } from '~/api/k8s/metricsData';
 import './Metrics.scss';
 import fetchData from '../app-wrapper-data';
-import { formatData, getAllAppwrapperNamespaces } from './metrics-utils';
-import { MetricData, DataItems, Query, QueryReturnType } from './types';
+import { getAllAppwrapperNamespaces } from './metrics-utils';
+import { MetricData, DataItems, Query } from './types';
 import { graphContainer } from './tooltip';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
@@ -163,6 +163,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
                 right: 0,
                 top: 0,
               }}
+              scale={{ x: 'time', y: 'linear' }}
             >
               <ChartAxis
                 tickCount={6}
@@ -180,11 +181,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
                       })
                 }
               />
-              <ChartAxis
-                dependentAxis
-                showGrid
-                tickFormat={(tick) => formatData(Number(tick), query.queryReturnType)}
-              />
+              <ChartAxis dependentAxis showGrid tickFormat={(tick) => tick} />
               <ChartGroup>
                 {metricData?.map((obj, index) => {
                   return (
@@ -193,7 +190,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
                       name={obj.metric.pod}
                       data={metricData[index].values.map(([timestamp, value]) => ({
                         x: timestamp,
-                        y: formatData(Number(value), query.queryReturnType),
+                        y: Number(value),
                       }))}
                     />
                   );

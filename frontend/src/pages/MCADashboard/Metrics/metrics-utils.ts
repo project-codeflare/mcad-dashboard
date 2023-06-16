@@ -1,16 +1,4 @@
-import { QueryReturnType } from './types';
 import fetchData from '../app-wrapper-data';
-
-export const formatData = (data: number, queryReturnType: QueryReturnType) => {
-  switch (queryReturnType) {
-    case QueryReturnType.PERCENT:
-      return Math.round(data * 100 * 100) / 100;
-    case QueryReturnType.BYTES:
-      return Math.round(data / 1000000);
-    default:
-      return Math.round(data * 100) / 100;
-  }
-};
 
 export const convertRangeToTime = (timeRange: string) => {
   switch (timeRange) {

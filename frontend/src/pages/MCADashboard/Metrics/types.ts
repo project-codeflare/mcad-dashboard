@@ -1,13 +1,7 @@
-export enum QueryReturnType {
-  PERCENT = 'percent',
-  CORES = 'cores',
-  BYTES = 'bytes',
-}
-
 export type Query = {
   name: string;
   query: string;
-  queryReturnType: QueryReturnType;
+  unit?: Unit;
 };
 
 export type MetricData = {
@@ -16,3 +10,7 @@ export type MetricData = {
 };
 
 export type DataItems = MetricData[];
+
+export enum Unit {
+  PERCENT = '%',
+}
