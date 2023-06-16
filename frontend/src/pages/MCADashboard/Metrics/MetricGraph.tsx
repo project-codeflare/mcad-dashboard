@@ -121,6 +121,12 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     setMetricData([]);
 
     getData();
+
+    const interval = setInterval(async () => {
+      getData();
+    }, refreshRate);
+
+    return () => clearInterval(interval);
   }, [time]);
 
   React.useEffect(() => {
