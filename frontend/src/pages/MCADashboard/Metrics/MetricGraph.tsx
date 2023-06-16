@@ -11,6 +11,7 @@ import {
   GridItem,
   Tooltip,
   TooltipPosition,
+  Spinner,
 } from '@patternfly/react-core';
 import {
   Chart,
@@ -59,7 +60,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
 }: MetricGraphProps): React.ReactElement => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
   const [metricData, setMetricData] = React.useState<MetricData[]>();
-  const containerRef: any = React.useRef(null);
+  const containerRef = React.useRef<null | HTMLDivElement>(null);
   const [width, setWidth] = React.useState<number>();
   const handleResize = () => {
     if (containerRef.current && containerRef.current.clientWidth) {
@@ -67,34 +68,15 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     }
   };
 
-  const getMaxValue = (data: DataItems | undefined) => {
-    if (!data) {
-      return 0;
-    }
-    let maxValue = 0;
-
-    for (const item of data) {
-      const { values } = item;
-
-      for (const [_, value] of values) {
-        const parsedValue = parseFloat(value);
-        if (parsedValue > maxValue) {
-          maxValue = parsedValue;
-        }
-      }
-    }
-
-    return maxValue;
-  };
-
   React.useEffect(() => {
     handleResize();
     window.addEventListener('resize', handleResize);
-
+    window.addEventListener('sidebar_toggle', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('sidebar_toggle', handleResize);
     };
-  }, [containerRef, activeTabKey]);
+  }, [activeTabKey, containerRef]);
 
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);
@@ -102,6 +84,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
 
   React.useEffect(() => {
     setMetricData([]);
+
     const getData = async () => {
       const validNamespaces = await getAllAppwrapperNamespaces();
       const response = await getMetricDataRange(query.query, time);
@@ -145,75 +128,107 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     >
       <PageSection isFilled data-id="page-content">
         <div className="metric-graph-outer" ref={containerRef}>
-          <div className="metric-graph">
-            <Chart
-              ariaDesc={query.name}
-              ariaTitle={query.name}
-              containerComponent={graphContainer}
-              height={200}
-              maxDomain={{ y: getMaxValue(metricData) * 1.1 }}
-              minDomain={{ y: 0 }}
-              name={query.name}
-              width={width}
-              themeColor={ChartThemeColor.multiUnordered}
-              domainPadding={{ y: 1 }}
-              padding={{
-                bottom: 0,
-                left: 0,
-                right: 0,
-                top: 0,
-              }}
-              scale={{ x: 'time', y: 'linear' }}
-            >
-              <ChartAxis
-                tickCount={6}
-                tickFormat={(tick) =>
-                  time.charAt(time.length - 1) === 'h' || time.charAt(time.length - 1) === 'm'
-                    ? new Date(tick * 1000).toLocaleTimeString([], {
-                        hour: 'numeric',
-                        minute: 'numeric',
-                      })
-                    : new Date(tick * 1000).toLocaleDateString([], {
-                        day: 'numeric',
-                        month: 'numeric',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                      })
-                }
-              />
-              <ChartAxis dependentAxis showGrid tickFormat={(tick) => tick} />
-              <ChartGroup>
-                {metricData?.map((obj, index) => {
-                  return (
-                    <ChartLine
-                      key={index}
-                      name={obj.metric.pod}
-                      data={metricData[index].values.map(([timestamp, value]) => ({
-                        x: timestamp,
-                        y: Number(value),
-                      }))}
-                    />
-                  );
-                })}
-              </ChartGroup>
-              {legendData && (
-                <ChartLegend
-                  data={legendData}
-                  groupComponent={<LegendContainer />}
-                  gutter={30}
-                  itemsPerRow={3}
-                  orientation="vertical"
-                  style={{
-                    labels: { fontSize: 11, fill: 'var(--pf-global--Color--100)' },
-                  }}
-                  symbolSpacer={4}
-                />
-              )}
-            </Chart>
-          </div>
+          <Graph
+            query={query}
+            width={width}
+            legendData={legendData}
+            time={time}
+            metricData={metricData}
+          />
         </div>
       </PageSection>
     </ExpandableSection>
+  );
+};
+
+type GraphProps = {
+  query: Query;
+  width?: number;
+  legendData?: { childName: string; name: string }[];
+  time: string;
+  metricData?: MetricData[];
+};
+
+const Graph: React.FC<GraphProps> = ({
+  query,
+  width,
+  legendData,
+  time,
+  metricData,
+}: GraphProps) => {
+  if (!metricData || metricData.length === 0) {
+    return (
+      <div className="graph-loading">
+        <Spinner />
+      </div>
+    );
+  }
+  return (
+    <div className="metric-graph">
+      <Chart
+        ariaDesc={query.name}
+        ariaTitle={query.name}
+        containerComponent={graphContainer}
+        height={200}
+        minDomain={{ y: 0 }}
+        name={query.name}
+        width={width}
+        themeColor={ChartThemeColor.multiUnordered}
+        domainPadding={{ y: 1 }}
+        padding={{
+          bottom: 0,
+          left: 0,
+          right: 0,
+          top: 0,
+        }}
+        scale={{ x: 'time', y: 'linear' }}
+      >
+        <ChartAxis
+          tickCount={6}
+          tickFormat={(tick) =>
+            time.charAt(time.length - 1) === 'h' || time.charAt(time.length - 1) === 'm'
+              ? new Date(tick * 1000).toLocaleTimeString([], {
+                  hour: 'numeric',
+                  minute: 'numeric',
+                })
+              : new Date(tick * 1000).toLocaleDateString([], {
+                  day: 'numeric',
+                  month: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
+                })
+          }
+        />
+        <ChartAxis dependentAxis showGrid tickFormat={(tick) => tick} />
+        <ChartGroup>
+          {metricData?.map((obj, index) => {
+            return (
+              <ChartLine
+                key={index}
+                name={obj.metric.pod}
+                data={metricData[index].values.map(([timestamp, value]) => ({
+                  x: timestamp,
+                  y: Number(value),
+                }))}
+              />
+            );
+          })}
+        </ChartGroup>
+        {legendData && (
+          <ChartLegend
+            data={legendData}
+            groupComponent={<LegendContainer />}
+            gutter={30}
+            itemsPerRow={3}
+            orientation="vertical"
+            style={{
+              labels: { fontSize: 11, fill: 'var(--pf-global--Color--100)' },
+            }}
+            symbolSpacer={4}
+          />
+        )}
+      </Chart>
+    </div>
   );
 };
 

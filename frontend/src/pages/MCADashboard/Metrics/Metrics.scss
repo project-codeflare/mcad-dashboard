@@ -1,4 +1,7 @@
 .metric-card {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .metric-card-data {
@@ -11,6 +14,7 @@
   display: flex;
   justify-content: center;
   font-weight: 800;
+  height: 75px;
 }
 
 .metric-graph {
@@ -29,7 +33,6 @@
   align-items: stretch;
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
   margin-top: 0;
   overflow: visible; // Tooltips may overflow
   padding-top: 45px;
@@ -165,4 +168,11 @@
 
 .co-nowrap {
   white-space: nowrap;
+}
+
+.graph-loading {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

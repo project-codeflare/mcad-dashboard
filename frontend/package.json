@@ -71,6 +71,7 @@
     "react-router-dom": "^6.4.1",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
+    "resize-observer": "^1.0.4",
     "sass": "^1.56.2",
     "showdown": "^1.9.1",
     "victory-core": "^36.6.10",

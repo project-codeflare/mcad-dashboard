@@ -24,7 +24,7 @@ type TooltipProps = {
   width?: number;
   x?: number;
 };
-// For performance, use this instead of PatternFly's ChartTooltip or Victory VictoryTooltip
+
 const Tooltip: React.FC<TooltipProps> = ({
   activePoints,
   center,
@@ -47,8 +47,8 @@ const Tooltip: React.FC<TooltipProps> = ({
   const isOnLeft = spaceOnLeft > spaceOnRight;
   const tooltipMaxWidth = Math.min(isOnLeft ? spaceOnLeft : spaceOnRight, TOOLTIP_MAX_WIDTH);
 
-  const sortedActivePoints = activePoints!.sort((a, b) => b.y - a.y);
-  const allSeries = sortedActivePoints.slice(0, TOOLTIP_MAX_ENTRIES);
+  // const sortedActivePoints = activePoints!.sort((a, b) => b.y - a.y);
+  const allSeries = activePoints!.slice(0, TOOLTIP_MAX_ENTRIES);
 
   const dateTime = (timeInSeconds: number | undefined) => {
     if (!timeInSeconds) {
