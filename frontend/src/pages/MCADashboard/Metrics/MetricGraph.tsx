@@ -82,29 +82,31 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     setIsExpanded(isExpanded);
   };
 
+  const getData = async () => {
+    const validNamespaces = await getAllAppwrapperNamespaces();
+    const response = await getMetricDataRange(query.query, time);
+    if (response.data) {
+      const data: MetricData[] = response.data;
+      const filteredData = data.filter((data) => {
+        return validNamespaces.has(data.metric.namespace);
+      });
+      setMetricData(filteredData);
+    }
+  };
+
   React.useEffect(() => {
     setMetricData([]);
 
-    const getData = async () => {
-      const validNamespaces = await getAllAppwrapperNamespaces();
-      const response = await getMetricDataRange(query.query, time);
-      if (response.data) {
-        const data: MetricData[] = response.data;
-        const filteredData = data.filter((data) => {
-          return validNamespaces.has(data.metric.namespace);
-        });
-        setMetricData(filteredData);
-      }
-    };
-
     getData();
+  }, [time]);
 
+  React.useEffect(() => {
     const interval = setInterval(async () => {
       getData();
     }, refreshRate);
 
     return () => clearInterval(interval);
-  }, [time]);
+  }, [refreshRate]);
 
   const legendData = metricData?.map((obj) => {
     return {

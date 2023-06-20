@@ -20,20 +20,22 @@ const MetricCard: React.FC<MetricCardProps> = ({
 }: MetricCardProps): React.ReactElement => {
   const [percentage, setPercentage] = React.useState(0.0);
 
+  const getData = async () => {
+    const data = await getMetricData(query);
+    setPercentage(Math.round(data.data * 100) / 100);
+  };
+
   React.useEffect(() => {
-    const getData = async () => {
-      const data = await getMetricData(query);
-      setPercentage(Math.round(data.data * 100) / 100);
-    };
-
     getData();
+  }, []);
 
+  React.useEffect(() => {
     const interval = setInterval(async () => {
       getData();
     }, refreshRate);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [refreshRate]);
 
   return (
     <Card className="metric-card">

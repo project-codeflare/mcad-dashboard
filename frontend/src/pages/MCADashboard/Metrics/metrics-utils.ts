@@ -27,6 +27,24 @@ export const convertRangeToTime = (timeRange: string) => {
   }
 };
 
+export const timeStringToSeconds = (timeString: string) => {
+  const value: number = parseInt(timeString.substring(0, timeString.length - 1));
+  const unit = timeString.charAt(timeString.length - 1).toLowerCase();
+  console.log('timeString', timeString);
+  switch (unit) {
+    case 'm':
+      return value * 60;
+    case 'h':
+      return value * 60 * 60;
+    case 'd':
+      return value * 24 * 60 * 60;
+    case 'w':
+      return value * 7 * 24 * 60 * 60;
+    default:
+      throw new Error('Invalid time unit');
+  }
+};
+
 export const getAllAppwrapperNamespaces = async () => {
   let appwrapperData;
   const namespaces = new Set<string>();

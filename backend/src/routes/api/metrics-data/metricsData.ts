@@ -87,8 +87,8 @@ const metricsData = async (
   fastify: KubeFastifyInstance,
   request: OauthFastifyRequest,
   query: string,
-  range: number[] | null,
-  step: number | null,
+  range?: number[],
+  step?: number,
 ) => {
   const host = await getHost();
   if (!host) {
@@ -96,7 +96,7 @@ const metricsData = async (
   }
   const res = await getDirectCallOptions(fastify, request, host);
   const auth = res.headers.Authorization.toString();
-  if (auth.substring(0, 6) !== 'Bearer') {
+  if (!auth || auth.substring(0, 6) !== 'Bearer') {
     return new Error('auth not found');
   }
   const axiosInstance = axios.create({
