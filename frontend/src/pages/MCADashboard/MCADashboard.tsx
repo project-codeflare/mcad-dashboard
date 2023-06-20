@@ -12,6 +12,8 @@ import RefreshRateDropDown from './DropDowns/refresh-rate-drop-down';
 import './MCADashboard.css';
 import fetchData from './app-wrapper-data';
 import { Data } from './types';
+import MetricsCards from './Metrics/MetricsCards';
+import { availableResourceQueries } from './Metrics/queries';
 //const description = `A Dashboard for Multi-Cluster App Dispatcher`;
 
 type MCADashboardInnerProps = {
@@ -100,6 +102,11 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
         </div>
         <StatusSummaryTable data={data ? data : emptyDataObject} />
         <AppWrapperSummaryTable data={data ? data : emptyDataObject} />
+        <MetricsCards
+          queries={availableResourceQueries}
+          name={'Cluster Available Resources'}
+          refreshRate={refreshRate}
+        />
       </ApplicationsPage>
     );
   },
