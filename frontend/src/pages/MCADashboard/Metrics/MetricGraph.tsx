@@ -6,31 +6,21 @@ import {
   Text,
   TextVariants,
   PageSection,
-  Gallery,
-  Grid,
-  GridItem,
-  Tooltip,
-  TooltipPosition,
   Spinner,
 } from '@patternfly/react-core';
 import {
   Chart,
   ChartAxis,
   ChartLine,
-  ChartLegendTooltip,
   ChartLegend,
-  createContainer,
   ChartGroup,
-  ChartVoronoiContainer,
-  ChartTooltip,
   ChartThemeColor,
 } from '@patternfly/react-charts';
 
 import { getMetricDataRange } from '~/api/k8s/metricsData';
 import './Metrics.scss';
-import fetchData from '../app-wrapper-data';
 import { getAllAppwrapperNamespaces } from './metrics-utils';
-import { MetricData, DataItems, Query } from './types';
+import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
@@ -50,6 +40,7 @@ type MetricGraphProps = {
   time: string;
   activeTabKey: number;
   refreshRate: number;
+  validNamespaces?: Set<string>;
 };
 
 const MetricGraph: React.FC<MetricGraphProps> = ({
@@ -57,9 +48,11 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   time,
   activeTabKey,
   refreshRate,
+  validNamespaces,
 }: MetricGraphProps): React.ReactElement => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
-  const [metricData, setMetricData] = React.useState<MetricData[]>();
+  const [filteredMetricData, setFilteredMetricData] = React.useState<MetricData[]>();
+  const [unfilteredMetricData, setUnfilteredMetricData] = React.useState<MetricData[]>();
   const containerRef = React.useRef<null | HTMLDivElement>(null);
   const [width, setWidth] = React.useState<number>();
   const handleResize = () => {
@@ -82,42 +75,49 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     setIsExpanded(isExpanded);
   };
 
-  const getData = async () => {
-    const [validNamespaces, response] = await Promise.all([
-      getAllAppwrapperNamespaces(),
-      getMetricDataRange(query.query, time),
-    ]);
-
-    if (response.data) {
-      const data: MetricData[] = response.data;
-      const filteredData = data.filter((data) => {
+  const getFilteredMetricData = async () => {
+    if (unfilteredMetricData && validNamespaces) {
+      const filteredData = unfilteredMetricData.filter((data) => {
         return validNamespaces.has(data.metric.namespace);
       });
-      setMetricData(filteredData);
+      setFilteredMetricData(filteredData);
+    }
+  };
+
+  const getUnfilteredMetricData = async () => {
+    const response = await getMetricDataRange(query.query, time);
+    if (response.data) {
+      const data: MetricData[] = response.data;
+      setUnfilteredMetricData(data);
     }
   };
 
   React.useEffect(() => {
-    setMetricData([]);
+    getFilteredMetricData();
+  }, [unfilteredMetricData]);
 
-    getData();
+  React.useEffect(() => {
+    setUnfilteredMetricData(undefined);
+    setFilteredMetricData(undefined);
+
+    getUnfilteredMetricData();
 
     const interval = setInterval(async () => {
-      getData();
+      getUnfilteredMetricData();
     }, refreshRate);
 
     return () => clearInterval(interval);
-  }, [time]);
+  }, [time, validNamespaces]);
 
   React.useEffect(() => {
     const interval = setInterval(async () => {
-      getData();
+      getUnfilteredMetricData();
     }, refreshRate);
 
     return () => clearInterval(interval);
   }, [refreshRate]);
 
-  const legendData = metricData?.map((obj) => {
+  const legendData = filteredMetricData?.map((obj) => {
     return {
       childName: obj.metric.pod,
       name: obj.metric.pod,
@@ -144,7 +144,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
             width={width}
             legendData={legendData}
             time={time}
-            metricData={metricData}
+            metricData={filteredMetricData}
           />
         </div>
       </PageSection>
@@ -167,7 +167,7 @@ const Graph: React.FC<GraphProps> = ({
   time,
   metricData,
 }: GraphProps) => {
-  if (!metricData || metricData.length === 0) {
+  if (!metricData) {
     return (
       <div className="graph-loading">
         <Spinner />

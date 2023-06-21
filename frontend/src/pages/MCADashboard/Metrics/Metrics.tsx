@@ -9,7 +9,7 @@ import TimeRangeDropDown from './time-range-dropdown';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
 import ApplicationsPage from '../../ApplicationsPage';
 import { Query, Unit } from './types';
-import { convertRangeToTime } from './metrics-utils';
+import { convertRangeToTime, getAllAppwrapperNamespaces } from './metrics-utils';
 import { statusSummaryQueries, graphQueries } from './queries';
 
 type MetricsProps = {
@@ -19,6 +19,7 @@ type MetricsProps = {
 const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.ReactElement => {
   const [refreshRate, setRefreshRate] = React.useState<number>(30000);
   const [span, setSpan] = React.useState<string>('2w');
+  const [validNamespaces, setValidNamespaces] = React.useState<Set<string>>();
   const handleRefreshSelection = (selectedItemId: number) => {
     setRefreshRate(selectedItemId);
   };
@@ -26,6 +27,15 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
   const handleTimeRangeSelection = (item: string) => {
     setSpan(item);
   };
+
+  React.useEffect(() => {
+    const getValidNamespaces = async () => {
+      const validNamespaces = await getAllAppwrapperNamespaces();
+      setValidNamespaces(validNamespaces);
+    };
+
+    getValidNamespaces();
+  }, []);
 
   const { components, loaded, loadError } = useWatchComponents(true);
   const isEmpty = !components || components.length === 0;
@@ -60,6 +70,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
               time={span}
               activeTabKey={activeTabKey}
               refreshRate={refreshRate}
+              validNamespaces={validNamespaces}
             />
           );
         })}
