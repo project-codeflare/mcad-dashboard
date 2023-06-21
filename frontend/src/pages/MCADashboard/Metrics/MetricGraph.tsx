@@ -83,8 +83,11 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   };
 
   const getData = async () => {
-    const validNamespaces = await getAllAppwrapperNamespaces();
-    const response = await getMetricDataRange(query.query, time);
+    const [validNamespaces, response] = await Promise.all([
+      getAllAppwrapperNamespaces(),
+      getMetricDataRange(query.query, time),
+    ]);
+
     if (response.data) {
       const data: MetricData[] = response.data;
       const filteredData = data.filter((data) => {
