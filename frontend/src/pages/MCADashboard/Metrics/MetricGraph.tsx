@@ -11,7 +11,10 @@ import {
   GridItem,
   Tooltip,
   TooltipPosition,
+<<<<<<< HEAD
   Spinner,
+=======
+>>>>>>> 6d22fea (tooltip for graph)
 } from '@patternfly/react-core';
 import {
   Chart,
@@ -29,8 +32,13 @@ import {
 import { getMetricDataRange } from '~/api/k8s/metricsData';
 import './Metrics.scss';
 import fetchData from '../app-wrapper-data';
+<<<<<<< HEAD
 import { getAllAppwrapperNamespaces } from './metrics-utils';
 import { MetricData, DataItems, Query } from './types';
+=======
+import { formatData, getAllAppwrapperNamespaces } from './metrics-utils';
+import { MetricData, DataItems, Query, QueryReturnType } from './types';
+>>>>>>> 6d22fea (tooltip for graph)
 import { graphContainer } from './tooltip';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
@@ -66,6 +74,26 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     if (containerRef.current && containerRef.current.clientWidth) {
       setWidth(containerRef.current.clientWidth);
     }
+  };
+
+  const getMaxValue = (data: DataItems | undefined) => {
+    if (!data) {
+      return 0;
+    }
+    let maxValue = 0;
+
+    for (const item of data) {
+      const { values } = item;
+
+      for (const [_, value] of values) {
+        const parsedValue = parseFloat(value);
+        if (parsedValue > maxValue) {
+          maxValue = parsedValue;
+        }
+      }
+    }
+
+    return maxValue;
   };
 
   React.useEffect(() => {

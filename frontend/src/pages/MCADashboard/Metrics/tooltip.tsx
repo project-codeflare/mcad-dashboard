@@ -24,7 +24,6 @@ type TooltipProps = {
   width?: number;
   x?: number;
 };
-
 const Tooltip: React.FC<TooltipProps> = ({
   activePoints,
   center,
