@@ -1,6 +1,6 @@
 import React from 'react';
 import RefreshRateDropDown from '../DropDowns/refresh-rate-drop-down';
-import { getMetricData, getMetricDataRange } from '~/api/k8s/metricsData';
+import { getMetricData, getMetricDataRange } from './api/metricsData';
 import MetricsCards from './MetricsCards';
 import '../../MCADashboard/MCADashboard.css';
 import './Metrics.scss';
