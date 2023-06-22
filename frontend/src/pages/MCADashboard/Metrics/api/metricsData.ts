@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { PrometheusQueryResponse } from '~/types';
-import usePrometheusQuery from '../prometheus/usePrometheusQuery';
+import usePrometheusQuery from '../../../../api/prometheus/usePrometheusQuery';
 import React from 'react';
 import { timeStringToSeconds } from '~/pages/MCADashboard/Metrics/metrics-utils';
 
