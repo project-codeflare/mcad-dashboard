@@ -13,6 +13,7 @@ import Table from '../components/table/Table';
 import { Data } from '../types';
 import SearchFieldAppwrappers, { SearchType } from './SearchFieldAppwrappers';
 import useTableColumnSort from '../components/table/useTableColumnSort';
+import { getMetricData, getMetricTableData } from '../Metrics/api/metricsData';
 
 interface QuotaData {
   namespace: string;
@@ -32,10 +33,12 @@ interface NameSpaceCount {
 
 type QuotaViewProps = {
   data: Data;
+  validNamespaces?: Set<string>;
 };
 
 export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
   data: Data,
+  validNamespaces,
 }) => {
   const [isExpanded, setIsExpanded] = React.useState(true);
   const [selectedRepoName, setSelectedRepoName] = React.useState('');
@@ -105,6 +108,16 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
     appwrapperSummaryData.push(quota);
   }
 
+  React.useEffect(() => {
+    const get = async () => {
+      const data2 = await getMetricTableData(
+        'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
+      );
+      console.log(data2);
+    };
+    get();
+  }, []);
+
   const namespaceCounts: { [key: string]: number } = {};
   for (const appwrapper of Object.values(Data.appwrappers)) {
     const namespace = appwrapper.metadata.namespace;
@@ -114,12 +127,14 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       namespaceCounts[namespace] = 1;
     }
   }
-  const appwrappersInNamespace = Object.entries(namespaceCounts).map(([namespace, count]: [string, number]) => ({
-    namespace,
-    numberofappwrappers: count,
-  }));
+  const appwrappersInNamespace = Object.entries(namespaceCounts).map(
+    ([namespace, count]: [string, number]) => ({
+      namespace,
+      numberofappwrappers: count,
+    }),
+  );
 
-  console.log("appwrappersInNamespace", appwrappersInNamespace)
+  console.log('appwrappersInNamespace', appwrappersInNamespace);
 
   const sort = useTableColumnSort<QuotaData>(columns, 0);
 
@@ -167,8 +182,12 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
               isHoverable
               isRowSelected={selectedRepoName === appwrappersInNamespace.namespace}
             >
-              <Td dataLabel={appwrappersInNamespace.namespace}>{appwrappersInNamespace.namespace}</Td>
-              <Td dataLabel={appwrappersInNamespace.numberofappwrappers.toString()}>{appwrappersInNamespace.numberofappwrappers.toString()}</Td>
+              <Td dataLabel={appwrappersInNamespace.namespace}>
+                {appwrappersInNamespace.namespace}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.numberofappwrappers.toString()}>
+                {appwrappersInNamespace.numberofappwrappers.toString()}
+              </Td>
             </Tr>
           )}
           toolbarContent={

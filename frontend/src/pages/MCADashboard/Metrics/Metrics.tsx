@@ -137,7 +137,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
             />
           );
         })}
-        <QuotaTable data={data ? data : emptyDataObject} />
+        <QuotaTable data={data ? data : emptyDataObject} validNamespaces={validNamespaces} />
       </ApplicationsPage>
     </>
   );

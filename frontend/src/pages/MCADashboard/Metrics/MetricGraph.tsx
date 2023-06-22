@@ -23,7 +23,7 @@ import { getMetricDataRange } from './api/metricsData';
 import './Metrics.scss';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
-import { formatUnitString, timeStringToSeconds } from './metrics-utils';
+import { formatUnitString, timeStringToSeconds, filterData } from './metrics-utils';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
@@ -71,8 +71,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   validNamespaces,
 }: MetricGraphProps): React.ReactElement => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
-  const [filteredMetricData, setFilteredMetricData] = React.useState<MetricData[]>();
-  const [unfilteredMetricData, setUnfilteredMetricData] = React.useState<MetricData[]>();
+  const [metricData, setMetricData] = React.useState<MetricData[]>();
   const containerRef = React.useRef<null | HTMLDivElement>(null);
   const [width, setWidth] = React.useState<number>();
 
@@ -101,43 +100,29 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     setIsExpanded(isExpanded);
   };
 
-  const getFilteredMetricData = async () => {
-    if (unfilteredMetricData && validNamespaces) {
-      const filteredData = unfilteredMetricData.filter((data) => {
-        return validNamespaces.has(data.metric.namespace);
-      });
-      setFilteredMetricData(filteredData);
-    }
-  };
-
-  const getUnfilteredMetricData = async () => {
+  const getMetricData = async () => {
     const response = await getMetricDataRange(query.query, time);
     if (response.data) {
       const data: MetricData[] = response.data;
-      setUnfilteredMetricData(data);
+      setMetricData(filterData(response.data, validNamespaces));
     }
   };
 
   React.useEffect(() => {
-    getFilteredMetricData();
-  }, [unfilteredMetricData]);
+    setMetricData(undefined);
 
-  React.useEffect(() => {
-    setUnfilteredMetricData(undefined);
-    setFilteredMetricData(undefined);
-
-    getUnfilteredMetricData();
+    getMetricData();
     setXDomain(getXDomain(Date.now() / 1000, timeStringToSeconds(time)));
 
     const interval = setInterval(async () => {
       setXDomain(getXDomain(Date.now() / 1000, timeStringToSeconds(time)));
-      getUnfilteredMetricData();
+      getMetricData();
     }, refreshRate);
 
     return () => clearInterval(interval);
   }, [time, validNamespaces, refreshRate]);
 
-  const legendData = filteredMetricData?.map((obj) => {
+  const legendData = metricData?.map((obj) => {
     return {
       childName: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
       name: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
@@ -159,7 +144,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     >
       <PageSection isFilled data-id="page-content">
         <div
-          className={filteredMetricData ? 'metric-graph-outer' : 'metric-graph-outer-loading'}
+          className={metricData ? 'metric-graph-outer' : 'metric-graph-outer-loading'}
           ref={containerRef}
         >
           <Graph
@@ -167,7 +152,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
             width={width}
             legendData={legendData}
             time={time}
-            metricData={filteredMetricData}
+            metricData={metricData}
             xDomain={xDomain}
           />
         </div>

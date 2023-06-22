@@ -1,15 +1,21 @@
 import axios from 'axios';
 import { PrometheusQueryResponse } from '~/types';
-import usePrometheusQuery from '../../../../api/prometheus/usePrometheusQuery';
 import React from 'react';
 import { timeStringToSeconds } from '~/pages/MCADashboard/Metrics/metrics-utils';
 
-const getMetricData = async (query: string) => {
+export const getMetricData = async (query: string) => {
+  const body = { query: query };
+  const res: { data: { value: [string, number] }[] } = await axios.post('/api/metrics-data', body);
+  return res.data[0].value[1];
+};
+
+export const getMetricTableData = async (query: string) => {
   const body = { query: query };
   const res = await axios.post('/api/metrics-data', body);
-  return res;
+  return res.data;
 };
-const getMetricDataRange = async (query: string, range: string) => {
+
+export const getMetricDataRange = async (query: string, range: string) => {
   const body: any = { query: query };
   const dtNow = new Date().getTime() / 1000; // prometheus uses seconds
   const rangeArr: number[] = [];
@@ -27,5 +33,3 @@ const getMetricDataRange = async (query: string, range: string) => {
   const res = await axios.post('/api/metrics-data', body);
   return res;
 };
-
-export { getMetricData, getMetricDataRange };

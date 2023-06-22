@@ -80,3 +80,14 @@ export const formatUnitString = (value: number, unit?: Unit) => {
   }
   return round(value).toString() + 'M';
 };
+
+export const filterData = (data, validNamespaces) => {
+  if (data && validNamespaces) {
+    const filteredData = data.filter((dataPoint) => {
+      return validNamespaces.has(dataPoint.metric.namespace);
+    });
+    return filteredData;
+  } else {
+    return data;
+  }
+};
