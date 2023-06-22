@@ -16,6 +16,7 @@ import useTableColumnSort from '../components/table/useTableColumnSort';
 import { getMetricData, getMetricTableData } from '../Metrics/api/metricsData';
 import { filterData, formatUnitString } from '../Metrics/metrics-utils';
 import { Unit } from '../Metrics/types';
+import { tableQueries } from '../Metrics/queries';
 
 interface QuotaData {
   namespace: string;
@@ -27,37 +28,6 @@ interface QuotaData {
   cpulimits: number;
   memorylimits: number;
 }
-
-const queries = [
-  {
-    name: 'cpusage',
-    query:
-      'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""}) by (namespace)',
-  },
-  {
-    name: 'memoryusage',
-    query:
-      'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", container!=""} / 1000000) by (namespace)',
-  },
-  {
-    name: 'cpurequests',
-    query: 'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster=""}) by (namespace)',
-  },
-  {
-    name: 'memoryrequests',
-    query:
-      'sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster=""} / 1000000) by (namespace)',
-  },
-  {
-    name: 'cpulimits',
-    query: 'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
-  },
-  {
-    name: 'memorylimits',
-    query:
-      'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster=""} / 1000000) by (namespace)',
-  },
-];
 
 interface NameSpaceCount {
   namespace: string;
@@ -163,7 +133,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
     };
     if (validNamespaces) {
       const get = async () => {
-        const promises = queries.map(async (query) => {
+        const promises = tableQueries.map(async (query) => {
           const data = await getMetricTableData(query.query);
           const filteredData = filterData(data, validNamespaces);
           const formattedData = formatData(filteredData);

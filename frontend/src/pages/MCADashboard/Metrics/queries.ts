@@ -95,3 +95,34 @@ export const graphQueries: Query[] = [
     unit: Unit.MEGABYTE,
   },
 ];
+
+export const tableQueries = [
+  {
+    name: 'cpusage',
+    query:
+      'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'memoryusage',
+    query:
+      'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", container!=""} / 1000000) by (namespace)',
+  },
+  {
+    name: 'cpurequests',
+    query: 'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'memoryrequests',
+    query:
+      'sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster=""} / 1000000) by (namespace)',
+  },
+  {
+    name: 'cpulimits',
+    query: 'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'memorylimits',
+    query:
+      'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster=""} / 1000000) by (namespace)',
+  },
+];
