@@ -14,18 +14,50 @@ import { Data } from '../types';
 import SearchFieldAppwrappers, { SearchType } from './SearchFieldAppwrappers';
 import useTableColumnSort from '../components/table/useTableColumnSort';
 import { getMetricData, getMetricTableData } from '../Metrics/api/metricsData';
-import { filterData } from '../Metrics/metrics-utils';
+import { filterData, formatUnitString } from '../Metrics/metrics-utils';
+import { Unit } from '../Metrics/types';
 
 interface QuotaData {
   namespace: string;
   numberofappwrappers: number;
-  // cpusage: number;
-  // memoryusage: number;
-  // cpurequests: number;
-  // memoryrequests: number;
-  // cpulimits: number;
-  // memorylimits: number;
+  cpusage: number;
+  memoryusage: number;
+  cpurequests: number;
+  memoryrequests: number;
+  cpulimits: number;
+  memorylimits: number;
 }
+
+const queries = [
+  {
+    name: 'cpusage',
+    query:
+      'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'memoryusage',
+    query:
+      'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", container!=""} / 1000000) by (namespace)',
+  },
+  {
+    name: 'cpurequests',
+    query: 'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'memoryrequests',
+    query:
+      'sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster=""} / 1000000) by (namespace)',
+  },
+  {
+    name: 'cpulimits',
+    query: 'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'memorylimits',
+    query:
+      'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster=""} / 1000000) by (namespace)',
+  },
+];
 
 interface NameSpaceCount {
   namespace: string;
@@ -45,11 +77,18 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
   const [selectedRepoName, setSelectedRepoName] = React.useState('');
   const [searchType, setSearchType] = React.useState<SearchType>(SearchType.NAME);
   const [search, setSearch] = React.useState('');
+  const [tableData, setTableData] = React.useState<any>();
   const searchTypes = React.useMemo(() => Object.keys(SearchType), []);
 
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);
   };
+
+  const initialTableData = {};
+
+  React.useEffect(() => {
+    setTableData(initialTableData);
+  }, []);
 
   const columns: SortableData<QuotaData>[] = [
     {
@@ -85,7 +124,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
     {
       field: 'cpulimits',
       label: 'CPU Limits',
-      sortable: false,
+      sortable: true,
     },
     {
       field: 'memorylimits',
@@ -99,25 +138,45 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
     const quota: QuotaData = {
       namespace: metadata.namespace,
       numberofappwrappers: 1,
-      // cpusage: metadata.namespace,
-      // memoryusage: metadata.namespace,
-      // cpurequests: metadata.namespace,
-      // memoryrequests: metadata.namespace,
-      // cpulimits: metadata.namespace,
-      // memorylimits: metadata.namespace,
+      cpusage: tableData?.cpusage?.[metadata.namespace],
+      memoryusage: tableData?.memoryusage?.[metadata.namespace],
+      cpurequests: tableData?.cpurequests?.[metadata.namespace],
+      memoryrequests: tableData?.memoryrequests?.[metadata.namespace],
+      cpulimits: tableData?.cpulimits?.[metadata.namespace],
+      memorylimits: tableData?.memorylimits?.[metadata.namespace],
     };
     appwrapperSummaryData.push(quota);
   }
 
   React.useEffect(() => {
-    const get = async () => {
-      const data2 = await getMetricTableData(
-        'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
-      );
-      console.log(filterData(data2, validNamespaces));
+    console.log(tableData);
+  }, [tableData]);
+
+  React.useEffect(() => {
+    const formatData = (data) => {
+      const formattedData = {};
+      for (const dataPoint of data) {
+        formattedData[dataPoint.metric.namespace] =
+          Math.round(parseFloat(dataPoint.value[1]) * 100) / 100;
+      }
+      return formattedData;
     };
-    get();
-  }, []);
+    if (validNamespaces) {
+      const get = async () => {
+        const promises = queries.map(async (query) => {
+          const data = await getMetricTableData(query.query);
+          const filteredData = filterData(data, validNamespaces);
+          const formattedData = formatData(filteredData);
+          return { [query.name]: formattedData };
+        });
+        const results = await Promise.all(promises);
+        const tableDataUpdate = Object.assign({}, ...results);
+
+        setTableData((tableData) => ({ ...tableData, ...tableDataUpdate }));
+      };
+      get();
+    }
+  }, [validNamespaces]);
 
   const namespaceCounts: { [key: string]: number } = {};
   for (const appwrapper of Object.values(Data.appwrappers)) {
@@ -128,10 +187,17 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       namespaceCounts[namespace] = 1;
     }
   }
+
   const appwrappersInNamespace = Object.entries(namespaceCounts).map(
     ([namespace, count]: [string, number]) => ({
       namespace,
       numberofappwrappers: count,
+      cpusage: tableData?.cpusage?.[namespace],
+      memoryusage: tableData?.memoryusage?.[namespace],
+      cpurequests: tableData?.cpurequests?.[namespace],
+      memoryrequests: tableData?.memoryrequests?.[namespace],
+      cpulimits: tableData?.cpulimits?.[namespace],
+      memorylimits: tableData?.memorylimits?.[namespace],
     }),
   );
 
@@ -188,6 +254,24 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
               </Td>
               <Td dataLabel={appwrappersInNamespace.numberofappwrappers.toString()}>
                 {appwrappersInNamespace.numberofappwrappers.toString()}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.cpusage?.toString() || '-'}>
+                {appwrappersInNamespace.cpusage?.toString() || '-'}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.memoryusage?.toString() || '-'}>
+                {formatUnitString(appwrappersInNamespace.memoryusage) || '-'}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.cpurequests?.toString() || '-'}>
+                {appwrappersInNamespace.cpurequests?.toString() || '-'}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.memoryrequests?.toString() || '-'}>
+                {formatUnitString(appwrappersInNamespace.memoryrequests) || '-'}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.cpulimits?.toString() || '-'}>
+                {appwrappersInNamespace.cpulimits?.toString() || '-'}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.memorylimits?.toString() || '-'}>
+                {formatUnitString(appwrappersInNamespace.memorylimits) || '-'}
               </Td>
             </Tr>
           )}

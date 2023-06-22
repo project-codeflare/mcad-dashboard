@@ -54,9 +54,13 @@ export const getNamespacesFromAppwrappers = (data): string[] => {
   return Array.from(namespaces);
 };
 
-export const formatUnitString = (value: number, unit?: Unit) => {
+export const formatUnitString = (value: number, unit?: Unit): string | null => {
+  if (!value || value === undefined) {
+    return null;
+  }
+
   const round = (num: number) => {
-    return Math.round(num * 100) / 100;
+    return (Math.round(num * 100) / 100).toString();
   };
 
   if (unit != Unit.MEGABYTE) {
