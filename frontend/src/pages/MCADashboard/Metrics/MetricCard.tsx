@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
-import { getMetricData } from '~/api/k8s/metricsData';
+import { getMetricData } from './api/metricsData';
 
 import { Unit } from './types';
 
