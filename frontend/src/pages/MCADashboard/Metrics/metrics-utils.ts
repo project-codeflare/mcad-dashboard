@@ -1,4 +1,5 @@
 import fetchData from '../app-wrapper-data';
+import { Unit } from './types';
 
 export const convertRangeToTime = (timeRange: string) => {
   switch (timeRange) {
@@ -30,7 +31,6 @@ export const convertRangeToTime = (timeRange: string) => {
 export const timeStringToSeconds = (timeString: string) => {
   const value: number = parseInt(timeString.substring(0, timeString.length - 1));
   const unit = timeString.charAt(timeString.length - 1).toLowerCase();
-  console.log('timeString', timeString);
   switch (unit) {
     case 'm':
       return value * 60;
@@ -64,4 +64,19 @@ export const getAllAppwrapperNamespaces = async () => {
     namespaces.add(appwrapperData[key].metadata.namespace);
   }
   return namespaces;
+};
+
+export const formatUnitString = (value: number, unit?: Unit) => {
+  const round = (num: number) => {
+    return Math.round(num * 100) / 100;
+  };
+
+  if (unit != Unit.MEGABYTE) {
+    return round(value).toString();
+  }
+  if (value >= 1000) {
+    value = value / 1000;
+    return round(value).toString() + 'G';
+  }
+  return round(value).toString() + 'M';
 };

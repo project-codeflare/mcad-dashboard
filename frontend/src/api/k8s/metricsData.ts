@@ -14,7 +14,12 @@ const getMetricDataRange = async (query: string, range: string) => {
   const dtNow = new Date().getTime() / 1000; // prometheus uses seconds
   const rangeArr: number[] = [];
   const timeBeforeSeconds: number = timeStringToSeconds(range); // getting the # seconds before dtNow
-  const step = timeBeforeSeconds / 60;
+  let step: number;
+  if (range === '5m' || range === '15m') {
+    step = 5;
+  } else {
+    step = timeBeforeSeconds / 300;
+  }
   body.step = step;
   rangeArr.push(dtNow - timeBeforeSeconds);
   rangeArr.push(dtNow);

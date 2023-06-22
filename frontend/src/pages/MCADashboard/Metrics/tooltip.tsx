@@ -2,6 +2,8 @@ import { VictoryPortal } from 'victory-core';
 import React from 'react';
 import classNames from 'classnames';
 import { ChartVoronoiContainer } from '@patternfly/react-charts';
+import { formatUnitString } from './metrics-utils';
+import { Unit } from './types';
 
 const TOOLTIP_MAX_ENTRIES = 15;
 const TOOLTIP_MAX_WIDTH = 400;
@@ -20,7 +22,7 @@ type TooltipProps = {
   activePoints?: { x: number; y: number; childName: string }[];
   center?: { x: number; y: number };
   height?: number;
-  style?: any;
+  style?: { unit: Unit; name: string }[];
   width?: number;
   x?: number;
 };
@@ -81,7 +83,9 @@ const Tooltip: React.FC<TooltipProps> = ({
                 <div className="query-browser__tooltip-series" key={i}>
                   <div className="query-browser__series-btn" style={{ backgroundColor: 'black' }} />
                   <div className="co-nowrap co-truncate">{s.childName}</div>
-                  <div className="query-browser__tooltip-value">{Math.round(s.y * 100) / 100}</div>
+                  <div className="query-browser__tooltip-value">
+                    {style ? formatUnitString(s.y, style[0].unit) : formatUnitString(s.y)}
+                  </div>
                 </div>
               ))}
             </div>

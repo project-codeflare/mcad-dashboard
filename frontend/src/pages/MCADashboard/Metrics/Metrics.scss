@@ -33,6 +33,7 @@
   align-items: stretch;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   margin-top: 0;
   overflow: visible; // Tooltips may overflow
   padding-top: 45px;
@@ -167,6 +168,7 @@
 }
 
 .graph-loading {
+  padding-bottom: 45px;
   width: 100%;
   display: flex;
   justify-content: center;

@@ -13,4 +13,5 @@ export type DataItems = MetricData[];
 
 export enum Unit {
   PERCENT = '%',
+  MEGABYTE = 'M',
 }

@@ -100,13 +100,13 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
           <div className="spacer" />
           <TimeRangeDropDown />
         </div>
-        <StatusSummaryTable data={data ? data : emptyDataObject} />
-        <AppWrapperSummaryTable data={data ? data : emptyDataObject} />
         <MetricsCards
           queries={availableResourceQueries}
           name={'Cluster Available Resources'}
           refreshRate={refreshRate}
         />
+        <StatusSummaryTable data={data ? data : emptyDataObject} />
+        <AppWrapperSummaryTable data={data ? data : emptyDataObject} />
       </ApplicationsPage>
     );
   },

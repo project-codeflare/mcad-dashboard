@@ -1,5 +1,7 @@
 import React from 'react';
 
+import * as _ from 'lodash-es';
+
 import {
   ExpandableSection,
   TextContent,
@@ -19,9 +21,9 @@ import {
 
 import { getMetricDataRange } from '~/api/k8s/metricsData';
 import './Metrics.scss';
-import { getAllAppwrapperNamespaces } from './metrics-utils';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
+import { formatUnitString, timeStringToSeconds } from './metrics-utils';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
@@ -43,6 +45,24 @@ type MetricGraphProps = {
   validNamespaces?: Set<string>;
 };
 
+const formatSeriesValues = (values: any[], samples: number, span: number) => {
+  const newValues = values;
+
+  // The data may have missing values, so we fill those gaps with nulls so that the graph correctly
+  // shows the missing values as gaps in the line
+  // const start = Number(_.get(newValues, '[0].x'));
+  // const end = Number(_.get(_.last(newValues), 'x'));
+  // const step = span / 300;
+  // _.range(start, end, step).forEach((t, i) => {
+  //   const x = new Date(t);
+  //   if (_.get(newValues, [i, 'x']) > x) {
+  //     newValues.splice(i, 0, { x, y: null });
+  //   }
+  // });
+
+  return newValues;
+};
+
 const MetricGraph: React.FC<MetricGraphProps> = ({
   query,
   time,
@@ -55,6 +75,12 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   const [unfilteredMetricData, setUnfilteredMetricData] = React.useState<MetricData[]>();
   const containerRef = React.useRef<null | HTMLDivElement>(null);
   const [width, setWidth] = React.useState<number>();
+
+  const getXDomain = (endTime: number, span: number) => [endTime - span, endTime];
+  const [xDomain, setXDomain] = React.useState(
+    getXDomain(Date.now(), timeStringToSeconds(time) * 1000),
+  );
+
   const handleResize = () => {
     if (containerRef.current && containerRef.current.clientWidth) {
       setWidth(containerRef.current.clientWidth);
@@ -101,26 +127,20 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     setFilteredMetricData(undefined);
 
     getUnfilteredMetricData();
+    setXDomain(getXDomain(Date.now() / 1000, timeStringToSeconds(time)));
 
     const interval = setInterval(async () => {
+      setXDomain(getXDomain(Date.now() / 1000, timeStringToSeconds(time)));
       getUnfilteredMetricData();
     }, refreshRate);
 
     return () => clearInterval(interval);
-  }, [time, validNamespaces]);
-
-  React.useEffect(() => {
-    const interval = setInterval(async () => {
-      getUnfilteredMetricData();
-    }, refreshRate);
-
-    return () => clearInterval(interval);
-  }, [refreshRate]);
+  }, [time, validNamespaces, refreshRate]);
 
   const legendData = filteredMetricData?.map((obj) => {
     return {
-      childName: obj.metric.pod,
-      name: obj.metric.pod,
+      childName: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
+      name: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
     };
   });
 
@@ -145,6 +165,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
             legendData={legendData}
             time={time}
             metricData={filteredMetricData}
+            xDomain={xDomain}
           />
         </div>
       </PageSection>
@@ -158,6 +179,7 @@ type GraphProps = {
   legendData?: { childName: string; name: string }[];
   time: string;
   metricData?: MetricData[];
+  xDomain: any;
 };
 
 const Graph: React.FC<GraphProps> = ({
@@ -166,6 +188,7 @@ const Graph: React.FC<GraphProps> = ({
   legendData,
   time,
   metricData,
+  xDomain,
 }: GraphProps) => {
   if (!metricData) {
     return (
@@ -174,6 +197,22 @@ const Graph: React.FC<GraphProps> = ({
       </div>
     );
   }
+
+  const domain: any = { x: xDomain, y: undefined };
+
+  let maxVal = 0;
+  let maxDataVal;
+  for (const data of metricData) {
+    maxDataVal = _.maxBy(data.values, (item) => {
+      return parseInt(item[1]);
+    })[1];
+    maxVal = Math.max(maxVal, maxDataVal);
+  }
+
+  if (maxVal <= 0) {
+    domain.y = [0, 1];
+  }
+
   return (
     <div className="metric-graph">
       <Chart
@@ -193,9 +232,10 @@ const Graph: React.FC<GraphProps> = ({
           top: 0,
         }}
         scale={{ x: 'time', y: 'linear' }}
+        domain={domain}
       >
         <ChartAxis
-          tickCount={6}
+          tickCount={4}
           tickFormat={(tick) =>
             time.charAt(time.length - 1) === 'h' || time.charAt(time.length - 1) === 'm'
               ? new Date(tick * 1000).toLocaleTimeString([], {
@@ -210,17 +250,31 @@ const Graph: React.FC<GraphProps> = ({
                 })
           }
         />
-        <ChartAxis dependentAxis showGrid tickFormat={(tick) => tick} />
+        <ChartAxis
+          crossAxis={false}
+          dependentAxis
+          showGrid
+          tickFormat={(tick) => formatUnitString(Number(tick), query.unit)}
+          tickCount={6}
+        />
         <ChartGroup>
           {metricData?.map((obj, index) => {
+            const style = {
+              labels: { unit: query.unit, fill: '' },
+            };
             return (
               <ChartLine
                 key={index}
-                name={obj.metric.pod}
-                data={metricData[index].values.map(([timestamp, value]) => ({
-                  x: timestamp,
-                  y: Number(value),
-                }))}
+                name={obj.metric.pod ? obj.metric.pod : obj.metric.namespace}
+                data={formatSeriesValues(
+                  metricData[index].values.map(([timestamp, value]) => ({
+                    x: timestamp,
+                    y: Number.isNaN(value) ? null : Number(value),
+                  })),
+                  0,
+                  timeStringToSeconds(time),
+                )}
+                style={style}
               />
             );
           })}

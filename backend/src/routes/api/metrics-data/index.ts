@@ -17,7 +17,7 @@ module.exports = module.exports = async (fastify: KubeFastifyInstance) => {
         try {
           return await metricsData(fastify, request, query, range, step);
         } catch (err) {
-          return err;
+          return { error: err };
         }
       },
     ),

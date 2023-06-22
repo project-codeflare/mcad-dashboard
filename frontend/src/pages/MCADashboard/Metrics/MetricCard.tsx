@@ -48,7 +48,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       <CardHeader className="metric-card-header">{name}</CardHeader>
       <CardBody className="metric-card-data">
         {Math.round(percentage * 100) / 100}
-        {unit}
+        {unit === Unit.PERCENT && unit}
       </CardBody>
     </Card>
   );

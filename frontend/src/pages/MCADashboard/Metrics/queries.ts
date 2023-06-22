@@ -73,23 +73,25 @@ export const statusSummaryQueries: Query[] = [
 
 export const graphQueries: Query[] = [
   {
-    name: 'Appwrapper CPU Usage (namespaces)',
+    name: 'CPU Usage',
     query:
-      'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""}) by (namespace)',
+      'sum by (pod, namespace)(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""})',
   },
   {
-    name: 'Appwrapper Memory Usage (namespaces)',
+    name: 'Memory Usage',
     query:
-      'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", container!=""}) by (namespace)',
+      'sum by (pod, namespace)(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", container!=""} / 1000000)',
+    unit: Unit.MEGABYTE,
   },
   {
-    name: 'Appwrapper CPU Request',
+    name: 'CPU Request (by namespace)',
     query:
-      'sum by (pod, namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="cpu"})',
+      'sum by (namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="cpu"})',
   },
   {
-    name: 'Appwrapper Memory Request',
+    name: 'Memory request (by namespace)',
     query:
-      'sum by (pod, namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="memory"} / 1000000)',
+      'sum by (namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="memory"} / 1000000)',
+    unit: Unit.MEGABYTE,
   },
 ];
