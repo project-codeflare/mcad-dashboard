@@ -19,7 +19,7 @@ import {
   ChartThemeColor,
 } from '@patternfly/react-charts';
 
-import { getMetricDataRange } from '~/api/k8s/metricsData';
+import { getMetricDataRange } from './api/metricsData';
 import './Metrics.scss';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
