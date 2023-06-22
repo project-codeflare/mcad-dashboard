@@ -158,7 +158,10 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
       }
     >
       <PageSection isFilled data-id="page-content">
-        <div className="metric-graph-outer" ref={containerRef}>
+        <div
+          className={filteredMetricData ? 'metric-graph-outer' : 'metric-graph-outer-loading'}
+          ref={containerRef}
+        >
           <Graph
             query={query}
             width={width}

@@ -26,7 +26,7 @@
   overflow: auto;
 }
 
-.metric-graph-outer {
+.metric-graph-outer-loading {
   background: white;
   padding: 5px 45px 5px 60px;
   min-height: 350px;
@@ -34,6 +34,20 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-top: 0;
+  overflow: visible; // Tooltips may overflow
+  padding-top: 45px;
+  width: 100%;
+  height: 100%;
+}
+
+.metric-graph-outer {
+  background: white;
+  padding: 5px 45px 5px 60px;
+  min-height: 350px;
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
   margin-top: 0;
   overflow: visible; // Tooltips may overflow
   padding-top: 45px;
