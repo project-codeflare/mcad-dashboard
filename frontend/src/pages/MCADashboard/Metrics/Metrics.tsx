@@ -9,7 +9,7 @@ import TimeRangeDropDown from './time-range-dropdown';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
 import ApplicationsPage from '../../ApplicationsPage';
 import { Query, Unit } from './types';
-import { convertRangeToTime, getAllAppwrapperNamespaces } from './metrics-utils';
+import { convertRangeToTime } from './metrics-utils';
 import { statusSummaryQueries, graphQueries } from './queries';
 import QuotaTable from '../Tables/quota-table';
 import { Data } from '../types';
@@ -47,11 +47,19 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
 
   React.useEffect(() => {
     const getValidNamespaces = async () => {
-      const validNamespaces = await getAllAppwrapperNamespaces();
-      setValidNamespaces(validNamespaces);
+      const namespacesFromStorage = sessionStorage.getItem('valid-namespaces');
+      if (namespacesFromStorage) {
+        setValidNamespaces(new Set<string>(JSON.parse(namespacesFromStorage)));
+      }
     };
 
     getValidNamespaces();
+
+    window.addEventListener('data_stored', getValidNamespaces);
+
+    return () => {
+      window.removeEventListener('data_stored', getValidNamespaces);
+    };
   }, []);
 
   const { components, loaded, loadError } = useWatchComponents(true);
@@ -59,22 +67,35 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
 
   const [data, setData] = React.useState<Data>(emptyDataObject);
 
-  React.useEffect(() => {
-    const getData = () => {
-      const dataFromStorage = sessionStorage.getItem('appwrapper-data');
-      if (dataFromStorage) {
-        try {
-          const parsedData = JSON.parse(dataFromStorage);
-          if (parsedData.appwrappers && parsedData.stats) {
-            setData(parsedData);
-          }
-        } catch (err) {
-          console.log('ERROR Pulling Data from local storage');
+  const getData = () => {
+    const dataFromStorage = sessionStorage.getItem('appwrapper-data');
+    if (dataFromStorage) {
+      try {
+        const parsedData = JSON.parse(dataFromStorage);
+        if (parsedData.appwrappers && parsedData.stats) {
+          setData(parsedData);
         }
+      } catch (err) {
+        console.log('ERROR Pulling Data from local storage');
       }
-    };
+    }
+  };
+
+  React.useEffect(() => {
     getData();
   }, [refreshRate]);
+
+  React.useEffect(() => {
+    const handleStorageChange = () => {
+      getData();
+    };
+
+    window.addEventListener('data_stored', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('data_stored', handleStorageChange);
+    };
+  }, []);
 
   const convertRangeToTime = (timeRange: string) => {
     switch (timeRange) {

@@ -104,13 +104,15 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     const response = await getMetricDataRange(query.query, time);
     if (response.data) {
       const data: MetricData[] = response.data;
-      setMetricData(filterData(response.data, validNamespaces));
+      setMetricData(filterData(data, validNamespaces));
     }
   };
 
   React.useEffect(() => {
     setMetricData(undefined);
+  }, [time]);
 
+  React.useEffect(() => {
     getMetricData();
     setXDomain(getXDomain(Date.now() / 1000, timeStringToSeconds(time)));
 

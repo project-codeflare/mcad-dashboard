@@ -14,6 +14,7 @@ import { Data } from '../types';
 import SearchFieldAppwrappers, { SearchType } from './SearchFieldAppwrappers';
 import useTableColumnSort from '../components/table/useTableColumnSort';
 import { getMetricData, getMetricTableData } from '../Metrics/api/metricsData';
+import { filterData } from '../Metrics/metrics-utils';
 
 interface QuotaData {
   namespace: string;
@@ -113,7 +114,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       const data2 = await getMetricTableData(
         'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
       );
-      console.log(data2);
+      console.log(filterData(data2, validNamespaces));
     };
     get();
   }, []);

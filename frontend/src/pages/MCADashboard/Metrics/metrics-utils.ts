@@ -45,25 +45,13 @@ export const timeStringToSeconds = (timeString: string) => {
   }
 };
 
-export const getAllAppwrapperNamespaces = async () => {
-  let appwrapperData;
+export const getNamespacesFromAppwrappers = (data): string[] => {
   const namespaces = new Set<string>();
-  const dataFromStorage = sessionStorage.getItem('appwrapper-data');
-  try {
-    const parsedData = JSON.parse(dataFromStorage ? dataFromStorage : '');
-    if (parsedData.appwrappers && parsedData.stats) {
-      appwrapperData = parsedData;
-    } else {
-      appwrapperData = await fetchData();
-    }
-  } catch (err) {
-    appwrapperData = await fetchData();
-  }
-  appwrapperData = appwrapperData.appwrappers;
+  const appwrapperData = data.appwrappers;
   for (const key in appwrapperData) {
     namespaces.add(appwrapperData[key].metadata.namespace);
   }
-  return namespaces;
+  return Array.from(namespaces);
 };
 
 export const formatUnitString = (value: number, unit?: Unit) => {
@@ -88,6 +76,6 @@ export const filterData = (data, validNamespaces) => {
     });
     return filteredData;
   } else {
-    return data;
+    return undefined;
   }
 };
