@@ -14,22 +14,27 @@ import { Data } from '../types';
 import SearchFieldAppwrappers, { SearchType } from './SearchFieldAppwrappers';
 import useTableColumnSort from '../components/table/useTableColumnSort';
 
-interface AppWrapperSummaryData {
-  name: string;
+interface QuotaData {
   namespace: string;
-  createdon: string;
-  age: string;
-  priority: string;
-  state: string;
-  timesreenqueued: string;
-  latestmessage: string;
+  numberofappwrappers: number;
+  // cpusage: number;
+  // memoryusage: number;
+  // cpurequests: number;
+  // memoryrequests: number;
+  // cpulimits: number;
+  // memorylimits: number;
 }
 
-type AppWrapperViewProps = {
+interface NameSpaceCount {
+  namespace: string;
+  numberofappwrappers: number;
+}
+
+type QuotaViewProps = {
   data: Data;
 };
 
-export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps> = ({
+export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
   data: Data,
 }) => {
   const [isExpanded, setIsExpanded] = React.useState(true);
@@ -42,66 +47,81 @@ export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps
     setIsExpanded(isExpanded);
   };
 
-  const columns: SortableData<AppWrapperSummaryData>[] = [
-    {
-      field: 'name',
-      label: 'Name',
-      sortable: true,
-    },
+  const columns: SortableData<QuotaData>[] = [
     {
       field: 'namespace',
       label: 'Namespace',
       sortable: true,
     },
     {
-      field: 'createdon',
-      label: 'Created On',
+      field: 'numberofappwrappers',
+      label: '# of Appwrappers',
       sortable: true,
     },
     {
-      field: 'age',
-      label: 'Age',
+      field: 'cpusage',
+      label: 'CPU Usage',
       sortable: true,
     },
     {
-      field: 'priority',
-      label: 'Priority',
+      field: 'memoryusage',
+      label: 'Memory Usage',
       sortable: true,
     },
     {
-      field: 'state',
-      label: 'State',
+      field: 'cpurequests',
+      label: 'CPU Requests',
       sortable: false,
     },
     {
-      field: 'timesreenqueued',
-      label: 'Times Re-enqueued',
+      field: 'memoryrequests',
+      label: 'Memory Requests',
       sortable: false,
     },
     {
-      field: 'latestmessage',
-      label: 'Latest Message',
+      field: 'cpulimits',
+      label: 'CPU Limits',
+      sortable: false,
+    },
+    {
+      field: 'memorylimits',
+      label: 'Memory Limits',
       sortable: false,
     },
   ];
-
-  const appwrapperSummaryData: AppWrapperSummaryData[] = [];
+  const appwrapperSummaryData: QuotaData[] = [];
   for (const appWrapper of Object.values(Data.appwrappers)) {
-    const { metadata, status } = appWrapper;
-    const repository: AppWrapperSummaryData = {
-      name: metadata.name,
+    const { metadata } = appWrapper;
+    const quota: QuotaData = {
       namespace: metadata.namespace,
-      createdon: metadata.creationTimestamp,
-      age: metadata.calculatedTimeSpent,
-      priority: status.systempriority.toString(),
-      state: status.state,
-      timesreenqueued: status.numRequeuings.toString(),
-      latestmessage: status.constructedMessage,
+      numberofappwrappers: 1,
+      // cpusage: metadata.namespace,
+      // memoryusage: metadata.namespace,
+      // cpurequests: metadata.namespace,
+      // memoryrequests: metadata.namespace,
+      // cpulimits: metadata.namespace,
+      // memorylimits: metadata.namespace,
     };
-    appwrapperSummaryData.push(repository);
+    appwrapperSummaryData.push(quota);
   }
 
-  const sort = useTableColumnSort<AppWrapperSummaryData>(columns, 0);
+  const namespaceCounts: { [key: string]: number } = {};
+  for (const appwrapper of Object.values(Data.appwrappers)) {
+    const namespace = appwrapper.metadata.namespace;
+    if (namespace in namespaceCounts) {
+      namespaceCounts[namespace]++;
+    } else {
+      namespaceCounts[namespace] = 1;
+    }
+  }
+  const appwrappersInNamespace = Object.entries(namespaceCounts).map(([namespace, count]: [string, number]) => ({
+    namespace,
+    numberofappwrappers: count,
+  }));
+
+  console.log("appwrappersInNamespace", appwrappersInNamespace)
+
+  const sort = useTableColumnSort<QuotaData>(columns, 0);
 
   const filteredAppwrapperSummaryData = sort
     .transformData(appwrapperSummaryData)
@@ -111,12 +131,8 @@ export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps
       }
 
       switch (searchType) {
-        case SearchType.NAME:
-          return appwrapper.name.toLowerCase().includes(search.toLowerCase());
         case SearchType.NAMESPACE:
           return appwrapper.namespace.toLowerCase().includes(search.toLowerCase());
-        case SearchType.CREATEDON:
-          return appwrapper.createdon.toLowerCase().includes(search.toLowerCase());
         default:
           return true;
       }
@@ -130,37 +146,29 @@ export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps
       toggleContent={
         <div>
           <TextContent>
-            <Text component={TextVariants.h2}>Appwrapper Summary</Text>
+            <Text component={TextVariants.h2}>Appwrapper Quota Summary</Text>
           </TextContent>
         </div>
       }
     >
       <PageSection isFilled data-id="page-content">
         <Table
-          aria-label="Appwrapper Summary"
+          aria-label="Appwrapper Quota Summary"
           variant="compact"
           enablePagination
-          data={filteredAppwrapperSummaryData}
+          data={appwrappersInNamespace}
           columns={columns}
-          emptyTableView={<>No appwrappers match your filters. </>}
-          rowRenderer={(appwrapperSummary) => (
+          emptyTableView={<>No namespaces match your filters. </>}
+          rowRenderer={(appwrappersInNamespace) => (
             <Tr
-              key={appwrapperSummary.name + appwrapperSummary.namespace}
-              onRowClick={() => setSelectedRepoName(appwrapperSummary.name)}
+              key={appwrappersInNamespace.namespace}
+              onRowClick={() => setSelectedRepoName(appwrappersInNamespace.namespace)}
               isSelectable
               isHoverable
-              isRowSelected={selectedRepoName === appwrapperSummary.name}
+              isRowSelected={selectedRepoName === appwrappersInNamespace.namespace}
             >
-              <Td dataLabel={appwrapperSummary.name}>{appwrapperSummary.name}</Td>
-              <Td dataLabel={appwrapperSummary.namespace}>{appwrapperSummary.namespace}</Td>
-              <Td dataLabel={appwrapperSummary.createdon}>{appwrapperSummary.createdon}</Td>
-              <Td dataLabel={appwrapperSummary.age}>{appwrapperSummary.age}</Td>
-              <Td dataLabel={appwrapperSummary.priority}>{appwrapperSummary.priority}</Td>
-              <Td dataLabel={appwrapperSummary.state}>{appwrapperSummary.state}</Td>
-              <Td dataLabel={appwrapperSummary.timesreenqueued}>
-                {appwrapperSummary.timesreenqueued}
-              </Td>
-              <Td dataLabel={appwrapperSummary.latestmessage}>{appwrapperSummary.latestmessage}</Td>
+              <Td dataLabel={appwrappersInNamespace.namespace}>{appwrappersInNamespace.namespace}</Td>
+              <Td dataLabel={appwrappersInNamespace.numberofappwrappers.toString()}>{appwrappersInNamespace.numberofappwrappers.toString()}</Td>
             </Tr>
           )}
           toolbarContent={
@@ -186,4 +194,4 @@ export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps
   );
 };
 
-export default AppWrapperSummaryTable;
+export default QuotaTable;
