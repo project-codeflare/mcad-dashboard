@@ -229,19 +229,25 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
                 {appwrappersInNamespace.cpusage?.toString() || '-'}
               </Td>
               <Td dataLabel={appwrappersInNamespace.memoryusage?.toString() || '-'}>
-                {formatUnitString(appwrappersInNamespace.memoryusage) || '-'}
+                {appwrappersInNamespace.memorylimits
+                  ? formatUnitString(appwrappersInNamespace.memoryusage, Unit.BYTES)
+                  : '-'}
               </Td>
               <Td dataLabel={appwrappersInNamespace.cpurequests?.toString() || '-'}>
                 {appwrappersInNamespace.cpurequests?.toString() || '-'}
               </Td>
               <Td dataLabel={appwrappersInNamespace.memoryrequests?.toString() || '-'}>
-                {formatUnitString(appwrappersInNamespace.memoryrequests) || '-'}
+                {appwrappersInNamespace.memoryrequests
+                  ? formatUnitString(appwrappersInNamespace.memoryrequests, Unit.BYTES)
+                  : '-'}
               </Td>
               <Td dataLabel={appwrappersInNamespace.cpulimits?.toString() || '-'}>
                 {appwrappersInNamespace.cpulimits?.toString() || '-'}
               </Td>
               <Td dataLabel={appwrappersInNamespace.memorylimits?.toString() || '-'}>
-                {formatUnitString(appwrappersInNamespace.memorylimits) || '-'}
+                {appwrappersInNamespace.memorylimits
+                  ? formatUnitString(appwrappersInNamespace.memorylimits, Unit.BYTES)
+                  : '-'}
               </Td>
             </Tr>
           )}

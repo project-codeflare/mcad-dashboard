@@ -23,7 +23,7 @@ import { getMetricDataRange } from './api/metricsData';
 import './Metrics.scss';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
-import { formatUnitString, timeStringToSeconds, filterData } from './metrics-utils';
+import { formatUnitStringOnAxis, timeStringToSeconds, filterData } from './metrics-utils';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
@@ -188,20 +188,27 @@ const Graph: React.FC<GraphProps> = ({
     );
   }
 
+  const [maxVal, setMaxVal] = React.useState<number>(0);
+
   const domain: any = { x: xDomain, y: undefined };
-
-  let maxVal = 0;
-  let maxDataVal;
-  for (const data of metricData) {
-    maxDataVal = _.maxBy(data.values, (item) => {
-      return parseInt(item[1]);
-    })[1];
-    maxVal = Math.max(maxVal, maxDataVal);
-  }
-
-  if (maxVal <= 0) {
+  const getMaxVal = (metricData) => {
+    let maxDataVal;
+    let maxVal = 0;
+    for (const data of metricData) {
+      maxDataVal = _.maxBy(data.values, (item) => {
+        return parseInt(item[1]);
+      })[1];
+      maxVal = Math.max(maxVal, maxDataVal);
+    }
+    return maxVal;
+  };
+  const max = getMaxVal(metricData);
+  if (max <= 0) {
     domain.y = [0, 1];
   }
+  React.useEffect(() => {
+    setMaxVal(getMaxVal(metricData));
+  }, []);
 
   return (
     <div className="metric-graph">
@@ -217,7 +224,7 @@ const Graph: React.FC<GraphProps> = ({
         domainPadding={{ y: 1 }}
         padding={{
           bottom: 0,
-          left: 0,
+          left: 20,
           right: 0,
           top: 0,
         }}
@@ -244,7 +251,7 @@ const Graph: React.FC<GraphProps> = ({
           crossAxis={false}
           dependentAxis
           showGrid
-          tickFormat={(tick) => formatUnitString(Number(tick), query.unit)}
+          tickFormat={(tick) => formatUnitStringOnAxis(Number(tick), maxVal, query.unit)}
           tickCount={6}
         />
         <ChartGroup>

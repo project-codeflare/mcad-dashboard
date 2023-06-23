@@ -54,23 +54,51 @@ export const getNamespacesFromAppwrappers = (data): string[] => {
   return Array.from(namespaces);
 };
 
-export const formatUnitString = (value: number, unit?: Unit): string | null => {
-  if (!value || value === undefined) {
-    return null;
-  }
-
+export const formatUnitString = (value: number, unit?: Unit): string => {
   const round = (num: number) => {
     return (Math.round(num * 100) / 100).toString();
   };
 
-  if (unit != Unit.MEGABYTE) {
+  if (unit != Unit.BYTES) {
     return round(value).toString();
   }
-  if (value >= 1000) {
-    value = value / 1000;
-    return round(value).toString() + 'G';
+  if (value < 1000) {
+    return round(value).toString() + 'B';
   }
-  return round(value).toString() + 'M';
+  value /= 1024;
+  if (value < 1000) {
+    return round(value).toString() + 'KiB';
+  }
+  value /= 1024;
+  if (value < 1000) {
+    return round(value).toString() + 'MiB';
+  }
+  value /= 1024;
+  return round(value).toString() + 'GiB';
+};
+
+export const formatUnitStringOnAxis = (value: number, maxVal: number, unit?: Unit): string => {
+  const round = (num: number) => {
+    return (Math.round(num * 100) / 100).toString();
+  };
+  const maxValString = formatUnitString(maxVal, unit);
+  if (maxValString.length <= 1 || maxValString.charAt(maxValString.length - 1) !== 'B') {
+    return round(value).toString();
+  }
+  if (maxValString.length < 3) {
+    return round(value).toString();
+  }
+  const post = maxValString.charAt(maxValString.length - 3);
+  switch (post) {
+    case 'K':
+      return round(value / 1024).toString() + 'KiB';
+    case 'M':
+      return round(value / 1024 / 1024).toString() + 'MiB';
+    case 'G':
+      return round(value / 1024 / 1024 / 1024).toString() + 'GiB';
+    default:
+      return round(value).toString() + 'B';
+  }
 };
 
 export const filterData = (data, validNamespaces) => {
