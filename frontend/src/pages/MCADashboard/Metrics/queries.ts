@@ -73,23 +73,23 @@ export const statusSummaryQueries: Query[] = [
 
 export const graphQueries: Query[] = [
   {
-    name: 'CPU Usage',
+    name: 'CPU Usage (by Appwrapper)',
     query:
       'sum by (pod, namespace)(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""})',
   },
   {
-    name: 'Memory Usage',
+    name: 'Memory Usage (by Appwrapper)',
     query:
       'sum by (pod, namespace)(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", container!=""} / 1000000)',
     unit: Unit.MEGABYTE,
   },
   {
-    name: 'CPU Request (by namespace)',
+    name: 'CPU Request (by Namespace)',
     query:
       'sum by (namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="cpu"})',
   },
   {
-    name: 'Memory request (by namespace)',
+    name: 'Memory request (by Namespace)',
     query:
       'sum by (namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="memory"} / 1000000)',
     unit: Unit.MEGABYTE,
