@@ -39,16 +39,33 @@ type QuotaViewProps = {
   validNamespaces?: Set<string>;
 };
 
+enum SearchTypeQuotaTable {
+  NAMESPACE = 'Namespace',
+}
+
+type kv_pair = {
+  key?: number;
+};
+
+type TableData = {
+  cpusage?: kv_pair;
+  cpurequests?: kv_pair;
+  memoryusage?: kv_pair;
+  memoryrequests?: kv_pair;
+  cpulimits?: kv_pair;
+  memorylimits?: kv_pair;
+};
+
 export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
   data: Data,
   validNamespaces,
 }) => {
   const [isExpanded, setIsExpanded] = React.useState(true);
   const [selectedRepoName, setSelectedRepoName] = React.useState('');
-  const [searchType, setSearchType] = React.useState<SearchType>(SearchType.NAME);
+  const [searchType, setSearchType] = React.useState<SearchType>(SearchType.NAMESPACE);
   const [search, setSearch] = React.useState('');
-  const [tableData, setTableData] = React.useState<any>();
-  const searchTypes = React.useMemo(() => Object.keys(SearchType), []);
+  const [tableData, setTableData] = React.useState<TableData>();
+  const searchTypes = React.useMemo(() => Object.keys(SearchTypeQuotaTable), []);
 
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);
@@ -59,6 +76,19 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
   React.useEffect(() => {
     setTableData(initialTableData);
   }, []);
+
+  const sortFunction = (a: QuotaData, b: QuotaData, keyfield: string) => {
+    if (a[keyfield] === undefined && !b[keyfield] === undefined) {
+      return 0;
+    }
+    if (a[keyfield] === undefined) {
+      return -1;
+    }
+    if (b[keyfield] === undefined) {
+      return 1;
+    }
+    return a[keyfield] - b[keyfield];
+  };
 
   const columns: SortableData<QuotaData>[] = [
     {
@@ -74,32 +104,32 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
     {
       field: 'cpusage',
       label: 'CPU Usage',
-      sortable: true,
+      sortable: sortFunction,
     },
     {
       field: 'memoryusage',
       label: 'Memory Usage',
-      sortable: true,
+      sortable: sortFunction,
     },
     {
       field: 'cpurequests',
       label: 'CPU Requests',
-      sortable: false,
+      sortable: sortFunction,
     },
     {
       field: 'memoryrequests',
       label: 'Memory Requests',
-      sortable: false,
+      sortable: sortFunction,
     },
     {
       field: 'cpulimits',
       label: 'CPU Limits',
-      sortable: true,
+      sortable: sortFunction,
     },
     {
       field: 'memorylimits',
       label: 'Memory Limits',
-      sortable: false,
+      sortable: sortFunction,
     },
   ];
   const appwrapperSummaryData: QuotaData[] = [];
@@ -175,8 +205,8 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
 
   const sort = useTableColumnSort<QuotaData>(columns, 0);
 
-  const filteredAppwrapperSummaryData = sort
-    .transformData(appwrapperSummaryData)
+  const filteredAppwrappersInNamespace = sort
+    .transformData(appwrappersInNamespace)
     .filter((appwrapper) => {
       if (!search) {
         return true;
@@ -208,7 +238,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
           aria-label="Appwrapper Quota Summary"
           variant="compact"
           enablePagination
-          data={appwrappersInNamespace}
+          data={filteredAppwrappersInNamespace}
           columns={columns}
           emptyTableView={<>No namespaces match your filters. </>}
           rowRenderer={(appwrappersInNamespace) => (

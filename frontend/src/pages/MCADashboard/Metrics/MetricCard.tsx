@@ -27,12 +27,6 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
   React.useEffect(() => {
     getData();
-
-    const interval = setInterval(async () => {
-      getData();
-    }, refreshRate);
-
-    return () => clearInterval(interval);
   }, []);
 
   React.useEffect(() => {
