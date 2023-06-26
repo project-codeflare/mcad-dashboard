@@ -21,12 +21,12 @@ import { tableQueries } from '../Metrics/queries';
 interface QuotaData {
   namespace: string;
   numberofappwrappers: number;
-  cpusage: number;
-  memoryusage: number;
-  cpurequests: number;
-  memoryrequests: number;
-  cpulimits: number;
-  memorylimits: number;
+  cpusage?: number;
+  memoryusage?: number;
+  cpurequests?: number;
+  memoryrequests?: number;
+  cpulimits?: number;
+  memorylimits?: number;
 }
 
 interface NameSpaceCount {
@@ -78,7 +78,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
   }, []);
 
   const sortFunction = (a: QuotaData, b: QuotaData, keyfield: string) => {
-    if (a[keyfield] === undefined && !b[keyfield] === undefined) {
+    if (a[keyfield] === undefined && b[keyfield] === undefined) {
       return 0;
     }
     if (a[keyfield] === undefined) {
@@ -259,7 +259,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
                 {appwrappersInNamespace.cpusage?.toString() || '-'}
               </Td>
               <Td dataLabel={appwrappersInNamespace.memoryusage?.toString() || '-'}>
-                {appwrappersInNamespace.memorylimits
+                {appwrappersInNamespace.memoryusage
                   ? formatUnitString(appwrappersInNamespace.memoryusage, Unit.BYTES)
                   : '-'}
               </Td>
