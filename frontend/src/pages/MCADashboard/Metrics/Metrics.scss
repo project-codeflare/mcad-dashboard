@@ -1,4 +1,7 @@
 .metric-card {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .metric-card-data {
@@ -11,29 +14,45 @@
   display: flex;
   justify-content: center;
   font-weight: 800;
+  height: 75px;
 }
 
 .metric-graph {
   width: 100%;
 }
 
-.metric-graph-outer {
+.chart-tooltip * {
+  height: 100px;
+  overflow: auto;
+}
+
+.metric-graph-outer-loading {
   background: white;
-  padding: 5px 15px 15px 60px;
+  padding: 5px 45px 5px 60px;
   min-height: 350px;
   align-items: stretch;
   display: flex;
   flex-direction: column;
-  margin-bottom: 16px;
+  justify-content: center;
   margin-top: 0;
   overflow: visible; // Tooltips may overflow
-  padding-top: 15px; // So graph title doesn't abut border
+  padding-top: 45px;
   width: 100%;
+  height: 100%;
+}
 
-  .cos-status-box {
-    height: 100%; // Loading box should be approximately same height as graph
-    position: relative; // .co-m-loader uses position: absolute, needs position: relative wrapper for correct placement
-  }
+.metric-graph-outer {
+  background: white;
+  padding: 5px 45px 5px 60px;
+  min-height: 350px;
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  overflow: visible; // Tooltips may overflow
+  padding-top: 45px;
+  width: 100%;
+  height: 100%;
 }
 
 .metric-graph-outer svg {
@@ -88,4 +107,84 @@
   .query-browser__span-dropdown-item {
     width: $width - 1px;
   }
+}
+
+.query-browser__tooltip {
+  background-color: var(--pf-global--BackgroundColor--dark-100);
+  color: #eee;
+  font-size: 12px;
+  overflow-x: hidden;
+  padding: 10px;
+}
+
+.query-browser__tooltip-arrow {
+  border-bottom: 12px solid transparent;
+  border-right: 12px solid var(--pf-global--BackgroundColor--dark-100);
+  border-top: 12px solid transparent;
+  height: 0;
+  width: 0;
+}
+
+.query-browser__tooltip-line {
+  stroke: var(--pf-global--BackgroundColor--dark-100);
+}
+
+.query-browser__tooltip-series {
+  display: flex;
+
+  .query-browser__series-btn {
+    flex: 0 0 12px;
+    height: 12px;
+    margin-top: 4px;
+    margin-right: 3px;
+  }
+}
+
+.query-browser__series-btn {
+  border: var(--pf-global--BorderWidth--sm) solid transparent;
+  border-radius: var(--pf-global--BorderRadius--sm);
+  height: 20px;
+  padding: 0 !important;
+  width: 20px;
+  &--disabled {
+    border: var(--pf-global--BorderWidth--sm) solid #888 !important;
+  }
+}
+
+.query-browser__tooltip-time {
+  font-weight: var(--pf-global--FontWeight--bold);
+}
+
+.query-browser__tooltip-value {
+  font-weight: var(--pf-global--FontWeight--bold);
+  margin-left: auto;
+  padding-left: 10px;
+  white-space: nowrap;
+}
+
+.query-browser__tooltip-wrap {
+  align-items: center;
+  display: flex;
+  height: 100%;
+
+  &--left {
+    flex-direction: row-reverse;
+
+    .query-browser__tooltip-arrow {
+      border-left: 12px solid var(--pf-global--BackgroundColor--dark-100);
+      border-right: none;
+    }
+  }
+}
+
+.co-nowrap {
+  white-space: nowrap;
+}
+
+.graph-loading {
+  padding-bottom: 45px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

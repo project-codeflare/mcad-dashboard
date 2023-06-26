@@ -11,39 +11,25 @@ import {
 } from '@patternfly/react-core';
 
 import MetricCard from './MetricCard';
+import { Unit } from './types';
 
-// TODO: Update the queries for Memory
-const queries = [
-  { name: 'CPU Utilization', query: 'cluster:node_cpu:ratio_rate5m{cluster=""}' },
-  {
-    name: 'CPU Requests Commitment',
-    query:
-      'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster=""}) / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="cpu",cluster=""})',
-  },
-  {
-    name: 'CPU Limits Commitment',
-    query:
-      'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="cpu",cluster=""})',
-  },
-  { name: 'Memory Utilization', query: 'cluster:node_cpu:ratio_rate5m{cluster=""}' },
-  {
-    name: 'Memory Requests Commitment',
-    query:
-      'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster=""}) / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="cpu",cluster=""})',
-  },
-  {
-    name: 'Memory Limits Commitment',
-    query:
-      'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) / sum(kube_node_status_allocatable{job="kube-state-metrics",resource="cpu",cluster=""})',
-  },
-];
+type MetricsCardsProps = {
+  queries: { name: string; query: string; unit?: Unit }[];
+  name: string;
+  refreshRate: number;
+};
 
-const MetricsCards: React.FunctionComponent = () => {
+const MetricsCards: React.FunctionComponent<MetricsCardsProps> = ({
+  queries,
+  name,
+  refreshRate,
+}: MetricsCardsProps) => {
   const [isExpanded, setIsExpanded] = React.useState(true);
 
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);
   };
+
   return (
     <ExpandableSection
       displaySize={'large'}
@@ -52,7 +38,7 @@ const MetricsCards: React.FunctionComponent = () => {
       toggleContent={
         <div>
           <TextContent>
-            <Text component={TextVariants.h2}>Metrics Summary</Text>
+            <Text component={TextVariants.h2}>{name}</Text>
           </TextContent>
         </div>
       }
@@ -60,10 +46,15 @@ const MetricsCards: React.FunctionComponent = () => {
       <PageSection isFilled data-id="page-content">
         <div>
           <Grid role="list" hasGutter>
-            {queries.map((queryItem) => {
+            {queries.map((queryItem, index) => {
               return (
-                <GridItem key={queryItem.name} lg={4} md={6} sm={12}>
-                  <MetricCard key={queryItem.name} name={queryItem.name} query={queryItem.query} />
+                <GridItem key={index} lg={4} md={6} sm={12}>
+                  <MetricCard
+                    name={queryItem.name}
+                    query={queryItem.query}
+                    refreshRate={refreshRate}
+                    unit={queryItem.unit}
+                  />
                 </GridItem>
               );
             })}

@@ -15,7 +15,7 @@ const fetchPrometheusData = async (host: string, query: string, axiosInstance: A
       return res.data.data.result;
     })
     .catch((err) => {
-      console.error(`error fetching data from prometheus. Error: ${err}`);
+      return Error(`error fetching data from prometheus. Error: ${err}`);
     });
 };
 
@@ -40,15 +40,14 @@ const fetchPrometheusDataRange = async (
       return res.data.data.result;
     })
     .catch((err) => {
-      console.error(`error fetching data from Prometheus. Error: ${err}`);
+      return Error(`error fetching data from Prometheus. Error: ${err}`);
     });
 };
 
 const getMetric = async (host: string, query: string, axiosInstance: AxiosInstance) => {
   const fetchedData: any = await fetchPrometheusData(host, query, axiosInstance);
   const valueAsDecimal = parseFloat(fetchedData[0].value[1]);
-  const valueAsPercent = valueAsDecimal * 100;
-  return valueAsPercent;
+  return fetchedData;
 };
 
 const getMetricRange = async (
@@ -87,8 +86,8 @@ const metricsData = async (
   fastify: KubeFastifyInstance,
   request: OauthFastifyRequest,
   query: string,
-  range: number[] | null,
-  step: number | null,
+  range?: number[],
+  step?: number,
 ) => {
   const host = await getHost();
   if (!host) {
@@ -96,7 +95,7 @@ const metricsData = async (
   }
   const res = await getDirectCallOptions(fastify, request, host);
   const auth = res.headers.Authorization.toString();
-  if (auth.substring(0, 6) !== 'Bearer') {
+  if (!auth || auth.substring(0, 6) !== 'Bearer') {
     return new Error('auth not found');
   }
   const axiosInstance = axios.create({
