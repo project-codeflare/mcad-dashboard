@@ -146,6 +146,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
           name={'Cluster Status Summary'}
           refreshRate={refreshRate}
         />
+        <QuotaTable data={data ? data : emptyDataObject} validNamespaces={validNamespaces} />
         {graphQueries.map((query, index) => {
           return (
             <MetricGraph
@@ -158,7 +159,6 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
             />
           );
         })}
-        <QuotaTable data={data ? data : emptyDataObject} validNamespaces={validNamespaces} />
       </ApplicationsPage>
     </>
   );
