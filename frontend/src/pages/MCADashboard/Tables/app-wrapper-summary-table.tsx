@@ -30,7 +30,7 @@ type AppWrapperViewProps = {
 };
 
 export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps> = ({
-  data: unfilteredProjects,
+  data: Data,
 }) => {
   const [isExpanded, setIsExpanded] = React.useState(true);
   const [selectedRepoName, setSelectedRepoName] = React.useState('');
@@ -86,7 +86,7 @@ export const AppWrapperSummaryTable: React.FunctionComponent<AppWrapperViewProps
   ];
 
   const appwrapperSummaryData: AppWrapperSummaryData[] = [];
-  for (const appWrapper of Object.values(unfilteredProjects.appwrappers)) {
+  for (const appWrapper of Object.values(Data.appwrappers)) {
     const { metadata, status } = appWrapper;
     const repository: AppWrapperSummaryData = {
       name: metadata.name,

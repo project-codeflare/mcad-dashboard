@@ -27,9 +27,9 @@ export const availableResourceQueries: Query[] = [
     unit: Unit.PERCENT,
   },
   {
-    name: 'Available Memory (Megabytes)',
+    name: 'Available Memory (Mebibytes)',
     query:
-      '(sum(cluster:capacity_memory_bytes:sum{cluster=""}) - sum(cluster:memory_usage_bytes:sum{cluster=""})) / 1000000',
+      '(sum(cluster:capacity_memory_bytes:sum{cluster=""}) - sum(cluster:memory_usage_bytes:sum{cluster=""})) / 1048576',
   },
 ];
 
@@ -80,8 +80,8 @@ export const graphQueries: Query[] = [
   {
     name: 'Memory Usage (by Appwrapper)',
     query:
-      'sum by (pod, namespace)(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", container!=""} / 1000000)',
-    unit: Unit.MEGABYTE,
+      'sum by (pod, namespace)(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", container!=""})',
+    unit: Unit.BYTES,
   },
   {
     name: 'CPU Request (by Namespace)',
@@ -91,7 +91,38 @@ export const graphQueries: Query[] = [
   {
     name: 'Memory request (by Namespace)',
     query:
-      'sum by (namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="memory"} / 1000000)',
-    unit: Unit.MEGABYTE,
+      'sum by (namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="memory"})',
+    unit: Unit.BYTES,
+  },
+];
+
+export const tableQueries = [
+  {
+    name: 'cpusage',
+    query:
+      'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'memoryusage',
+    query:
+      'sum(container_memory_rss{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", container!=""}) by (namespace)',
+  },
+  {
+    name: 'cpurequests',
+    query: 'sum(namespace_cpu:kube_pod_container_resource_requests:sum{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'memoryrequests',
+    query:
+      'sum(namespace_memory:kube_pod_container_resource_requests:sum{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'cpulimits',
+    query: 'sum(namespace_cpu:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'memorylimits',
+    query:
+      'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
   },
 ];

@@ -23,7 +23,7 @@ import { getMetricDataRange } from './api/metricsData';
 import './Metrics.scss';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
-import { formatUnitString, timeStringToSeconds } from './metrics-utils';
+import { formatUnitStringOnAxis, timeStringToSeconds, filterData } from './metrics-utils';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
@@ -71,8 +71,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   validNamespaces,
 }: MetricGraphProps): React.ReactElement => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
-  const [filteredMetricData, setFilteredMetricData] = React.useState<MetricData[]>();
-  const [unfilteredMetricData, setUnfilteredMetricData] = React.useState<MetricData[]>();
+  const [metricData, setMetricData] = React.useState<MetricData[]>();
   const containerRef = React.useRef<null | HTMLDivElement>(null);
   const [width, setWidth] = React.useState<number>();
 
@@ -101,43 +100,31 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     setIsExpanded(isExpanded);
   };
 
-  const getFilteredMetricData = async () => {
-    if (unfilteredMetricData && validNamespaces) {
-      const filteredData = unfilteredMetricData.filter((data) => {
-        return validNamespaces.has(data.metric.namespace);
-      });
-      setFilteredMetricData(filteredData);
-    }
-  };
-
-  const getUnfilteredMetricData = async () => {
+  const getMetricData = async () => {
     const response = await getMetricDataRange(query.query, time);
     if (response.data) {
       const data: MetricData[] = response.data;
-      setUnfilteredMetricData(data);
+      setMetricData(filterData(data, validNamespaces));
     }
   };
 
   React.useEffect(() => {
-    getFilteredMetricData();
-  }, [unfilteredMetricData]);
+    setMetricData(undefined);
+  }, [time]);
 
   React.useEffect(() => {
-    setUnfilteredMetricData(undefined);
-    setFilteredMetricData(undefined);
-
-    getUnfilteredMetricData();
+    getMetricData();
     setXDomain(getXDomain(Date.now() / 1000, timeStringToSeconds(time)));
 
     const interval = setInterval(async () => {
       setXDomain(getXDomain(Date.now() / 1000, timeStringToSeconds(time)));
-      getUnfilteredMetricData();
+      getMetricData();
     }, refreshRate);
 
     return () => clearInterval(interval);
   }, [time, validNamespaces, refreshRate]);
 
-  const legendData = filteredMetricData?.map((obj) => {
+  const legendData = metricData?.map((obj) => {
     return {
       childName: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
       name: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
@@ -158,13 +145,16 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
       }
     >
       <PageSection isFilled data-id="page-content">
-        <div className="metric-graph-outer" ref={containerRef}>
+        <div
+          className={metricData ? 'metric-graph-outer' : 'metric-graph-outer-loading'}
+          ref={containerRef}
+        >
           <Graph
             query={query}
             width={width}
             legendData={legendData}
             time={time}
-            metricData={filteredMetricData}
+            metricData={metricData}
             xDomain={xDomain}
           />
         </div>
@@ -198,20 +188,27 @@ const Graph: React.FC<GraphProps> = ({
     );
   }
 
+  const [maxVal, setMaxVal] = React.useState<number>(0);
+
   const domain: any = { x: xDomain, y: undefined };
-
-  let maxVal = 0;
-  let maxDataVal;
-  for (const data of metricData) {
-    maxDataVal = _.maxBy(data.values, (item) => {
-      return parseInt(item[1]);
-    })[1];
-    maxVal = Math.max(maxVal, maxDataVal);
-  }
-
-  if (maxVal <= 0) {
+  const getMaxVal = (metricData) => {
+    let maxDataVal;
+    let maxVal = 0;
+    for (const data of metricData) {
+      maxDataVal = _.maxBy(data.values, (item) => {
+        return parseInt(item[1]);
+      })[1];
+      maxVal = Math.max(maxVal, maxDataVal);
+    }
+    return maxVal;
+  };
+  const max = getMaxVal(metricData);
+  if (max <= 0) {
     domain.y = [0, 1];
   }
+  React.useEffect(() => {
+    setMaxVal(getMaxVal(metricData));
+  }, []);
 
   return (
     <div className="metric-graph">
@@ -227,7 +224,7 @@ const Graph: React.FC<GraphProps> = ({
         domainPadding={{ y: 1 }}
         padding={{
           bottom: 0,
-          left: 0,
+          left: 20,
           right: 0,
           top: 0,
         }}
@@ -254,7 +251,7 @@ const Graph: React.FC<GraphProps> = ({
           crossAxis={false}
           dependentAxis
           showGrid
-          tickFormat={(tick) => formatUnitString(Number(tick), query.unit)}
+          tickFormat={(tick) => formatUnitStringOnAxis(Number(tick), maxVal, query.unit)}
           tickCount={6}
         />
         <ChartGroup>

@@ -45,38 +45,69 @@ export const timeStringToSeconds = (timeString: string) => {
   }
 };
 
-export const getAllAppwrapperNamespaces = async () => {
-  let appwrapperData;
+export const getNamespacesFromAppwrappers = (data): string[] => {
   const namespaces = new Set<string>();
-  const dataFromStorage = sessionStorage.getItem('appwrapper-data');
-  try {
-    const parsedData = JSON.parse(dataFromStorage ? dataFromStorage : '');
-    if (parsedData.appwrappers && parsedData.stats) {
-      appwrapperData = parsedData;
-    } else {
-      appwrapperData = await fetchData();
-    }
-  } catch (err) {
-    appwrapperData = await fetchData();
-  }
-  appwrapperData = appwrapperData.appwrappers;
+  const appwrapperData = data.appwrappers;
   for (const key in appwrapperData) {
     namespaces.add(appwrapperData[key].metadata.namespace);
   }
-  return namespaces;
+  return Array.from(namespaces);
 };
 
-export const formatUnitString = (value: number, unit?: Unit) => {
+export const formatUnitString = (value: number, unit?: Unit): string => {
   const round = (num: number) => {
-    return Math.round(num * 100) / 100;
+    return (Math.round(num * 100) / 100).toString();
   };
 
-  if (unit != Unit.MEGABYTE) {
+  if (unit != Unit.BYTES) {
     return round(value).toString();
   }
-  if (value >= 1000) {
-    value = value / 1000;
-    return round(value).toString() + 'G';
+  if (value < 1000) {
+    return round(value).toString() + 'B';
   }
-  return round(value).toString() + 'M';
+  value /= 1024;
+  if (value < 1000) {
+    return round(value).toString() + 'KiB';
+  }
+  value /= 1024;
+  if (value < 1000) {
+    return round(value).toString() + 'MiB';
+  }
+  value /= 1024;
+  return round(value).toString() + 'GiB';
+};
+
+export const formatUnitStringOnAxis = (value: number, maxVal: number, unit?: Unit): string => {
+  const round = (num: number) => {
+    return (Math.round(num * 100) / 100).toString();
+  };
+  const maxValString = formatUnitString(maxVal, unit);
+  if (maxValString.length <= 1 || maxValString.charAt(maxValString.length - 1) !== 'B') {
+    return round(value).toString();
+  }
+  if (maxValString.length < 3) {
+    return round(value).toString();
+  }
+  const post = maxValString.charAt(maxValString.length - 3);
+  switch (post) {
+    case 'K':
+      return round(value / 1024).toString() + 'KiB';
+    case 'M':
+      return round(value / 1024 / 1024).toString() + 'MiB';
+    case 'G':
+      return round(value / 1024 / 1024 / 1024).toString() + 'GiB';
+    default:
+      return round(value).toString() + 'B';
+  }
+};
+
+export const filterData = (data, validNamespaces) => {
+  if (data && validNamespaces) {
+    const filteredData = data.filter((dataPoint) => {
+      return validNamespaces.has(dataPoint.metric.namespace);
+    });
+    return filteredData;
+  } else {
+    return undefined;
+  }
 };

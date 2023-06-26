@@ -22,17 +22,11 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
   const getData = async () => {
     const data = await getMetricData(query);
-    setPercentage(Math.round(data.data * 100) / 100);
+    setPercentage(Math.round(data * 100) / 100);
   };
 
   React.useEffect(() => {
     getData();
-
-    const interval = setInterval(async () => {
-      getData();
-    }, refreshRate);
-
-    return () => clearInterval(interval);
   }, []);
 
   React.useEffect(() => {
