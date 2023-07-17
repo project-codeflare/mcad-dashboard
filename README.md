@@ -2,6 +2,14 @@
 
 A dashboard for Multi-Cluster App Dispatcher and Open Data Hub components.
 
+![Status Summary](docs/rsrc/MCAD-dashboard/status_summary.png)
+
+For more detailed current features of the MCAD dashboard:
+ 
+- [MCAD Dashboard Features](/FEATURES.md)
+
+
+ODH Dashboard Installation and Components:
 - Shows what's installed
 - Show's what's available for installation
 - Links to component UIs
