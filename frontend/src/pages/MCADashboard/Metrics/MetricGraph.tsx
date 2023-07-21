@@ -126,8 +126,8 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
 
   const legendData = metricData?.map((obj) => {
     return {
-      childName: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
-      name: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
+      childName: obj.metric.status ? obj.metric.status : obj.metric.namespace,
+      name: obj.metric.status ? obj.metric.status : obj.metric.namespace,
     };
   });
 

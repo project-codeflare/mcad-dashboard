@@ -1,1 +1,1 @@
-oc get route prometheus-portal -n odh -o jsonpath="{.spec.host}"
+oc get route prometheus-portal -n odh-dashboard -o jsonpath="{.spec.host}"
