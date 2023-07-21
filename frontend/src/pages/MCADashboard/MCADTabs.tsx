@@ -10,6 +10,7 @@ import MCADashboard from './MCADashboard';
 import ApplicationsPage from '../ApplicationsPage';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
 import Metrics from './Metrics/Metrics';
+import Resources from './Metrics/Resources';
 
 const description = 'A Dashboard for Multi-Cluster App Dispatcher';
 const subDescription =
@@ -71,7 +72,7 @@ export const MCADTabs: React.FunctionComponent = () => {
           aria-label="resources-tab"
         >
           {/* Place holder */}
-          Resources
+          <Resources activeTabKey={Number(activeTabKey)} />
         </Tab>
         <Tab
           eventKey={2}

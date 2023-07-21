@@ -201,7 +201,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
     }),
   );
 
-  console.log('appwrappersInNamespace', appwrappersInNamespace);
+  //console.log('appwrappersInNamespace', appwrappersInNamespace);
 
   const sort = useTableColumnSort<QuotaData>(columns, 0);
 
