@@ -266,7 +266,7 @@ const Graph: React.FC<GraphProps> = ({
             return (
               <ChartLine
                 key={index}
-                name={obj.metric.pod ? obj.metric.pod : obj.metric.namespace}
+                name={obj.metric.status ? obj.metric.status : obj.metric.namespace}
                 data={formatSeriesValues(
                   metricData[index].values.map(([timestamp, value]) => ({
                     x: timestamp,
