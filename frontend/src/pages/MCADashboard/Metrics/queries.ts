@@ -7,9 +7,8 @@ export const availableResourceQueries: Query[] = [
     unit: Unit.PERCENT,
   },
   {
-    name: 'Utilized CPU %',
-    query: 'cluster:node_cpu:ratio{cluster=""} * 100',
-    unit: Unit.PERCENT,
+    name: 'Utilized GPU',
+    query: 'count(count by (UUID,GPU_I_ID) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{exported_pod=~".+"})) or vector(0)',
   },
   {
     name: 'Available CPU (Cores)',
@@ -22,8 +21,8 @@ export const availableResourceQueries: Query[] = [
     unit: Unit.PERCENT,
   },
   {
-    name: 'Utilized Memory %',
-    query: 'cluster:memory_usage:ratio{cluster=""} * 100',
+    name: 'Utilized GPU Memory',
+    query: 'count(count by (UUID,GPU_I_ID) (DCGM_FI_DEV_MEM_COPY_UTIL))',
     unit: Unit.PERCENT,
   },
   {
@@ -94,6 +93,11 @@ export const graphQueries: Query[] = [
       'sum by (namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="memory"})',
     unit: Unit.BYTES,
   },
+  {
+    name: 'Utilized GPU',
+    query:
+      'count(count by (UUID,GPU_I_ID) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{exported_pod=~".+"})) or vector(0)',
+  },
 ];
 
 export const tableQueries = [
@@ -124,6 +128,16 @@ export const tableQueries = [
     name: 'memorylimits',
     query:
       'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'gpu',
+    query:
+      'count((DCGM_FI_PROF_GR_ENGINE_ACTIVE{exported_pod=~".+"})) by (namespace)',
+  },
+  {
+    name: 'gpumemory',
+    query:
+      'count(DCGM_FI_DEV_MEM_COPY_UTIL) by (namespace)',
   },
 ];
 

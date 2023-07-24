@@ -27,6 +27,8 @@ interface QuotaData {
   memoryrequests?: number;
   cpulimits?: number;
   memorylimits?: number;
+  gpu?: number;
+  gpumemory?: number;
 }
 
 interface NameSpaceCount {
@@ -54,6 +56,8 @@ type TableData = {
   memoryrequests?: kv_pair;
   cpulimits?: kv_pair;
   memorylimits?: kv_pair;
+  gpu?: kv_pair;
+  gpumemory?: kv_pair;
 };
 
 export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
@@ -131,6 +135,16 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       label: 'Memory Limits',
       sortable: sortFunction,
     },
+    {
+      field: 'gpu',
+      label: 'GPU',
+      sortable: sortFunction,
+    },
+    {
+      field: 'gpumemory',
+      label: 'GPU Memory',
+      sortable: sortFunction,
+    },
   ];
   const appwrapperSummaryData: QuotaData[] = [];
   for (const appWrapper of Object.values(Data.appwrappers)) {
@@ -144,6 +158,8 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       memoryrequests: tableData?.memoryrequests?.[metadata.namespace],
       cpulimits: tableData?.cpulimits?.[metadata.namespace],
       memorylimits: tableData?.memorylimits?.[metadata.namespace],
+      gpu: tableData?.gpu?.[metadata.namespace],
+      gpumemory: tableData?.gpumemory?.[metadata.namespace],
     };
     appwrapperSummaryData.push(quota);
   }
@@ -198,6 +214,8 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       memoryrequests: tableData?.memoryrequests?.[namespace],
       cpulimits: tableData?.cpulimits?.[namespace],
       memorylimits: tableData?.memorylimits?.[namespace],
+      gpu: tableData?.gpu?.[namespace],
+      gpumemory: tableData?.gpumemory?.[namespace],
     }),
   );
 
@@ -278,6 +296,12 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
                 {appwrappersInNamespace.memorylimits
                   ? formatUnitString(appwrappersInNamespace.memorylimits, Unit.BYTES)
                   : '-'}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.gpu?.toString() || '-'}>
+                {appwrappersInNamespace.gpu?.toString() || '-'}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.gpumemory?.toString() || '-'}>
+                {appwrappersInNamespace.gpumemory?.toString() || '-'}
               </Td>
             </Tr>
           )}
