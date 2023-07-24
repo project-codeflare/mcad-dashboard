@@ -126,3 +126,10 @@ export const tableQueries = [
       'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
   },
 ];
+
+export const mcadPromQueries: Query[] = [
+  {
+    name: 'Appwrapper Count by Status',
+    query: 'appwrapper_count',
+  },
+];

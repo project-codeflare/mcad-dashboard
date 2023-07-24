@@ -19,7 +19,7 @@ import {
   ChartThemeColor,
 } from '@patternfly/react-charts';
 
-import { getMetricDataRange } from './api/metricsData';
+import { getMCADMetricDataRange } from './api/metricsData';
 import './Metrics.scss';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
@@ -63,7 +63,7 @@ const formatSeriesValues = (values: any[], samples: number, span: number) => {
   return newValues;
 };
 
-const MetricGraph: React.FC<MetricGraphProps> = ({
+const McadMetricGraph: React.FC<MetricGraphProps> = ({
   query,
   time,
   activeTabKey,
@@ -101,11 +101,13 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   };
 
   const getMetricData = async () => {
-    const response = await getMetricDataRange(query.query, time);
+    const response = await getMCADMetricDataRange(query.query, time);
+    console.log(query.query, time, response)
     if (response.data) {
       const data: MetricData[] = response.data;
-      setMetricData(filterData(data, validNamespaces));
+      setMetricData(data);
     }
+
   };
 
   React.useEffect(() => {
@@ -186,6 +188,8 @@ const Graph: React.FC<GraphProps> = ({
         <Spinner />
       </div>
     );
+  } else {
+    console.log("metric to legend", metricData, legendData);
   }
 
   const [maxVal, setMaxVal] = React.useState<number>(0);
@@ -294,4 +298,4 @@ const Graph: React.FC<GraphProps> = ({
   );
 };
 
-export default MetricGraph;
+export default McadMetricGraph;

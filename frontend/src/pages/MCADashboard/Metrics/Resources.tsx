@@ -34,7 +34,7 @@ type MetricsProps = {
   activeTabKey: number;
 };
 
-const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.ReactElement => {
+const Resources: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.ReactElement => {
   const [refreshRate, setRefreshRate] = React.useState<number>(30000);
   const [span, setSpan] = React.useState<string>('2w');
   const [validNamespaces, setValidNamespaces] = React.useState<Set<string>>();
@@ -142,15 +142,9 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
             dateFormatter={convertRangeToTime}
           />
         </div>
-        <MetricsCards
-          queries={statusSummaryQueries}
-          name={'Cluster Status Summary'}
-          refreshRate={refreshRate}
-        />
-        <QuotaTable data={data ? data : emptyDataObject} validNamespaces={validNamespaces} />
-        {graphQueries.map((query, index) => {
+        {mcadPromQueries.map((query, index) => {
           return (
-            <MetricGraph
+            <McadMetricGraph
               key={index}
               query={query}
               time={span}
@@ -165,4 +159,4 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
   );
 };
 
-export default Metrics;
+export default Resources;
