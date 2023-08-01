@@ -11,7 +11,7 @@ class AllAppwrappers {
     const stats: { [key: string]: any } = {};
     const wrappers: { [key: string]: string } = {};
     const wrappersLite: { [key: string]: any } = {};
-    const statusCounts = { Dispatched: 0, Queued: 0, 'Re-enqueued': 0, Other: 0 };
+    const statusCounts = { Dispatched: 0, Queued: 0, 'Re-enqueued': 0, Failed: 0, Other: 0 };
 
     let jsonData;
     for (let i = 0; i < jsonStringList.length; i++) {
@@ -90,6 +90,9 @@ class AllAppwrappers {
           rephrasedState = 'Queued';
           statusCounts.Queued = statusCounts.Queued + 1;
         }
+      } else if (state === 'Failed') {
+        rephrasedState = 'Failed';
+        statusCounts.Failed = statusCounts.Failed + 1;
       } else if (state === 'RunningHoldCompletion') {
         rephrasedState = 'CompletedWithRunningPods';
         statusCounts.Other = statusCounts.Other + 1;
