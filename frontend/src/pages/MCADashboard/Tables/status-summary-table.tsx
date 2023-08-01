@@ -17,6 +17,7 @@ interface StatusSummaryData {
   dispatched: string;
   queued: string;
   reenqueued: string;
+  failed: string;
   other: string;
 }
 
@@ -31,12 +32,12 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
   const onToggle = (isExpanded: boolean) => {
     setIsExpanded(isExpanded);
   };
-
   const repositories: StatusSummaryData[] = [
     {
       dispatched: data.stats.statusCounts.Dispatched.toString(),
       queued: data.stats.statusCounts.Queued.toString(),
       reenqueued: data.stats.statusCounts['Re-enqueued'].toString(),
+      failed: data.stats.statusCounts.Failed.toString(),
       other: data.stats.statusCounts.Other.toString(),
     },
   ];
@@ -45,6 +46,7 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
     { x: 'Dispatched', y: data.stats.statusCounts.Dispatched },
     { x: 'Queued', y: data.stats.statusCounts.Queued },
     { x: 'Re-enqueued', y: data.stats.statusCounts['Re-enqueued'] },
+    { x: 'Failed', y: data.stats.statusCounts.Failed },
     { x: 'Other', y: data.stats.statusCounts.Other },
   ];
 
@@ -69,6 +71,11 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
     {
       field: 'reenqueued',
       label: 'Re-enqueued',
+      sortable: false,
+    },
+    {
+      field: 'failed',
+      label: 'Failed',
       sortable: false,
     },
     {
@@ -105,6 +112,7 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
                   { name: 'Dispatched: ' + data.stats.statusCounts.Dispatched },
                   { name: 'Queued: ' + data.stats.statusCounts.Queued },
                   { name: 'Re-enqueued: ' + data.stats.statusCounts['Re-enqueued'] },
+                  { name: 'Failed: ' + data.stats.statusCounts.Failed },
                   { name: 'Other: ' + data.stats.statusCounts.Other },
                 ]}
                 legendOrientation="vertical"
@@ -135,6 +143,7 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
                     <Td dataLabel={statusSummary.dispatched}>{statusSummary.dispatched}</Td>
                     <Td dataLabel={statusSummary.queued}>{statusSummary.queued}</Td>
                     <Td dataLabel={statusSummary.reenqueued}>{statusSummary.reenqueued}</Td>
+                    <Td dataLabel={statusSummary.failed}>{statusSummary.failed}</Td>
                     <Td dataLabel={statusSummary.other}>{statusSummary.other}</Td>
                   </Tr>
                 )}

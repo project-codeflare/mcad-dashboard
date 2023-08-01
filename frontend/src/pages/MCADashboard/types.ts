@@ -21,6 +21,7 @@ export interface Data {
       Dispatched: number | string;
       Queued: number | string;
       'Re-enqueued': number | string;
+      Failed: number | string;
       Other: number | string;
     };
   };
