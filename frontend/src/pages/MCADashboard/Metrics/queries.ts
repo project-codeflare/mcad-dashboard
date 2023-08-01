@@ -2,8 +2,8 @@ import { Query, Unit } from './types';
 
 export const availableResourceQueries: Query[] = [
   {
-    name: 'Available CPU %',
-    query: '(1 - cluster:node_cpu:ratio{cluster=""}) * 100',
+    name: 'Utilized CPU %',
+    query: '(cluster:node_cpu:ratio{cluster=""}) * 100',
     unit: Unit.PERCENT,
   },
   {
@@ -16,8 +16,8 @@ export const availableResourceQueries: Query[] = [
       'sum(cluster:capacity_cpu_cores:sum{cluster=""}) - sum(cluster:cpu_usage_cores:sum{cluster=""})',
   },
   {
-    name: 'Available Memory %',
-    query: '(1 - cluster:memory_usage:ratio{cluster=""}) * 100',
+    name: 'Utilized Memory %',
+    query: '(cluster:memory_usage:ratio{cluster=""}) * 100',
     unit: Unit.PERCENT,
   },
   {
