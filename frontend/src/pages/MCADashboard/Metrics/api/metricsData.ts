@@ -4,9 +4,30 @@ import React from 'react';
 import { timeStringToSeconds } from '~/pages/MCADashboard/Metrics/metrics-utils';
 
 export const getMetricData = async (query: string) => {
-  const body = { query: query };
-  const res: { data: { value: [string, number] }[] } = await axios.post('/api/metrics-data', body);
-  return res.data[0].value[1];
+  const noGpu = "No GPU In Cluster"
+  const utilizedGPUQuery = 'count(count by (UUID,GPU_I_ID) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{exported_pod=~".+"})) or vector(0)'
+  const utilizedGPUMemoryQuery = 'count(count by (UUID,GPU_I_ID) (DCGM_FI_DEV_MEM_COPY_UTIL))'
+  try {
+    const body = { query: query };
+    const res: { data: { value: [string, number] }[] } = await axios.post('/api/metrics-data', body);
+    if (query === utilizedGPUQuery) { // since vector(0) in query, even if no gpu returns 0
+      const gpubody = { query: utilizedGPUMemoryQuery }; // use the utilizedGPUMemoryQuery to verify gpu is present in the cluster
+      const gpures: { data: { value: [string, number] }[] } = await axios.post('/api/metrics-data', gpubody);
+      if (gpures.data && gpures.data[0] && gpures.data[0].value && gpures.data[0].value[1] !== undefined) {
+        return res.data[0].value[1];
+      } else {
+        return noGpu;
+      }
+    } else {
+      if (res.data && res.data[0] && res.data[0].value && res.data[0].value[1] !== undefined) {
+        return res.data[0].value[1];
+      } else {
+        return noGpu;
+      }
+    }
+  } catch (error) {
+    return 0;
+  }
 };
 
 export const getMetricTableData = async (query: string) => {

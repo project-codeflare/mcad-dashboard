@@ -46,7 +46,7 @@ const fetchPrometheusDataRange = async (
 
 const getMetric = async (host: string, query: string, axiosInstance: AxiosInstance) => {
   const fetchedData: any = await fetchPrometheusData(host, query, axiosInstance);
-  const valueAsDecimal = parseFloat(fetchedData[0].value[1]);
+  //const valueAsDecimal = parseFloat(fetchedData[0].value[1]);
   return fetchedData;
 };
 

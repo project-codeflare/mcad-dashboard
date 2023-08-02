@@ -41,6 +41,7 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
           Dispatched: '-',
           Queued: '-',
           'Re-enqueued': '-',
+          Failed: '-',
           Other: '-',
         },
       },
