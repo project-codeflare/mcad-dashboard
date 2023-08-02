@@ -19,10 +19,15 @@ const MetricCard: React.FC<MetricCardProps> = ({
   unit,
 }: MetricCardProps): React.ReactElement => {
   const [percentage, setPercentage] = React.useState(0.0);
+  const [noGpu, setNoGpu] = React.useState("");
 
   const getData = async () => {
     const data = await getMetricData(query);
-    setPercentage(Math.round(data * 100) / 100);
+    if (data === 'No GPU In Cluster') {
+      setNoGpu(data);
+    } else {
+      setPercentage(Math.round(data * 100) / 100);
+    }
   };
 
   React.useEffect(() => {
@@ -41,8 +46,16 @@ const MetricCard: React.FC<MetricCardProps> = ({
     <Card className="metric-card">
       <CardHeader className="metric-card-header">{name}</CardHeader>
       <CardBody className="metric-card-data">
-        {Math.round(percentage * 100) / 100}
-        {unit === Unit.PERCENT && unit}
+        {noGpu === "" ? (
+          <>
+            {Math.round(percentage * 100) / 100}
+            {unit === Unit.PERCENT && unit}
+          </>
+        ) : (
+          <>
+            {noGpu}
+          </>
+        )}
       </CardBody>
     </Card>
   );

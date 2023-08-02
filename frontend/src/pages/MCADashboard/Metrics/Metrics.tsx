@@ -22,6 +22,7 @@ const emptyDataObject: Data = {
       Dispatched: '-',
       Queued: '-',
       'Re-enqueued': '-',
+      Failed: '-',
       Other: '-',
     },
   },
