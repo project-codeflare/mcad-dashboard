@@ -10,7 +10,8 @@ export const getMetricData = async (query: string) => {
   try {
     const body = { query: query };
     const res: { data: { value: [string, number] }[] } = await axios.post('/api/metrics-data', body);
-    if (query === utilizedGPUQuery) { // since vector(0) in query, even if no gpu returns 0
+    console.log("res.data", res.data)
+    if (query === utilizedGPUQuery) { // since vector(0) in query, even if no gpu in cluster returns 0
       const gpubody = { query: utilizedGPUMemoryQuery }; // use the utilizedGPUMemoryQuery to verify gpu is present in the cluster
       const gpures: { data: { value: [string, number] }[] } = await axios.post('/api/metrics-data', gpubody);
       if (gpures.data && gpures.data[0] && gpures.data[0].value && gpures.data[0].value[1] !== undefined) {
@@ -22,7 +23,11 @@ export const getMetricData = async (query: string) => {
       if (res.data && res.data[0] && res.data[0].value && res.data[0].value[1] !== undefined) {
         return res.data[0].value[1];
       } else {
-        return noGpu;
+        if (query === utilizedGPUMemoryQuery) {
+          return noGpu;
+        } else {
+          return 0;
+        }
       }
     }
   } catch (error) {
