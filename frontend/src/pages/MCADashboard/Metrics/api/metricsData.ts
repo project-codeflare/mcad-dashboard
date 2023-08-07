@@ -10,7 +10,6 @@ export const getMetricData = async (query: string) => {
   try {
     const body = { query: query };
     const res: { data: { value: [string, number] }[] } = await axios.post('/api/metrics-data', body);
-    console.log("res.data", res.data)
     if (query === utilizedGPUQuery) { // since vector(0) in query, even if no gpu in cluster returns 0
       const gpubody = { query: utilizedGPUMemoryQuery }; // use the utilizedGPUMemoryQuery to verify gpu is present in the cluster
       const gpures: { data: { value: [string, number] }[] } = await axios.post('/api/metrics-data', gpubody);
