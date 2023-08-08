@@ -4,7 +4,7 @@ import React from 'react';
 import { timeStringToSeconds } from '~/pages/MCADashboard/Metrics/metrics-utils';
 
 export const getMetricData = async (query: string) => {
-  const noGpu = "No GPU In Cluster"
+  const noGpu = "No GPUs Detected"
   const utilizedGPUQuery = 'count(count by (UUID,GPU_I_ID) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{exported_pod=~".+"})) or vector(0)'
   const utilizedGPUMemoryQuery = 'count(count by (UUID,GPU_I_ID) (DCGM_FI_DEV_MEM_COPY_UTIL))'
   try {
