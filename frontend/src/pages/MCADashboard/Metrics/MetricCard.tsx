@@ -23,7 +23,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
   const getData = async () => {
     const data = await getMetricData(query);
-    if (data === 'No GPU In Cluster') {
+    if (data === 'No GPUs Detected') {
       setNoGpu(data);
     } else {
       setPercentage(Math.round(data * 100) / 100);
