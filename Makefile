@@ -33,6 +33,7 @@ build:
 build-exporter:
 	echo "Building exporter from ${EXPORTER_DOCKERFILE}"
 	${CONTAINER_BUILDER} build -f ${EXPORTER_DOCKERFILE} -t mcad_exporter .
+	# TODO what should this image name be?
 
 ##################################
 

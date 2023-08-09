@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: mcad-exporter
-          image: 'docker.io/maiariyer/mcad_nodejs_exporter:latest'
+          image: 'mcad_exporter' #TODO what should this image name be?
           imagePullPolicy: Always
           ports:
             - name: http
