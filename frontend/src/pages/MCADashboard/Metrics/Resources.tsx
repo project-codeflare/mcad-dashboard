@@ -6,7 +6,7 @@ import '../../MCADashboard/MCADashboard.css';
 import './Metrics.scss';
 import MetricGraph from './MetricGraph';
 import McadMetricGraph from './McadMetricGraph';
-import TimeRangeDropDown from './time-range-dropdown';
+import TimeRangeDropDown from '../DropDowns/time-range-drop-down';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
 import ApplicationsPage from '../../ApplicationsPage';
 import { Query, Unit } from './types';
@@ -37,7 +37,7 @@ type MetricsProps = {
 
 const Resources: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.ReactElement => {
   const [refreshRate, setRefreshRate] = React.useState<number>(30000);
-  const [span, setSpan] = React.useState<string>('2w');
+  const [span, setSpan] = React.useState<string>('30m');
   const [validNamespaces, setValidNamespaces] = React.useState<Set<string>>();
   const handleRefreshSelection = (selectedItemId: number) => {
     setRefreshRate(selectedItemId);
@@ -98,33 +98,6 @@ const Resources: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): Reac
       window.removeEventListener('data_stored', handleStorageChange);
     };
   }, []);
-
-  const convertRangeToTime = (timeRange: string) => {
-    switch (timeRange) {
-      case 'Custom Time Range':
-        return '5m';
-      case 'Last 5 minutes':
-        return '5m';
-      case 'Last 10 minutes':
-        return '10m';
-      case 'Last 30 minutes':
-        return '30m';
-      case 'Last 1 hour':
-        return '1h';
-      case 'Last 2 hours':
-        return '2h';
-      case 'Last 1 day':
-        return '1d';
-      case 'Last 2 days':
-        return '2d';
-      case 'Last 1 week':
-        return '1w';
-      case 'Last 2 weeks':
-        return '2w';
-      default:
-        throw new Error('invalid input');
-    }
-  };
 
   return (
     <>

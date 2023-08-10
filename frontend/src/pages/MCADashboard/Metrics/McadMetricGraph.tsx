@@ -45,6 +45,11 @@ type MetricGraphProps = {
   validNamespaces?: Set<string>;
 };
 
+type LegendDataItem = {
+  childName: string;
+  name: string;
+};
+
 const formatSeriesValues = (values: any[], samples: number, span: number) => {
   const newValues = values;
 
@@ -125,12 +130,18 @@ const McadMetricGraph: React.FC<MetricGraphProps> = ({
 
     return () => clearInterval(interval);
   }, [time, validNamespaces, refreshRate]);
+  const legendData: LegendDataItem[] = [];
 
-  const legendData = metricData?.map((obj) => {
-    return {
-      childName: obj.metric.status ? obj.metric.status : obj.metric.namespace,
-      name: obj.metric.status ? obj.metric.status : obj.metric.namespace,
-    };
+  metricData?.forEach((obj) => {
+    const status = obj.metric.status;
+    // Check if the same status is already in legendData
+    const alreadyExists = legendData.some(item => item.childName === status);
+    if (!alreadyExists) {
+      legendData.push({
+        childName: status,
+        name: status,
+      });
+    }
   });
 
   return (
@@ -240,15 +251,15 @@ const Graph: React.FC<GraphProps> = ({
           tickFormat={(tick) =>
             time.charAt(time.length - 1) === 'h' || time.charAt(time.length - 1) === 'm'
               ? new Date(tick * 1000).toLocaleTimeString([], {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })
+                hour: 'numeric',
+                minute: 'numeric',
+              })
               : new Date(tick * 1000).toLocaleDateString([], {
-                  day: 'numeric',
-                  month: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })
+                day: 'numeric',
+                month: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+              })
           }
         />
         <ChartAxis
