@@ -13,6 +13,7 @@ import './MCADashboard.css';
 import fetchData from './app-wrapper-data';
 import { Data } from './types';
 import MetricsCards from './Metrics/MetricsCards';
+import { convertRangeToTime } from './Metrics/metrics-utils';
 import { availableResourceQueries } from './Metrics/queries';
 import { getNamespacesFromAppwrappers } from './Metrics/metrics-utils';
 //const description = `A Dashboard for Multi-Cluster App Dispatcher`;
@@ -29,9 +30,14 @@ let enabledComponents: OdhApplication[] = [];
 export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
   ({ loaded, loadError, components }) => {
     const isEmpty = !components || components.length === 0;
+    const [span, setSpan] = React.useState<string>('30m');
     const [refreshRate, setRefreshRate] = React.useState(30000);
     const handleSelection = (selectedItemId: number) => {
       setRefreshRate(selectedItemId);
+    };
+
+    const handleTimeRangeSelection = (item: string) => {
+      setSpan(item);
     };
 
     const emptyDataObject: Data = {
@@ -104,7 +110,10 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
         <div className="dropdowns-container">
           <RefreshRateDropDown onSelected={handleSelection} />
           <div className="spacer" />
-          <TimeRangeDropDown />
+          <TimeRangeDropDown
+            onSelected={handleTimeRangeSelection}
+            dateFormatter={convertRangeToTime}
+          />
         </div>
         <MetricsCards
           queries={availableResourceQueries}
