@@ -75,12 +75,7 @@
     "resize-observer": "^1.0.4",
     "sass": "^1.56.2",
     "showdown": "^1.9.1",
-<<<<<<< HEAD
-    "victory-core": "^36.6.10",
-    "yaml": "^2.1.3"
-=======
     "yaml": "^2.2.2"
->>>>>>> e8f212b894877ffb8b1eca4d980409f84d3969b7
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
