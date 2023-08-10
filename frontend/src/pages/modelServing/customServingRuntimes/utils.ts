@@ -2,8 +2,8 @@ import { K8sResourceCommon } from '@openshift/dynamic-plugin-sdk-utils';
 import { ServingRuntimeKind, TemplateKind } from '~/k8sTypes';
 import { getDisplayNameFromK8sResource } from '~/pages/projects/utils';
 
-export const getTemplateEnabled = (template: TemplateKind) =>
-  !(template.metadata.annotations?.['opendatahub.io/template-enabled'] === 'false');
+export const getTemplateEnabled = (template: TemplateKind, templateDisablement: string[]) =>
+  !templateDisablement.includes(getServingRuntimeNameFromTemplate(template));
 
 export const isTemplateOOTB = (template: TemplateKind) =>
   template.metadata.labels?.['opendatahub.io/ootb'] === 'true';
@@ -15,6 +15,26 @@ export const getSortedTemplates = (templates: TemplateKind[], order: string[]) =
       order.indexOf(getServingRuntimeNameFromTemplate(b)),
   );
 
+export const setListDisabled = (
+  template: TemplateKind,
+  listTemplates: TemplateKind[],
+  templateDisablement: string[],
+  isDisabled: boolean,
+): string[] => {
+  const servingRuntimeName = getServingRuntimeNameFromTemplate(template);
+  const templateDisablementFiltered = templateDisablement.filter((item) =>
+    listTemplates.find((t) => getServingRuntimeNameFromTemplate(t) === item),
+  );
+  if (isDisabled) {
+    if (!templateDisablementFiltered.includes(servingRuntimeName)) {
+      return [...templateDisablementFiltered, servingRuntimeName];
+    }
+  } else {
+    return templateDisablementFiltered.filter((item) => item !== servingRuntimeName);
+  }
+  return templateDisablementFiltered;
+};
+
 export const getServingRuntimeDisplayNameFromTemplate = (template: TemplateKind) =>
   getDisplayNameFromK8sResource(template.objects[0]);
 
@@ -23,7 +43,6 @@ export const getServingRuntimeNameFromTemplate = (template: TemplateKind) =>
 
 export const isServingRuntimeKind = (obj: K8sResourceCommon): obj is ServingRuntimeKind =>
   obj.kind === 'ServingRuntime' &&
-  obj.spec?.builtInAdapter !== undefined &&
   obj.spec?.containers !== undefined &&
   obj.spec?.supportedModelFormats !== undefined;
 
@@ -50,7 +69,12 @@ export const getServingRuntimeFromTemplate = (
   return template.objects[0];
 };
 
-export const getDisplayNameFromServingRuntimeTemplate = (resource: ServingRuntimeKind): string =>
-  resource.metadata.annotations?.['opendatahub.io/template-display-name'] ||
-  resource.metadata.annotations?.['opendatahub.io/template-name'] ||
-  'Unknown Serving Runtime';
+export const getDisplayNameFromServingRuntimeTemplate = (resource: ServingRuntimeKind): string => {
+  const templateName =
+    resource.metadata.annotations?.['opendatahub.io/template-display-name'] ||
+    resource.metadata.annotations?.['opendatahub.io/template-name'];
+  const legacyTemplateName =
+    resource.spec.builtInAdapter?.serverType === 'ovms' ? 'OpenVINO Model Server' : undefined;
+
+  return templateName || legacyTemplateName || 'Unknown Serving Runtime';
+};

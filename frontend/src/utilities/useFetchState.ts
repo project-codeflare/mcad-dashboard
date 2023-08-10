@@ -29,8 +29,9 @@ export const isCommonStateError = (e: Error) => {
   return false;
 };
 
-/** Provided as a promise, so you can await a refresh before enabling buttons / closing modals */
-export type FetchStateRefreshPromise = () => Promise<void>;
+/** Provided as a promise, so you can await a refresh before enabling buttons / closing modals.
+ * Returns the successful value or nothing if the call was cancelled / didn't complete. */
+export type FetchStateRefreshPromise<Type> = () => Promise<Type | undefined>;
 
 /** Return state */
 export type FetchState<Type, Default extends Type = Type> = [
@@ -38,11 +39,14 @@ export type FetchState<Type, Default extends Type = Type> = [
   loaded: boolean,
   loadError: Error | undefined,
   /** This promise should never throw to the .catch */
-  refresh: FetchStateRefreshPromise,
+  refresh: FetchStateRefreshPromise<Type>,
 ];
 
 type SetStateLazy<Type> = (lastState: Type) => Type;
 export type AdHocUpdate<Type> = (updateLater: (updater: SetStateLazy<Type>) => void) => void;
+
+const isAdHocUpdate = <Type>(r: Type | AdHocUpdate<Type>): r is AdHocUpdate<Type> =>
+  typeof r === 'function';
 
 /**
  * All callbacks will receive a K8sAPIOptions, which includes a signal to provide to a RequestInit.
@@ -133,7 +137,7 @@ const useFetchState = <Type, Default extends Type = Type>(
     cleanupRef.current();
   }, [fetchCallbackPromise]);
 
-  const call = React.useCallback<() => [Promise<void>, () => void]>(() => {
+  const call = React.useCallback<() => [Promise<Type | undefined>, () => void]>(() => {
     let alreadyAborted = false;
     const abortController = new AbortController();
 
@@ -142,7 +146,7 @@ const useFetchState = <Type, Default extends Type = Type>(
       fetchCallbackPromise({ signal: abortController.signal })
         .then((r) => {
           if (alreadyAborted) {
-            return;
+            return undefined;
           }
 
           if (r === undefined) {
@@ -151,33 +155,38 @@ const useFetchState = <Type, Default extends Type = Type>(
             console.error(
               'useFetchState Error: Got undefined back from a promise. This is likely an error with your call. Preventing setting.',
             );
-            return;
+            return undefined;
           }
 
           setLoadError(undefined);
-          if (typeof r === 'function') {
+          if (isAdHocUpdate(r)) {
             r((setState: SetStateLazy<Type>) => {
               if (alreadyAborted) {
-                return;
+                return undefined;
               }
 
               setResult(setState);
               setLoaded(true);
+              return undefined;
             });
-          } else {
-            setResult(r);
-            setLoaded(true);
+            return undefined;
           }
+
+          setResult(r);
+          setLoaded(true);
+
+          return r;
         })
         .catch((e) => {
           if (alreadyAborted) {
-            return;
+            return undefined;
           }
 
           if (isCommonStateError(e)) {
-            return;
+            return undefined;
           }
           setLoadError(e);
+          return undefined;
         });
 
     const unload = () => {
@@ -214,7 +223,7 @@ const useFetchState = <Type, Default extends Type = Type>(
     };
   }, [call, refreshRate]);
 
-  const refresh = React.useCallback<FetchStateRefreshPromise>(() => {
+  const refresh = React.useCallback<FetchStateRefreshPromise<Type>>(() => {
     abortCallbackRef.current();
     const [callPromise, unload] = call();
     abortCallbackRef.current = unload;
