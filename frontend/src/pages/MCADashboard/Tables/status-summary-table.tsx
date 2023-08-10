@@ -9,7 +9,7 @@ import {
 import { Td, Tr } from '@patternfly/react-table';
 import { SortableData } from '../components/table/useTableColumnSort';
 import Table from '../components/table/Table';
-import { Data } from '../types';
+import { Data, StatusKey } from '../types';
 import { ChartDonut, ChartThemeColor } from '@patternfly/react-charts';
 import MCADashboard from '../MCADashboard.css';
 
@@ -52,8 +52,8 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
 
   let totalAppWrappers = 0;
   for (const key in data.stats.statusCounts) {
-    if (typeof data.stats.statusCounts[key] === 'number') {
-      totalAppWrappers += data.stats.statusCounts[key] as number;
+    if (typeof data.stats.statusCounts[key as StatusKey] === 'number') {
+      totalAppWrappers += data.stats.statusCounts[key as StatusKey] as number;
     }
   }
 

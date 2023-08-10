@@ -27,7 +27,7 @@ import { formatUnitStringOnAxis, timeStringToSeconds, filterData } from './metri
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
-  const width = children?.[0]?.[0]?.props?.width ?? '100%';
+  const width = (React.Children.toArray(children)[0] as React.ReactElement)?.props?.width ?? '100%';
   return (
     <foreignObject height={75} width="100%" y={245}>
       <div className="monitoring-dashboards__legend-wrap horizontal-scroll">
@@ -188,16 +188,15 @@ const Graph: React.FC<GraphProps> = ({
   }
 
   const [maxVal, setMaxVal] = React.useState<number>(0);
-
   const domain: any = { x: xDomain, y: undefined };
-  const getMaxVal = (metricData) => {
+  const getMaxVal = (metricData: MetricData[]) => {
     let maxDataVal;
     let maxVal = 0;
     for (const data of metricData) {
       maxDataVal = _.maxBy(data.values, (item) => {
         return parseInt(item[1]);
-      })[1];
-      maxVal = Math.max(maxVal, maxDataVal);
+      })?.[1];
+      maxVal = Math.max(maxVal, Number(maxDataVal));
     }
     return maxVal;
   };

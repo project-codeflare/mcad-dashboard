@@ -45,7 +45,7 @@ export const timeStringToSeconds = (timeString: string) => {
   }
 };
 
-export const getNamespacesFromAppwrappers = (data): string[] => {
+export const getNamespacesFromAppwrappers = (data: { appwrappers: any; }): string[] => {
   const namespaces = new Set<string>();
   const appwrapperData = data.appwrappers;
   for (const key in appwrapperData) {
@@ -101,7 +101,7 @@ export const formatUnitStringOnAxis = (value: number, maxVal: number, unit?: Uni
   }
 };
 
-export const filterData = (data, validNamespaces) => {
+export const filterData = (data: any[], validNamespaces: Set<string> | undefined) => {
   if (data && validNamespaces) {
     const filteredData = data.filter((dataPoint) => {
       return validNamespaces.has(dataPoint.metric.namespace);

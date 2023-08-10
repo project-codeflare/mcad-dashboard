@@ -33,14 +33,14 @@ const SearchFieldAppwrappers: React.FC<SearchFieldProps> = ({
         selections={searchType}
         onSelect={(e, key) => {
           if (typeof key === 'string') {
-            onSearchTypeChange(SearchType[key]);
+            onSearchTypeChange(SearchType[key as keyof typeof SearchType]);
             setTypeOpen(false);
           }
         }}
       >
         {types.map((key) => (
           <SelectOption key={key} value={key}>
-            {SearchType[key]}
+            {SearchType[key as keyof typeof SearchType]}
           </SelectOption>
         ))}
       </Select>

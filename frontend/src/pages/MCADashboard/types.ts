@@ -26,3 +26,5 @@ export interface Data {
     };
   };
 }
+
+export type StatusKey = keyof Data['stats']['statusCounts'];

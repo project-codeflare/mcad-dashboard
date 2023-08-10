@@ -29,6 +29,7 @@ interface QuotaData {
   memorylimits?: number;
   gpu?: number;
   gpumemory?: number;
+  [key: string]: number | string | undefined; // Index signature
 }
 
 interface NameSpaceCount {
@@ -46,7 +47,7 @@ enum SearchTypeQuotaTable {
 }
 
 type kv_pair = {
-  key?: number;
+  [key: string]: number | undefined;
 };
 
 type TableData = {
@@ -59,6 +60,13 @@ type TableData = {
   gpu?: kv_pair;
   gpumemory?: kv_pair;
 };
+
+interface DataPoint {
+  metric: {
+    namespace: string; // Adjust this type accordingly
+  };
+  value: [number, string]; // Adjust this type accordingly
+}
 
 export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
   data: Data,
@@ -81,17 +89,19 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
     setTableData(initialTableData);
   }, []);
 
-  const sortFunction = (a: QuotaData, b: QuotaData, keyfield: string) => {
-    if (a[keyfield] === undefined && b[keyfield] === undefined) {
+  const sortFunction = (a: QuotaData, b: QuotaData, keyfield: keyof QuotaData) => {
+    const aValue = a[keyfield] as number | undefined;
+    const bValue = b[keyfield] as number | undefined;
+    if (aValue === undefined && bValue === undefined) {
       return 0;
     }
-    if (a[keyfield] === undefined) {
+    if (aValue === undefined) {
       return -1;
     }
-    if (b[keyfield] === undefined) {
+    if (bValue === undefined) {
       return 1;
     }
-    return a[keyfield] - b[keyfield];
+    return aValue - bValue;
   };
 
   const columns: SortableData<QuotaData>[] = [
@@ -165,12 +175,8 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
   }
 
   React.useEffect(() => {
-    console.log(tableData);
-  }, [tableData]);
-
-  React.useEffect(() => {
-    const formatData = (data) => {
-      const formattedData = {};
+    const formatData = (data: DataPoint[]) => {
+      const formattedData: { [key: string]: number } = {};
       for (const dataPoint of data) {
         formattedData[dataPoint.metric.namespace] =
           Math.round(parseFloat(dataPoint.value[1]) * 100) / 100;
@@ -182,8 +188,11 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
         const promises = tableQueries.map(async (query) => {
           const data = await getMetricTableData(query.query);
           const filteredData = filterData(data, validNamespaces);
-          const formattedData = formatData(filteredData);
-          return { [query.name]: formattedData };
+          if (filteredData) {
+            const formattedData = formatData(filteredData);
+            return { [query.name]: formattedData };
+          }
+          return null;
         });
         const results = await Promise.all(promises);
         const tableDataUpdate = Object.assign({}, ...results);
