@@ -351,7 +351,7 @@ export const checkRequiredFieldsForNotebookStart = (
   const { storageType, creating, existing } = storageData;
   const isNotebookDataValid = !!(
     projectName &&
-    notebookName &&
+    notebookName.trim() &&
     notebookSize &&
     image.imageStream &&
     image.imageVersion
@@ -374,5 +374,17 @@ export const checkRequiredFieldsForNotebookStart = (
     isStorageDataValid &&
     isEnvVariableDataValid(envVariables) &&
     isDataConnectionValid
+  );
+};
+
+export const isInvalidBYONImageStream = (imageStream: ImageStreamKind) => {
+  // there will be always only 1 tag in the spec for BYON images
+  // status tags could be more than one
+  const activeTag = imageStream.status?.tags?.find(
+    (statusTag) => statusTag.tag === imageStream.spec.tags?.[0].name,
+  );
+  return (
+    imageStream.metadata.labels?.['app.kubernetes.io/created-by'] === 'byon' &&
+    (activeTag === undefined || activeTag.items === null)
   );
 };

@@ -2,7 +2,7 @@ import * as path from 'path';
 import './dotenv';
 import { DashboardConfig, NotebookSize } from '../types';
 
-export const PORT = process.env.PORT || process.env.BACKEND_PORT || 8080;
+export const PORT = Number(process.env.PORT) || Number(process.env.BACKEND_PORT) || 8080;
 export const IP = process.env.IP || '0.0.0.0';
 export const LOG_LEVEL = process.env.FASTIFY_LOG_LEVEL || process.env.LOG_LEVEL || 'info';
 export const LOG_DIR = path.join(__dirname, '../../../logs');
@@ -62,6 +62,7 @@ export const blankDashboardCR: DashboardConfig = {
       allowedGroups: 'system:authenticated',
     },
     templateOrder: [],
+    // templateDisablement: [], Don't create this field, will be used in migration
   },
   status: {
     dependencyOperators: {
@@ -74,7 +75,7 @@ export const blankDashboardCR: DashboardConfig = {
 };
 
 export const MOUNT_PATH = '/opt/app-root/src';
-export const DEFAULT_PVC_SIZE = '20';
+export const DEFAULT_PVC_SIZE = '20Gi';
 
 export const DEFAULT_NOTEBOOK_SIZES: NotebookSize[] = [
   {
@@ -130,3 +131,6 @@ export const DEFAULT_NOTEBOOK_SIZES: NotebookSize[] = [
     },
   },
 ];
+
+export const imageUrlRegex =
+  /^([\w.\-_]+((?::\d+|)(?=\/[a-z0-9._-]+\/[a-z0-9._-]+))|)(?:\/|)([a-z0-9.\-_]+(?:\/[a-z0-9.\-_]+|))(?::([\w.\-_]{1,127})|)/;

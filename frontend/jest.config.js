@@ -2,25 +2,11 @@
 // https://jestjs.io/docs/en/configuration.html
 
 module.exports = {
+  roots: ['<rootDir>/src/__tests__/unit'],
+  testMatch: ['**/?(*.)+(spec|test).ts?(x)'],
+
   // Automatically clear mock calls and instances between every test
   clearMocks: true,
-
-  // Indicates whether the coverage information should be collected while executing the test
-  collectCoverage: false,
-
-  // The directory where Jest should output its coverage files
-  coverageDirectory: 'coverage',
-
-  coverageThreshold: {
-    global: {
-      branches: 0,
-      functions: 0,
-      lines: 0,
-      statements: 0,
-    },
-  },
-
-  collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}'],
 
   // An array of directory names to be searched recursively up from the requiring module's location
   moduleDirectories: ['node_modules', '<rootDir>/src'],
@@ -33,18 +19,11 @@ module.exports = {
     '~/(.*)': '<rootDir>/src/$1',
   },
 
-  // A preset that is used as a base for Jest's configuration
-  preset: 'ts-jest/presets/js-with-ts',
-
-  // The path to a module that runs some code to configure or set up the testing framework before each test
-  setupFilesAfterEnv: ['<rootDir>/config/setupTests.js'],
-
   // The test environment that will be used for testing.
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-environment-jsdom',
 
-  transform: {
-    'node_modules/.+\\.(j|t)sx?$': 'ts-jest',
-  },
+  // include projects from node_modules as required
+  transformIgnorePatterns: ['node_modules/(?!yaml)'],
 
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   snapshotSerializers: [],

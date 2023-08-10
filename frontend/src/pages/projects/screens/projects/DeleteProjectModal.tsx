@@ -34,8 +34,8 @@ const DeleteProjectModal: React.FC<DeleteProjectModalProps> = ({ deleteData, onC
           deleteProject(deleteData?.metadata.name)
             .then(() => onBeforeClose(true))
             .catch((e) => {
-              onBeforeClose(false);
               setError(e);
+              setDeleting(false);
             });
         }
       }}

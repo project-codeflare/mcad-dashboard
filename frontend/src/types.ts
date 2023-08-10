@@ -64,6 +64,7 @@ export type DashboardConfig = K8sResourceCommon & {
       notebookTolerationSettings?: TolerationSettings;
     };
     templateOrder?: string[];
+    templateDisablement?: string[];
   };
   /** Faux status object -- computed by the service account */
   status: {
@@ -150,7 +151,7 @@ export type NotebookTolerationFormSettings = TolerationSettings & {
   error?: string;
 };
 
-export type ClusterSettings = {
+export type ClusterSettingsType = {
   userTrackingEnabled: boolean;
   pvcSize: number | string;
   cullerTimeout: number;
@@ -296,19 +297,6 @@ export type K8sResourceCommon = {
   metadata: K8sMetadata;
 };
 
-// Minimal type for ConsoleLinks
-export type ConsoleLinkKind = {
-  spec: {
-    text: string;
-    location: string;
-    href: string;
-    applicationMenu: {
-      section: string;
-      imageURL: string;
-    };
-  };
-} & K8sResourceCommon;
-
 //
 // Used for Telemetry
 //
@@ -322,6 +310,17 @@ declare global {
 
 export type ODHSegmentKey = {
   segmentKey: string;
+};
+
+export type ApplicationAction = {
+  label: string;
+  href: string;
+  image: React.ReactNode;
+};
+
+export type Section = {
+  label?: string;
+  actions: ApplicationAction[];
 };
 
 export type TrackingEventProperties = {
@@ -436,19 +435,11 @@ export type Route = {
   };
 };
 
-export type BYONImageError = {
-  severity: string;
-  message: string;
-};
-
-export type BYONImageStatus = 'Importing' | 'Validating' | 'Succeeded' | 'Failed';
-
 export type BYONImage = {
   id: string;
-  phase?: BYONImageStatus;
   user?: string;
   uploaded?: Date;
-  error?: BYONImageError;
+  error?: string;
 } & BYONImageCreateRequest &
   BYONImageUpdateRequest;
 
@@ -536,6 +527,13 @@ export type ImageStreamStatusTag = {
   items: ImageStreamStatusTagItem[];
 };
 
+export type ImageStreamStatusTagCondition = {
+  type: string;
+  status: string;
+  reason: string;
+  message: string;
+};
+
 export type ImageStreamStatus = {
   dockerImageRepository?: string;
   publicDockerImageRepository?: string;
@@ -593,6 +591,7 @@ export type ImageInfo = {
   default?: boolean;
   order: number;
   dockerImageRepo: string;
+  error?: string;
 };
 
 export type ImageType = 'byon' | 'jupyter' | 'other';

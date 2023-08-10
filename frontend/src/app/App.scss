@@ -2,6 +2,11 @@ html, body, #root {
   height: 100%;
 }
 
+#dashboard-page-main {
+  // Establish positioning relative to the top left of the main container.
+  position: relative;
+}
+
 .odh-dashboard {
   &__page-content {
     border: 1px solid var(--pf-global--BorderColor--100);
@@ -18,7 +23,6 @@ html, body, #root {
   }
   &__brand {
     height: 36px;
-    width: 100%;
   }
 }
 // specificity targeting form elements to override --pf-global--FontSize--md

@@ -19,7 +19,7 @@ export const mockDashboardConfig = ({
   disableInfo = false,
   disableSupport = false,
   disableClusterManager = false,
-  disableTracking = true,
+  disableTracking = false,
   disableBYONImageStream = false,
   disableISVBadges = false,
   disableAppLauncher = false,
@@ -177,6 +177,7 @@ export const mockDashboardConfig = ({
       },
     ],
     templateOrder: ['test-model'],
+    templateDisablement: ['test-model'],
   },
   status: {
     dependencyOperators: {

@@ -25,13 +25,16 @@ const ServingRuntimeList: React.FC = () => {
     },
     servingRuntimeTemplates: { data: templates, loaded: templatesLoaded, error: templateError },
     servingRuntimeTemplateOrder: { data: templateOrder },
+    servingRuntimeTemplateDisablement: { data: templateDisablement },
     serverSecrets: { refresh: refreshTokens },
     inferenceServices: { refresh: refreshInferenceServices },
     currentProject,
   } = React.useContext(ProjectDetailsContext);
 
   const templatesSorted = getSortedTemplates(templates, templateOrder);
-  const templatesEnabled = templatesSorted.filter(getTemplateEnabled);
+  const templatesEnabled = templatesSorted.filter((template) =>
+    getTemplateEnabled(template, templateDisablement),
+  );
 
   const emptyTemplates = templatesEnabled?.length === 0;
   const emptyModelServer = servingRuntimes.length === 0;
@@ -55,7 +58,7 @@ const ServingRuntimeList: React.FC = () => {
         emptyState={
           <EmptyDetailsList
             title="No model servers"
-            description="Before deploying a model, you must first configure a model server."
+            description="Before deploying a model, you must first add a model server."
             icon={PlusCircleIcon}
           />
         }
