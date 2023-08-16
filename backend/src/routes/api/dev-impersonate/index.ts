@@ -6,7 +6,7 @@ import { KubeFastifyInstance } from '../../../types';
 import {
   DEV_IMPERSONATE_PASSWORD,
   DEV_IMPERSONATE_USER,
-  DEV_IMPERSONATE_TOKEN,  // Temporary workaround: get impersonate to work through a token, because of hostname resolve the problem and IBM not using OAuth proxy
+  DEV_IMPERSONATE_TOKEN, // Temporary workaround: get impersonate to work through a token, because of hostname resolve the problem and IBM not using OAuth proxy
 } from '../../../utils/constants';
 import { createCustomError } from '../../../utils/requestUtils';
 import { devRoute } from '../../../utils/route-security';

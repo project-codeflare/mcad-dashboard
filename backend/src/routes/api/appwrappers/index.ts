@@ -1,6 +1,5 @@
 import { secureRoute } from '../../../utils/route-security';
-import { KubeFastifyInstance, OauthFastifyRequest } from '../../../types';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { KubeFastifyInstance } from '../../../types';
 import { AllAppwrappers } from './appwrapper-utils';
 
 module.exports = module.exports = async (fastify: KubeFastifyInstance) => {
