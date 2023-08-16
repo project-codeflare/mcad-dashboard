@@ -6,7 +6,7 @@ import { KubeFastifyInstance } from '../../../types';
 import {
   DEV_IMPERSONATE_PASSWORD,
   DEV_IMPERSONATE_USER,
-  DEV_IMPERSONATE_TOKEN,  // Temporary work around: get impersonate to work through token, becuase of hostname resolve problem and IBM not using oauth proxy
+  DEV_IMPERSONATE_TOKEN,  // Temporary workaround: get impersonate to work through a token, because of hostname resolve the problem and IBM not using OAuth proxy
 } from '../../../utils/constants';
 import { createCustomError } from '../../../utils/requestUtils';
 import { devRoute } from '../../../utils/route-security';
@@ -16,7 +16,7 @@ export default async (fastify: KubeFastifyInstance): Promise<void> => {
     '/',
     devRoute(async (request: FastifyRequest<{ Body: { impersonate: boolean } }>) => {
       return new Promise<{ code: number; response: string }>((resolve, reject) => {
-        // Temporary work around: get impersonate to work through token, becuase of hostname resolve problem and IBM not using oauth proxy
+        // Temporary workaround: get impersonate to work through a token, because of hostname resolve the problem and IBM not using OAuth proxy
         if (DEV_IMPERSONATE_TOKEN) {
           setImpersonateAccessToken(DEV_IMPERSONATE_TOKEN);
           resolve({ code: 200, response: DEV_IMPERSONATE_TOKEN });
