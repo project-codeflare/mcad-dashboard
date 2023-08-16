@@ -11,12 +11,14 @@ import ApplicationsPage from '../ApplicationsPage';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
 import Metrics from './Metrics/Metrics';
 import Resources from './Metrics/Resources';
+import { useUser } from '~/redux/selectors';
 
 const description = 'A Dashboard for Multi-Cluster App Dispatcher';
 const subDescription =
   '- MCAD is a Kubernetes controller providing mechanisms for applications to manage batch jobs in a single or multi-cluster environment';
 
 export const MCADTabs: React.FunctionComponent = () => {
+  const { isAdmin } = useUser();
   const { components, loaded, loadError } = useWatchComponents(true);
   const isEmpty = !components || components.length === 0;
   const [activeTabKey, setActiveTabKey] = React.useState<string | number>(0);
@@ -59,81 +61,85 @@ export const MCADTabs: React.FunctionComponent = () => {
         >
           <MCADashboard />
         </Tab>
-        <Tab
-          eventKey={1}
-          title={
-            <>
-              <TabTitleIcon>
-                <BoxIcon />
-              </TabTitleIcon>
-              <TabTitleText>Resources</TabTitleText>
-            </>
-          }
-          aria-label="resources-tab"
-        >
-          {/* Place holder */}
-          <Resources activeTabKey={Number(activeTabKey)} />
-        </Tab>
-        <Tab
-          eventKey={2}
-          title={
-            <>
-              <TabTitleIcon>
-                <DatabaseIcon />
-              </TabTitleIcon>
-              <TabTitleText>Metrics</TabTitleText>
-            </>
-          }
-          aria-label="metrics-tab"
-        >
-          {/* Place holder */}
-          <Metrics activeTabKey={Number(activeTabKey)} />
-        </Tab>
-        <Tab
-          eventKey={3}
-          title={
-            <>
-              <TabTitleIcon>
-                <ServerIcon />
-              </TabTitleIcon>
-              <TabTitleText>Server</TabTitleText>
-            </>
-          }
-          aria-label="server-tab"
-        >
-          {/* Place holder */}
-          Server
-        </Tab>
-        <Tab
-          eventKey={4}
-          title={
-            <>
-              <TabTitleIcon>
-                <LaptopIcon />
-              </TabTitleIcon>
-              <TabTitleText>System</TabTitleText>
-            </>
-          }
-          aria-label="system-tab"
-        >
-          {/* Place holder */}
-          System
-        </Tab>
-        <Tab
-          eventKey={6}
-          title={
-            <>
-              <TabTitleIcon>
-                <ProjectDiagramIcon />
-              </TabTitleIcon>
-              <TabTitleText>Stat</TabTitleText>
-            </>
-          }
-          aria-label="stat-tab"
-        >
-          {/* Place holder */}
-          Network
-        </Tab>
+        {isAdmin && (
+          <>
+            <Tab
+              eventKey={1}
+              title={
+                <>
+                  <TabTitleIcon>
+                    <BoxIcon />
+                  </TabTitleIcon>
+                  <TabTitleText>Resources</TabTitleText>
+                </>
+              }
+              aria-label="resources-tab"
+            >
+              {/* Place holder */}
+              <Resources activeTabKey={Number(activeTabKey)} />
+            </Tab>
+            <Tab
+              eventKey={2}
+              title={
+                <>
+                  <TabTitleIcon>
+                    <DatabaseIcon />
+                  </TabTitleIcon>
+                  <TabTitleText>Metrics</TabTitleText>
+                </>
+              }
+              aria-label="metrics-tab"
+            >
+              {/* Place holder */}
+              <Metrics activeTabKey={Number(activeTabKey)} />
+            </Tab>
+            <Tab
+              eventKey={3}
+              title={
+                <>
+                  <TabTitleIcon>
+                    <ServerIcon />
+                  </TabTitleIcon>
+                  <TabTitleText>Server</TabTitleText>
+                </>
+              }
+              aria-label="server-tab"
+            >
+              {/* Place holder */}
+              Server
+            </Tab>
+            <Tab
+              eventKey={4}
+              title={
+                <>
+                  <TabTitleIcon>
+                    <LaptopIcon />
+                  </TabTitleIcon>
+                  <TabTitleText>System</TabTitleText>
+                </>
+              }
+              aria-label="system-tab"
+            >
+              {/* Place holder */}
+              System
+            </Tab>
+            <Tab
+              eventKey={6}
+              title={
+                <>
+                  <TabTitleIcon>
+                    <ProjectDiagramIcon />
+                  </TabTitleIcon>
+                  <TabTitleText>Stat</TabTitleText>
+                </>
+              }
+              aria-label="stat-tab"
+            >
+              {/* Place holder */}
+              Network
+            </Tab>
+          </>
+        )}
       </Tabs>
     </ApplicationsPage>
   );
