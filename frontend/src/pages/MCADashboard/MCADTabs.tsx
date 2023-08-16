@@ -46,8 +46,10 @@ export const MCADTabs: React.FunctionComponent = () => {
         activeKey={activeTabKey}
         onSelect={handleTabClick}
         aria-label="mcad-tabs"
+        key="tabs-component"
       >
         <Tab
+          key="Dashboard"
           eventKey={0}
           title={
             <>
@@ -62,86 +64,97 @@ export const MCADTabs: React.FunctionComponent = () => {
           <MCADashboard />
         </Tab>
         {isAdmin && (
-          <>
-            <Tab
-              eventKey={1}
-              title={
-                <>
-                  <TabTitleIcon>
-                    <BoxIcon />
-                  </TabTitleIcon>
-                  <TabTitleText>Resources</TabTitleText>
-                </>
-              }
-              aria-label="resources-tab"
-            >
-              {/* Place holder */}
-              <Resources activeTabKey={Number(activeTabKey)} />
-            </Tab>
-            <Tab
-              eventKey={2}
-              title={
-                <>
-                  <TabTitleIcon>
-                    <DatabaseIcon />
-                  </TabTitleIcon>
-                  <TabTitleText>Metrics</TabTitleText>
-                </>
-              }
-              aria-label="metrics-tab"
-            >
-              {/* Place holder */}
-              <Metrics activeTabKey={Number(activeTabKey)} />
-            </Tab>
-            <Tab
-              eventKey={3}
-              title={
-                <>
-                  <TabTitleIcon>
-                    <ServerIcon />
-                  </TabTitleIcon>
-                  <TabTitleText>Server</TabTitleText>
-                </>
-              }
-              aria-label="server-tab"
-            >
-              {/* Place holder */}
-              Server
-            </Tab>
-            <Tab
-              eventKey={4}
-              title={
-                <>
-                  <TabTitleIcon>
-                    <LaptopIcon />
-                  </TabTitleIcon>
-                  <TabTitleText>System</TabTitleText>
-                </>
-              }
-              aria-label="system-tab"
-            >
-              {/* Place holder */}
-              System
-            </Tab>
-            <Tab
-              eventKey={6}
-              title={
-                <>
-                  <TabTitleIcon>
-                    <ProjectDiagramIcon />
-                  </TabTitleIcon>
-                  <TabTitleText>Stat</TabTitleText>
-                </>
-              }
-              aria-label="stat-tab"
-            >
-              {/* Place holder */}
-              Network
-            </Tab>
-          </>
+          <Tab
+            key="Resources"
+            eventKey={1}
+            title={
+              <>
+                <TabTitleIcon>
+                  <BoxIcon />
+                </TabTitleIcon>
+                <TabTitleText>Resources</TabTitleText>
+              </>
+            }
+            aria-label="resources-tab"
+          >
+            {/* Place holder */}
+            <Resources activeTabKey={Number(activeTabKey)} />
+          </Tab>
+        )}
+        {isAdmin && (
+          <Tab
+            key="Metrics"
+            eventKey={2}
+            title={
+              <>
+                <TabTitleIcon>
+                  <DatabaseIcon />
+                </TabTitleIcon>
+                <TabTitleText>Metrics</TabTitleText>
+              </>
+            }
+            aria-label="metrics-tab"
+          >
+            {/* Place holder */}
+            <Metrics activeTabKey={Number(activeTabKey)} />
+          </Tab>
+        )}
+        {isAdmin && (
+          <Tab
+            key="Server"
+            eventKey={3}
+            title={
+              <>
+                <TabTitleIcon>
+                  <ServerIcon />
+                </TabTitleIcon>
+                <TabTitleText>Server</TabTitleText>
+              </>
+            }
+            aria-label="server-tab"
+          >
+            {/* Place holder */}
+            Server
+          </Tab>
+        )}
+        {isAdmin && (
+          <Tab
+            key="System"
+            eventKey={4}
+            title={
+              <>
+                <TabTitleIcon>
+                  <LaptopIcon />
+                </TabTitleIcon>
+                <TabTitleText>System</TabTitleText>
+              </>
+            }
+            aria-label="system-tab"
+          >
+            {/* Place holder */}
+            System
+          </Tab>
+        )}
+        {isAdmin && (
+          <Tab
+            key="Stat"
+            eventKey={6}
+            title={
+              <>
+                <TabTitleIcon>
+                  <ProjectDiagramIcon />
+                </TabTitleIcon>
+                <TabTitleText>Stat</TabTitleText>
+              </>
+            }
+            aria-label="stat-tab"
+          >
+            {/* Place holder */}
+            Network
+          </Tab>
         )}
       </Tabs>
-    </ApplicationsPage>
+    </ApplicationsPage >
   );
 };
 
