@@ -10,6 +10,7 @@ export const DEV_MODE = process.env.APP_ENV === 'development';
 /** Allows a username to be impersonated in place of the logged in user for testing purposes -- impacts only some API */
 export const DEV_IMPERSONATE_USER = DEV_MODE ? process.env.DEV_IMPERSONATE_USER : undefined;
 export const DEV_IMPERSONATE_PASSWORD = DEV_MODE ? process.env.DEV_IMPERSONATE_PASSWORD : undefined;
+export const DEV_IMPERSONATE_TOKEN = DEV_MODE ? process.env.DEV_IMPERSONATE_TOKEN : undefined; // Temporary workaround: get impersonate to work through a token, because of hostname resolve the problem and IBM not using OAuth proxy
 export const APP_ENV = process.env.APP_ENV;
 
 export const USER_ACCESS_TOKEN = 'x-forwarded-access-token';

@@ -3,7 +3,11 @@ import https from 'https';
 import createError from 'http-errors';
 import { setImpersonateAccessToken } from '../../../devFlags';
 import { KubeFastifyInstance } from '../../../types';
-import { DEV_IMPERSONATE_PASSWORD, DEV_IMPERSONATE_USER } from '../../../utils/constants';
+import {
+  DEV_IMPERSONATE_PASSWORD,
+  DEV_IMPERSONATE_USER,
+  DEV_IMPERSONATE_TOKEN,  // Temporary workaround: get impersonate to work through a token, because of hostname resolve the problem and IBM not using OAuth proxy
+} from '../../../utils/constants';
 import { createCustomError } from '../../../utils/requestUtils';
 import { devRoute } from '../../../utils/route-security';
 
@@ -12,6 +16,12 @@ export default async (fastify: KubeFastifyInstance): Promise<void> => {
     '/',
     devRoute(async (request: FastifyRequest<{ Body: { impersonate: boolean } }>) => {
       return new Promise<{ code: number; response: string }>((resolve, reject) => {
+        // Temporary workaround: get impersonate to work through a token, because of hostname resolve the problem and IBM not using OAuth proxy
+        if (DEV_IMPERSONATE_TOKEN) {
+          setImpersonateAccessToken(DEV_IMPERSONATE_TOKEN);
+          resolve({ code: 200, response: DEV_IMPERSONATE_TOKEN });
+          return;
+        }
         const doImpersonate = request.body.impersonate;
         if (doImpersonate) {
           const apiPath = fastify.kube.config.getCurrentCluster().server;
@@ -71,7 +81,7 @@ export default async (fastify: KubeFastifyInstance): Promise<void> => {
         if (e?.code) {
           throw createCustomError(
             'Error impersonating user',
-            e.response?.message || 'Impersonating user error',
+            e.response || 'Impersonating user error',
             e.code,
           );
         }
