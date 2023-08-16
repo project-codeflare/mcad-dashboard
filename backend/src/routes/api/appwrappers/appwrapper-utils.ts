@@ -1,5 +1,4 @@
 const { spawn } = require('child_process');
-const http = require('http');
 
 class AllAppwrappers {
   async get() {
@@ -29,7 +28,7 @@ class AllAppwrappers {
       //Identify message in last status condition, if state is other than 'Running'
       const conditionsArr: any[] = jsonData.status.conditions;
       const lastCondition = conditionsArr[conditionsArr.length - 1];
-      let message: string = '';
+      let message = '';
 
       message = message + lastCondition.type;
       message = message + '. Reason: ' + lastCondition.reason;
@@ -40,7 +39,7 @@ class AllAppwrappers {
       jsonData.status.constructedMessage = message;
 
       // create formatted age
-      let timestr: string = '';
+      let timestr = '';
       if (jsonData.metadata.creationTimestamp) {
         const dtCreation = new Date(jsonData.metadata.creationTimestamp);
         const delta = dtNow.getTime() - dtCreation.getTime();
@@ -67,9 +66,9 @@ class AllAppwrappers {
       jsonData.metadata.calculatedTimeSpent = timestr;
 
       // Identify status and add to counts
-      let numRequeuings: number = 0;
+      let numRequeuings = 0;
       const state: string = jsonData.status.state.trim();
-      let rephrasedState: string = '';
+      let rephrasedState = '';
       if (state === '') {
         rephrasedState = 'Submitted';
         statusCounts.Other = statusCounts.Other + 1;
@@ -170,7 +169,7 @@ class AllAppwrappers {
 
   pullJobs(): Promise<string> {
     return new Promise((resolve, reject) => {
-      let jsonString: string = '';
+      let jsonString = '';
       const child = spawn('sh', ['./src/routes/api/appwrappers/appwrapper_puller.sh'], {
         stdio: 'pipe',
         buffer: true,
