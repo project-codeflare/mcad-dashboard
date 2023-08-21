@@ -218,3 +218,27 @@ npm run make:deploy
 ```
 
 you will deploy all the resources located in the `manifests` folder alongside the image you selected in the previous step.
+
+## Working with the MCAD exporter
+
+The architecture for the MCAD dashboard requires an MCAD exporter to enable the storage of time-series appwrapper information in a Prometheus server. 
+
+To run the exporter locally, you can run the following command:
+
+```bash
+npm run start:dev
+```
+
+To build an image that exposes exported metrics, run the following make target:
+
+```bash
+make build-exporter
+```
+
+To run this image locally, run the following command:
+
+```bash
+{CONTAINER_BUILDER} run -p 9101:9101 {CONTAINER_IMAGE}
+```
+
+where `{CONTAINER_BUILDER}` is the container tool you use, set in the Makefile. This should work with podman or docker. `{EXPORTER_IMAGE_TAG}` is the tag of the exporter image. This is set in the `.env` file in the home directory of the git repo. 
