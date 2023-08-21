@@ -9,7 +9,7 @@ const fetchPrometheusData = async (host: string, query: string, axiosInstance: A
   });
 
   const url = `https://${host}/api/v1/query?${params.toString()}`;
-  console.log('FETCHING RPOMETJFDKS URL: ', url)
+  console.log('FETCHING RPOMETJFDKS URL: ', url);
   return axios //Instance
     .post(url)
     .then((res) => {
@@ -66,7 +66,7 @@ const getMetricRange = async (
     step,
     axiosInstance,
   );
-  console.log('fetched range data...: ', fetchedData)
+  console.log('fetched range data...: ', fetchedData);
   return fetchedData;
 };
 

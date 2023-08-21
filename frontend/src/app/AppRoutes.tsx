@@ -59,7 +59,6 @@ const AppRoutes: React.FC = () => {
         <Route path="/resources" element={<LearningCenterPage />} />
 
         <Route path="/mcad" element={<MCADashboard />} />
-        
         <Route path="/projects/*" element={<ProjectViewRoutes />} />
 
         <Route path="/notebookController/*" element={<NotebookController />} />

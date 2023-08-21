@@ -8,11 +8,12 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { Td, Tr } from '@patternfly/react-table';
-import { SortableData } from '../components/table/useTableColumnSort';
-import Table from '../components/table/Table';
-import { Data } from '../types';
+import useTableColumnSort from '~/pages/MCADashboard/components/table/useTableColumnSort';
+import { SortableData } from '~/pages/MCADashboard/components/table/useTableColumnSort';
+import Table from '~/pages/MCADashboard/components/table/Table';
+import { Data } from '~/pages/MCADashboard/types';
 import SearchFieldAppwrappers, { SearchType } from './SearchFieldAppwrappers';
-import useTableColumnSort from '../components/table/useTableColumnSort';
+
 
 interface AppWrapperSummaryData {
   name: string;

@@ -11,12 +11,12 @@ const TOOLTIP_MAX_HEIGHT = 400;
 const TOOLTIP_MAX_LEFT_JUT_OUT = 85;
 const TOOLTIP_MAX_RIGHT_JUT_OUT = 45;
 
-type TooltipSeries = {
-  color: string;
-  name: string;
-  total: number;
-  value: string;
-};
+// type TooltipSeries = {
+//   color: string;
+//   name: string;
+//   total: number;
+//   value: string;
+// };
 
 type TooltipProps = {
   activePoints?: { x: number; y: number; childName: string }[];

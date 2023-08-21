@@ -5,18 +5,18 @@ import { OdhApplication } from '~/types';
 import ApplicationsPage from '~/pages/ApplicationsPage';
 import QuickStarts from '~/app/QuickStarts';
 import { fireTrackingEvent } from '~/utilities/segmentIOUtils';
+import { useUser } from '~/redux/selectors';
 import AppWrapperSummaryTable from './Tables/app-wrapper-summary-table';
 import StatusSummaryTable from './Tables/status-summary-table';
-import TimeRangeDropDown from './DropDowns/time-range-drop-down';
+// import TimeRangeDropDown from './DropDowns/time-range-drop-down';
 import RefreshRateDropDown from './DropDowns/refresh-rate-drop-down';
 import './MCADashboard.css';
 import fetchData from './app-wrapper-data';
 import { Data } from './types';
 import MetricsCards from './Metrics/MetricsCards';
-import { convertRangeToTime } from './Metrics/metrics-utils';
+// import { convertRangeToTime } from './Metrics/metrics-utils';
 import { availableResourceQueries } from './Metrics/queries';
 import { getNamespacesFromAppwrappers } from './Metrics/metrics-utils';
-import { useUser } from '~/redux/selectors';
 
 //const description = `A Dashboard for Multi-Cluster App Dispatcher`;
 

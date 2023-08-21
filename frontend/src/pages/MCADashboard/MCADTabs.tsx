@@ -1,17 +1,17 @@
 import React from 'react';
 import { Tabs, Tab, TabTitleText, TabTitleIcon } from '@patternfly/react-core';
 import UsersIcon from '@patternfly/react-icons/dist/esm/icons/users-icon';
-import BoxIcon from '@patternfly/react-icons/dist/esm/icons/box-icon';
+// import BoxIcon from '@patternfly/react-icons/dist/esm/icons/box-icon';
 import DatabaseIcon from '@patternfly/react-icons/dist/esm/icons/database-icon';
-import ServerIcon from '@patternfly/react-icons/dist/esm/icons/server-icon';
-import LaptopIcon from '@patternfly/react-icons/dist/esm/icons/laptop-icon';
+// import ServerIcon from '@patternfly/react-icons/dist/esm/icons/server-icon';
+// import LaptopIcon from '@patternfly/react-icons/dist/esm/icons/laptop-icon';
 import ProjectDiagramIcon from '@patternfly/react-icons/dist/esm/icons/project-diagram-icon';
-import MCADashboard from './MCADashboard';
-import ApplicationsPage from '../ApplicationsPage';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
+import ApplicationsPage from '~/pages/ApplicationsPage';
+import { useUser } from '~/redux/selectors';
+import MCADashboard from './MCADashboard';
 import Metrics from './Metrics/Metrics';
 import Resources from './Metrics/Resources';
-import { useUser } from '~/redux/selectors';
 
 const description = 'A Dashboard for Multi-Cluster App Dispatcher';
 const subDescription =

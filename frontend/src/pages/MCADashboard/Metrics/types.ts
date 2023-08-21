@@ -6,8 +6,10 @@ export type Query = {
 
 export type MetricData = {
   metric: {
-    status: any; namespace: string; pod: string 
-};
+    status: any; 
+    namespace: string; 
+    pod: string
+  };
   values: [number, string][];
 };
 
