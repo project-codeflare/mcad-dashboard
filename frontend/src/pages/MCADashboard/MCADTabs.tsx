@@ -65,17 +65,17 @@ export const MCADTabs: React.FunctionComponent = () => {
         </Tab>
         {isAdmin && (
           <Tab
-            key="Resources"
+            key="appwrapperMetrics"
             eventKey={1}
             title={
               <>
                 <TabTitleIcon>
-                  <BoxIcon />
+                  <ProjectDiagramIcon />
                 </TabTitleIcon>
-                <TabTitleText>Resources</TabTitleText>
+                <TabTitleText>Appwrapper Metrics</TabTitleText>
               </>
             }
-            aria-label="resources-tab"
+            aria-label="appwrapper-metrics-tab"
           >
             {/* Place holder */}
             <Resources activeTabKey={Number(activeTabKey)} />
@@ -83,23 +83,23 @@ export const MCADTabs: React.FunctionComponent = () => {
         )}
         {isAdmin && (
           <Tab
-            key="Metrics"
+            key="clusterResources"
             eventKey={2}
             title={
               <>
                 <TabTitleIcon>
                   <DatabaseIcon />
                 </TabTitleIcon>
-                <TabTitleText>Metrics</TabTitleText>
+                <TabTitleText>Cluster Resources</TabTitleText>
               </>
             }
-            aria-label="metrics-tab"
+            aria-label="cluster-resources-tab"
           >
             {/* Place holder */}
             <Metrics activeTabKey={Number(activeTabKey)} />
           </Tab>
         )}
-        {isAdmin && (
+        {/* {isAdmin && (
           <Tab
             key="Server"
             eventKey={3}
@@ -113,7 +113,6 @@ export const MCADTabs: React.FunctionComponent = () => {
             }
             aria-label="server-tab"
           >
-            {/* Place holder */}
             Server
           </Tab>
         )}
@@ -131,7 +130,6 @@ export const MCADTabs: React.FunctionComponent = () => {
             }
             aria-label="system-tab"
           >
-            {/* Place holder */}
             System
           </Tab>
         )}
@@ -142,17 +140,16 @@ export const MCADTabs: React.FunctionComponent = () => {
             title={
               <>
                 <TabTitleIcon>
-                  <ProjectDiagramIcon />
+                  <BoxIcon />
                 </TabTitleIcon>
                 <TabTitleText>Stat</TabTitleText>
               </>
             }
             aria-label="stat-tab"
           >
-            {/* Place holder */}
             Network
           </Tab>
-        )}
+        )} */}
       </Tabs>
     </ApplicationsPage >
   );

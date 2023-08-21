@@ -33,15 +33,15 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
   ({ loaded, loadError, components }) => {
     const { isAdmin } = useUser();
     const isEmpty = !components || components.length === 0;
-    const [span, setSpan] = React.useState<string>('30m');
+    // const [span, setSpan] = React.useState<string>('30m');
     const [refreshRate, setRefreshRate] = React.useState(30000);
     const handleSelection = (selectedItemId: number) => {
       setRefreshRate(selectedItemId);
     };
 
-    const handleTimeRangeSelection = (item: string) => {
-      setSpan(item);
-    };
+    // const handleTimeRangeSelection = (item: string) => {
+    //   setSpan(item);
+    // };
 
     const emptyDataObject: Data = {
       stats: {
@@ -112,11 +112,11 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       >
         <div className="dropdowns-container">
           <RefreshRateDropDown onSelected={handleSelection} />
-          <div className="spacer" />
-          <TimeRangeDropDown
+          {/* <div className="spacer" /> */}
+          {/* <TimeRangeDropDown
             onSelected={handleTimeRangeSelection}
             dateFormatter={convertRangeToTime}
-          />
+          /> */}
         </div>
         {isAdmin && (
           <MetricsCards
