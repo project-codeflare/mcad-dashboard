@@ -5,7 +5,6 @@ import {
   Text,
   TextVariants,
   PageSection,
-  Gallery,
   Grid,
   GridItem,
 } from '@patternfly/react-core';

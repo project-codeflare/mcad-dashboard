@@ -27,9 +27,6 @@ const RefreshRateDropDown: React.FunctionComponent<RefreshRateDropDownProps> = (
             case 'minutes':
                 conversionFactor = 1000 * 60;
                 break;
-            case 'hour':
-                conversionFactor = 1000 * 60 * 60;
-                break;
             case 'hours':
             case 'hour':
                 conversionFactor = 1000 * 60 * 60;
@@ -48,7 +45,7 @@ const RefreshRateDropDown: React.FunctionComponent<RefreshRateDropDownProps> = (
     const onSelect = (_event: React.MouseEvent<Element, MouseEvent> | undefined, itemId: string | number | undefined) => {
         // eslint-disable-next-line no-console
         console.log('selected', itemId);
-        if(itemId === 'string')
+        if (itemId === 'string')
             onSelected(convertDurationToMilliseconds(itemId));
         setSelected(itemId as string);
         setIsOpen(false);

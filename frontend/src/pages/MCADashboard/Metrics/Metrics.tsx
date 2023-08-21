@@ -1,19 +1,19 @@
 import React from 'react';
-import RefreshRateDropDown from '../DropDowns/refresh-rate-drop-down';
-import { getMetricData, getMetricDataRange } from './api/metricsData';
-import MetricsCards from './MetricsCards';
-import '../../MCADashboard/MCADashboard.css';
-import './Metrics.scss';
-import MetricGraph from './MetricGraph';
-import McadMetricGraph from './McadMetricGraph';
-import TimeRangeDropDown from '../DropDowns/time-range-drop-down';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
-import ApplicationsPage from '../../ApplicationsPage';
-import { Query, Unit } from './types';
+import RefreshRateDropDown from '~/pages/MCADashboard/DropDowns/refresh-rate-drop-down';
+import TimeRangeDropDown from '~/pages/MCADashboard/DropDowns/time-range-drop-down';
+import ApplicationsPage from '~/pages/ApplicationsPage';
+import QuotaTable from '~/pages/MCADashboard/Tables/quota-table';
+import { Data } from '~/pages/MCADashboard/types';
+import '~/pages/MCADashboard/MCADashboard.css';
+import { statusSummaryQueries, graphQueries } from './queries';
+import MetricsCards from './MetricsCards';
+import MetricGraph from './MetricGraph';
 import { convertRangeToTime } from './metrics-utils';
-import { statusSummaryQueries, graphQueries, mcadPromQueries } from './queries';
-import QuotaTable from '../Tables/quota-table';
-import { Data } from '../types';
+import './Metrics.scss';
+// import { getMetricData, getMetricDataRange } from './api/metricsData';
+// import McadMetricGraph from './McadMetricGraph';
+// import { Query, Unit } from './types';
 
 const emptyDataObject: Data = {
   stats: {

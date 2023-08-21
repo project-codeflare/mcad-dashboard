@@ -1,4 +1,4 @@
-import fetchData from '../app-wrapper-data';
+// import fetchData from '../app-wrapper-data';
 import { Unit } from './types';
 
 export const convertRangeToTime = (timeRange: string) => {
@@ -45,7 +45,7 @@ export const timeStringToSeconds = (timeString: string) => {
   }
 };
 
-export const getNamespacesFromAppwrappers = (data: { appwrappers: any; }): string[] => {
+export const getNamespacesFromAppwrappers = (data: { appwrappers: any }): string[] => {
   const namespaces = new Set<string>();
   const appwrapperData = data.appwrappers;
   for (const key in appwrapperData) {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader } from '@patternfly/react-core';
 import { getMetricData } from './api/metricsData';
 
 import { Unit } from './types';
@@ -19,7 +19,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   unit,
 }: MetricCardProps): React.ReactElement => {
   const [percentage, setPercentage] = React.useState(0.0);
-  const [noGpu, setNoGpu] = React.useState("");
+  const [noGpu, setNoGpu] = React.useState('');
 
   const getData = async () => {
     const data = await getMetricData(query);
@@ -46,7 +46,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
     <Card className="metric-card">
       <CardHeader className="metric-card-header">{name}</CardHeader>
       <CardBody className="metric-card-data">
-        {noGpu === "" ? (
+        {noGpu === '' ? (
           <>
             {Math.round(percentage * 100) / 100}
             {unit === Unit.PERCENT && unit}

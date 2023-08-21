@@ -23,7 +23,7 @@ import { getMCADMetricDataRange } from './api/metricsData';
 import './Metrics.scss';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
-import { formatUnitStringOnAxis, timeStringToSeconds, filterData } from './metrics-utils';
+import { formatUnitStringOnAxis, timeStringToSeconds } from './metrics-utils';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
@@ -107,7 +107,6 @@ const McadMetricGraph: React.FC<MetricGraphProps> = ({
 
   const getMetricData = async () => {
     const response = await getMCADMetricDataRange(query.query, time);
-    console.log(query.query, time, response)
     if (response.data) {
       const data: MetricData[] = response.data;
       setMetricData(data);
