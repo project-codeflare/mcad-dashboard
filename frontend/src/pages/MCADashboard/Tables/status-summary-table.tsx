@@ -7,11 +7,11 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { Td, Tr } from '@patternfly/react-table';
-import { SortableData } from '../components/table/useTableColumnSort';
-import Table from '../components/table/Table';
-import { Data, StatusKey } from '../types';
 import { ChartDonut, ChartThemeColor } from '@patternfly/react-charts';
-import MCADashboard from '../MCADashboard.css';
+import { SortableData } from '~/pages/MCADashboard/components/table/useTableColumnSort';
+import Table from '~/pages/MCADashboard/components/table/Table';
+import { Data, StatusKey } from '~/pages/MCADashboard/types';
+import MCADashboard from '~/pages/MCADashboard/MCADashboard.css';
 
 interface StatusSummaryData {
   dispatched: string;

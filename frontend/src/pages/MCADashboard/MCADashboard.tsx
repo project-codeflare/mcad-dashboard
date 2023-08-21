@@ -5,18 +5,18 @@ import { OdhApplication } from '~/types';
 import ApplicationsPage from '~/pages/ApplicationsPage';
 import QuickStarts from '~/app/QuickStarts';
 import { fireTrackingEvent } from '~/utilities/segmentIOUtils';
+import { useUser } from '~/redux/selectors';
 import AppWrapperSummaryTable from './Tables/app-wrapper-summary-table';
 import StatusSummaryTable from './Tables/status-summary-table';
-import TimeRangeDropDown from './DropDowns/time-range-drop-down';
+// import TimeRangeDropDown from './DropDowns/time-range-drop-down';
 import RefreshRateDropDown from './DropDowns/refresh-rate-drop-down';
 import './MCADashboard.css';
 import fetchData from './app-wrapper-data';
 import { Data } from './types';
 import MetricsCards from './Metrics/MetricsCards';
-import { convertRangeToTime } from './Metrics/metrics-utils';
+// import { convertRangeToTime } from './Metrics/metrics-utils';
 import { availableResourceQueries } from './Metrics/queries';
 import { getNamespacesFromAppwrappers } from './Metrics/metrics-utils';
-import { useUser } from '~/redux/selectors';
 
 //const description = `A Dashboard for Multi-Cluster App Dispatcher`;
 
@@ -33,15 +33,15 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
   ({ loaded, loadError, components }) => {
     const { isAdmin } = useUser();
     const isEmpty = !components || components.length === 0;
-    const [span, setSpan] = React.useState<string>('30m');
+    // const [span, setSpan] = React.useState<string>('30m');
     const [refreshRate, setRefreshRate] = React.useState(30000);
     const handleSelection = (selectedItemId: number) => {
       setRefreshRate(selectedItemId);
     };
 
-    const handleTimeRangeSelection = (item: string) => {
-      setSpan(item);
-    };
+    // const handleTimeRangeSelection = (item: string) => {
+    //   setSpan(item);
+    // };
 
     const emptyDataObject: Data = {
       stats: {
@@ -112,11 +112,11 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
       >
         <div className="dropdowns-container">
           <RefreshRateDropDown onSelected={handleSelection} />
-          <div className="spacer" />
-          <TimeRangeDropDown
+          {/* <div className="spacer" /> */}
+          {/* <TimeRangeDropDown
             onSelected={handleTimeRangeSelection}
             dateFormatter={convertRangeToTime}
-          />
+          /> */}
         </div>
         {isAdmin && (
           <MetricsCards

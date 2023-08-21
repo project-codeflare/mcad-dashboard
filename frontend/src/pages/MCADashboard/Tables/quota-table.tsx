@@ -8,15 +8,16 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { Td, Tr } from '@patternfly/react-table';
-import { SortableData } from '../components/table/useTableColumnSort';
-import Table from '../components/table/Table';
-import { Data } from '../types';
+import useTableColumnSort from '~/pages/MCADashboard/components/table/useTableColumnSort';
+import { getMetricTableData } from '~/pages/MCADashboard/Metrics/api/metricsData';
+import { filterData, formatUnitString } from '~/pages/MCADashboard/Metrics/metrics-utils';
+import { Unit } from '~/pages/MCADashboard/Metrics/types';
+import { tableQueries } from '~/pages/MCADashboard/Metrics/queries';
+import { SortableData } from '~/pages/MCADashboard/components/table/useTableColumnSort';
+import Table from '~/pages/MCADashboard/components/table/Table';
+import { Data } from '~/pages/MCADashboard/types';
 import SearchFieldAppwrappers, { SearchType } from './SearchFieldAppwrappers';
-import useTableColumnSort from '../components/table/useTableColumnSort';
-import { getMetricData, getMetricTableData } from '../Metrics/api/metricsData';
-import { filterData, formatUnitString } from '../Metrics/metrics-utils';
-import { Unit } from '../Metrics/types';
-import { tableQueries } from '../Metrics/queries';
+
 
 interface QuotaData {
   namespace: string;
@@ -32,10 +33,10 @@ interface QuotaData {
   [key: string]: number | string | undefined; // Index signature
 }
 
-interface NameSpaceCount {
-  namespace: string;
-  numberofappwrappers: number;
-}
+// interface NameSpaceCount {
+//   namespace: string;
+//   numberofappwrappers: number;
+// }
 
 type QuotaViewProps = {
   data: Data;
