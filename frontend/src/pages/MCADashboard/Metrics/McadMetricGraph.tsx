@@ -295,7 +295,7 @@ const Graph: React.FC<GraphProps> = ({
             data={legendData}
             groupComponent={<LegendContainer />}
             gutter={30}
-            itemsPerRow={3}
+            itemsPerRow={4}
             orientation="vertical"
             style={{
               labels: { fontSize: 11, fill: 'var(--pf-global--Color--100)' },
