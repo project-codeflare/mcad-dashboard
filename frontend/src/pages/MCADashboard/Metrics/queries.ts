@@ -143,7 +143,11 @@ export const tableQueries = [
 
 export const mcadPromQueries: Query[] = [
   {
-    name: 'Appwrapper Count by Status',
+    name: 'Total Appwrapper Count by Status',
     query: 'appwrapper_count',
+  },
+  {
+    name: 'Appwrapper Status',
+    query: 'appwrapper_status',
   },
 ];

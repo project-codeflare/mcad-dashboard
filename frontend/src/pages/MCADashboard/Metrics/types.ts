@@ -6,6 +6,7 @@ export type Query = {
 
 export type MetricData = {
   metric: {
+    appwrapper_name: string;
     status: any; 
     namespace: string; 
     pod: string

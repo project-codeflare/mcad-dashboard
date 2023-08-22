@@ -131,18 +131,19 @@ const McadMetricGraph: React.FC<MetricGraphProps> = ({
   }, [time, validNamespaces, refreshRate]);
   const legendData: LegendDataItem[] = [];
 
-  metricData?.forEach((obj) => {
-    const status = obj.metric.status;
-    // Check if the same status is already in legendData
-    const alreadyExists = legendData.some(item => item.childName === status);
-    if (!alreadyExists) {
-      legendData.push({
-        childName: status,
-        name: status,
-      });
-    }
-  });
-
+  if (Array.isArray(metricData)) {
+    metricData?.forEach((obj) => {
+      const status = obj.metric.status ? obj.metric.status : obj.metric.appwrapper_name;
+      // Check if the same status is already in legendData
+      const alreadyExists = legendData.some(item => item.childName === status);
+      if (!alreadyExists) {
+        legendData.push({
+          childName: status,
+          name: status,
+        });
+      }
+    });
+  }
   return (
     <ExpandableSection
       displaySize={'large'}
@@ -267,26 +268,27 @@ const Graph: React.FC<GraphProps> = ({
           tickCount={6}
         />
         <ChartGroup>
-          {metricData?.map((obj, index) => {
-            const style = {
-              labels: { unit: query.unit, fill: '' },
-            };
-            return (
-              <ChartLine
-                key={index}
-                name={obj.metric.status ? obj.metric.status : obj.metric.namespace}
-                data={formatSeriesValues(
-                  metricData[index].values.map(([timestamp, value]) => ({
-                    x: timestamp,
-                    y: Number.isNaN(value) ? null : Number(value),
-                  })),
-                  0,
-                  timeStringToSeconds(time),
-                )}
-                style={style}
-              />
-            );
-          })}
+          {Array.isArray(metricData) &&
+            metricData?.map((obj, index) => {
+              const style = {
+                labels: { unit: query.unit, fill: '' },
+              };
+              return (
+                <ChartLine
+                  key={index}
+                  name={obj.metric.status ? obj.metric.status : obj.metric.appwrapper_name}
+                  data={formatSeriesValues(
+                    metricData[index].values.map(([timestamp, value]) => ({
+                      x: timestamp,
+                      y: Number.isNaN(value) ? null : Number(value),
+                    })),
+                    0,
+                    timeStringToSeconds(time),
+                  )}
+                  style={style}
+                />
+              );
+            })}
         </ChartGroup>
         {legendData && (
           <ChartLegend
