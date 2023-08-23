@@ -57,12 +57,17 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Get image tag
-        run: echo "GITHUB_SHA=$GITHUB_SHA" >> $GITHUB_ENV
+        run: echo "GITHUB_SHA=$GITHUB_SHA" >> $GITHUB_OUTPUT
       - name: Set origin image tag
-        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad-dashboard:$GITHUB_SHA" >> $GITHUB_ENV
+        id: origin
+        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad-dashboard:$GITHUB_SHA" >> $GITHUB_OUTPUT
       - name: Set version image tag # TODO make version dynamic
-        run: echo "VERSION_TAG=ghcr.io/${{ github.repository_owner }}/mcad-dashboard:v0.1.0"
-      - name: Tag image
-        run: docker tag ${{ IMAGE_REPOSITORY }} ${{ VERSION_TAG }}
-      - name: Push image
-        run: docker push ${{ VERSION_TAG }}
+        id: target
+        run: echo "VERSION_TAG=ghcr.io/${{ github.repository_owner }}/mcad-dashboard:v0.1.0" >> $GITHUB_OUTPUT
+      - name: Tag and push image
+        env: 
+          ORIGIN_REPO: ${{ steps.origin.outputs.IMAGE_REPOSITORY }}
+          TARGET_REPO: ${{ steps.target.outputs.VERSION_TAG }}
+        run: |
+          docker tag ${{ env.ORIGIN_REPO }} ${{ env.TARGET_REPO }}
+          docker push ${{ env.TARGET_REPO }}
