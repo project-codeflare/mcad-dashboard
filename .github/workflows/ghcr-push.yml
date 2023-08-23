@@ -27,6 +27,8 @@ jobs:
         run: echo "GITHUB_SHA=$GITHUB_SHA" > .env.local
       - name: Set release repo
         run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad_dashboard:$GITHUB_SHA" >> .env.local 
+      - name: Set container builder
+        run: echo "CONTAINER_BUILDER=docker" >> .env.local
       - name: Build image
         run: make build
       - name: Push image
