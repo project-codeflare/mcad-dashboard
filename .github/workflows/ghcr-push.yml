@@ -1,0 +1,38 @@
+name: ghcr.push
+# This GitHub action builds an image
+
+run-name: Push image to ghcr
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: read
+      packages: write
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: Log in to GHCR.io
+        uses: docker/login-action@v2.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get image tag
+        run: echo "GITHUB_SHA=$GITHUB_SHA" > .env.local
+      - name: Set release repo
+        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad_dashboard:$GITHUB_SHA" >> .env.local 
+      - name: Build image
+        run: make build
+      - name: Push image
+        run: make push
+      - name: Print job result
+        run: |
+          cat <<EOF >>"${GITHUB_STEP_SUMMARY}"
+          - This job's stats is ${{ job.status }}.
+          EOF
