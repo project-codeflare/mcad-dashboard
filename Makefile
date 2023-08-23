@@ -11,7 +11,7 @@ export $(shell sed 's/=.*//' ${ENV_FILE})
 endif
 
 CONTAINER_BUILDER=podman
-CONTAINER_DOCKERFILE=Dockerfile
+CONTAINER_DOCKERFILE ?= Dockerfile
 
 ##################################
 
