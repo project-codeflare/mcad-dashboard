@@ -9,6 +9,9 @@ on:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     permissions: 
       contents: read
       packages: write
@@ -26,7 +29,7 @@ jobs:
       - name: Get image tag
         run: echo "GITHUB_SHA=$GITHUB_SHA" > .env.local
       - name: Set release repo
-        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad_dashboard:$GITHUB_SHA" >> .env.local 
+        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad-dashboard:$GITHUB_SHA" >> .env.local 
       - name: Set container builder
         run: echo "CONTAINER_BUILDER=docker" >> .env.local
       - name: Build image
