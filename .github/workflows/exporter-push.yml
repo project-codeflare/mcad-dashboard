@@ -1,0 +1,74 @@
+name: ghcr.push exporter
+# This GitHub action builds an image
+
+run-name: Push exporter image to ghcr
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: Log in to GHCR.io
+        uses: docker/login-action@v2.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get image tag
+        run: echo "GITHUB_SHA=$GITHUB_SHA" > .env.local
+      - name: Set release repo
+        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad-exporter:$GITHUB_SHA" >> .env.local
+      - name: Set container builder
+        run: echo "CONTAINER_BUILDER=docker" >> .env.local
+      - name: Build image
+        run: make build-exporter
+      - name: Push image
+        run: make push-exporter
+      - name: Print job result
+        run: |
+          cat <<EOF >>"${GITHUB_STEP_SUMMARY}"
+          - This job's stats is ${{ job.status }}.
+          EOF
+  tag-version-on-main:
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - name: Log in to GHCR.io
+        uses: docker/login-action@v2.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get image tag
+        run: echo "GITHUB_SHA=$GITHUB_SHA" >> $GITHUB_OUTPUT
+      - name: Set origin image tag
+        id: origin
+        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad-exporter:$GITHUB_SHA" >> $GITHUB_OUTPUT
+      - name: Set version image tag # TODO make version dynamic
+        id: target
+        run: echo "VERSION_TAG=ghcr.io/${{ github.repository_owner }}/mcad-exporter:v0.1.0" >> $GITHUB_OUTPUT
+      - name: Tag and push image
+        env: 
+          ORIGIN_REPO: ${{ steps.origin.outputs.IMAGE_REPOSITORY }}
+          TARGET_REPO: ${{ steps.target.outputs.VERSION_TAG }}
+        run: |
+          docker pull ${{ env.ORIGIN_REPO }}
+          docker tag ${{ env.ORIGIN_REPO }} ${{ env.TARGET_REPO }}
+          docker push ${{ env.TARGET_REPO }}
