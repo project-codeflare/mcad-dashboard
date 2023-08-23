@@ -26,13 +26,20 @@ jobs:
       - name: Get image tag
         run: echo "GITHUB_SHA=$GITHUB_SHA" > .env.local
       - name: Set release repo
-        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad-dashboard:$GITHUB_SHA" >> .env.local 
+        run: |
+          echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad-dashboard:$GITHUB_SHA" >> $GITHUB_ENV
+          echo "IMAGE_REPOSITORY=${{ IMAGE_REPOSITORY }}" >> .env.local
       - name: Set container builder
         run: echo "CONTAINER_BUILDER=docker" >> .env.local
       - name: Build image
         run: make build
       - name: Push image
         run: make push
+      - name: Tag image with current version (0.1.0) #TODO make versioning more dynamic
+        run: |
+          echo "VERSION_TAG=ghcr.io/${{ github.repository_owner }}/mcad-dashboard:v0.1.0" >> $GITHUB_ENV
+          docker tag ${{ IMAGE_REPOSITORY }} ${{ VERSION_TAG }}
+          docker push ${{ VERSION_TAG }}
       - name: Print job result
         run: |
           cat <<EOF >>"${GITHUB_STEP_SUMMARY}"
