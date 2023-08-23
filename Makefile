@@ -12,6 +12,7 @@ endif
 
 CONTAINER_BUILDER=podman
 CONTAINER_DOCKERFILE=Dockerfile
+EXPORTER_DOCKERFILE=Dockerfile.exporter
 
 ##################################
 
@@ -27,6 +28,11 @@ reinstall: build push undeploy deploy
 build:
 	echo "Building ${IMAGE_REPOSITORY} from ${CONTAINER_DOCKERFILE}"
 	${CONTAINER_BUILDER} build -f ${CONTAINER_DOCKERFILE} -t ${IMAGE_REPOSITORY} .
+
+.PHONY: build-exporter
+build-exporter:
+	echo "Building ${EXPORTER_IMAGE_TAG} from ${EXPORTER_DOCKERFILE}"
+	${CONTAINER_BUILDER} build -f ${EXPORTER_DOCKERFILE} -t ${EXPORTER_IMAGE_TAG} .
 
 ##################################
 

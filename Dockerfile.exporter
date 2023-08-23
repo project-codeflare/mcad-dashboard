@@ -1,0 +1,12 @@
+FROM node:17.9.0-alpine
+
+WORKDIR /usr/src/app
+
+COPY exporter .
+
+RUN npm install
+
+EXPOSE 9101
+
+CMD ["npm", "run", "start:dev"]
+#ENTRYPOINT npm run start:dev
