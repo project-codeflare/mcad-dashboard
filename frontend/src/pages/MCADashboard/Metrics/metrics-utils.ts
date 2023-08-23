@@ -104,7 +104,7 @@ export const formatUnitStringOnAxis = (value: number, maxVal: number, unit?: Uni
 export const filterData = (data: any[], validNamespaces: Set<string> | undefined) => {
   if (data && validNamespaces) {
     const filteredData = data.filter((dataPoint) => {
-      return validNamespaces.has(dataPoint.metric.namespace);
+      return validNamespaces.has(dataPoint.metric.namespace ? dataPoint.metric.namespace: dataPoint.metric.exported_namespace);
     });
     return filteredData;
   } else {

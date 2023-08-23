@@ -2,12 +2,12 @@ import { Query, Unit } from './types';
 
 export const availableResourceQueries: Query[] = [
   {
-    name: 'Utilized CPU %',
+    name: 'Total Utilized CPU %',
     query: '(cluster:node_cpu:ratio{cluster=""}) * 100',
     unit: Unit.PERCENT,
   },
   {
-    name: 'Utilized GPU',
+    name: 'Total Utilized GPU',
     query: 'count(count by (UUID,GPU_I_ID) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{exported_pod=~".+"})) or vector(0)',
   },
   {
@@ -16,12 +16,12 @@ export const availableResourceQueries: Query[] = [
       'sum(cluster:capacity_cpu_cores:sum{cluster=""}) - sum(cluster:cpu_usage_cores:sum{cluster=""})',
   },
   {
-    name: 'Utilized Memory %',
+    name: 'Total Utilized Memory %',
     query: '(cluster:memory_usage:ratio{cluster=""}) * 100',
     unit: Unit.PERCENT,
   },
   {
-    name: 'Utilized GPU Memory',
+    name: 'Total Utilized GPU Memory',
     query: 'count(count by (UUID,GPU_I_ID) (DCGM_FI_DEV_MEM_COPY_UTIL))',
     unit: Unit.PERCENT,
   },
@@ -94,9 +94,9 @@ export const graphQueries: Query[] = [
     unit: Unit.BYTES,
   },
   {
-    name: 'Utilized GPU',
+    name: 'Utilized GPU (by Appwrapper)',
     query:
-      'count(count by (UUID,GPU_I_ID) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{exported_pod=~".+"})) or vector(0)',
+      'count (DCGM_FI_DEV_GPU_UTIL) by (exported_pod, exported_namespace)',
   },
 ];
 
@@ -132,13 +132,13 @@ export const tableQueries = [
   {
     name: 'gpu',
     query:
-      'count((DCGM_FI_PROF_GR_ENGINE_ACTIVE{exported_pod=~".+"})) by (namespace)',
+      'count (DCGM_FI_DEV_GPU_UTIL) by (exported_pod, exported_namespace)',
   },
-  {
-    name: 'gpumemory',
-    query:
-      'count(DCGM_FI_DEV_MEM_COPY_UTIL) by (namespace)',
-  },
+  // {
+  //   name: 'gpumemory',
+  //   query:
+  //     'count(DCGM_FI_DEV_MEM_COPY_UTIL) by (exported_namespace)',
+  // },
 ];
 
 export const mcadPromQueries: Query[] = [

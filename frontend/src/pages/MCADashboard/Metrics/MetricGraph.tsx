@@ -122,11 +122,10 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
 
     return () => clearInterval(interval);
   }, [time, validNamespaces, refreshRate]);
-
   const legendData = metricData?.map((obj) => {
     return {
-      childName: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
-      name: obj.metric.pod ? obj.metric.pod : obj.metric.namespace,
+      childName: obj.metric.pod ? obj.metric.pod : (obj.metric.namespace ? obj.metric.namespace : obj.metric.exported_pod),
+      name: obj.metric.pod ? obj.metric.pod : (obj.metric.namespace ? obj.metric.namespace : obj.metric.exported_pod),
     };
   });
 
@@ -234,15 +233,15 @@ const Graph: React.FC<GraphProps> = ({
           tickFormat={(tick) =>
             time.charAt(time.length - 1) === 'h' || time.charAt(time.length - 1) === 'm'
               ? new Date(tick * 1000).toLocaleTimeString([], {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })
+                hour: 'numeric',
+                minute: 'numeric',
+              })
               : new Date(tick * 1000).toLocaleDateString([], {
-                  day: 'numeric',
-                  month: 'numeric',
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })
+                day: 'numeric',
+                month: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+              })
           }
         />
         <ChartAxis
@@ -260,7 +259,7 @@ const Graph: React.FC<GraphProps> = ({
             return (
               <ChartLine
                 key={index}
-                name={obj.metric.pod ? obj.metric.pod : obj.metric.namespace}
+                name={obj.metric.pod ? obj.metric.pod : (obj.metric.namespace ? obj.metric.namespace : obj.metric.exported_pod)}
                 data={formatSeriesValues(
                   metricData[index].values.map(([timestamp, value]) => ({
                     x: timestamp,

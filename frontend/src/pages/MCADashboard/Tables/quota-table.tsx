@@ -29,7 +29,7 @@ interface QuotaData {
   cpulimits?: number;
   memorylimits?: number;
   gpu?: number;
-  gpumemory?: number;
+  // gpumemory?: number;
   [key: string]: number | string | undefined; // Index signature
 }
 
@@ -59,12 +59,13 @@ type TableData = {
   cpulimits?: kv_pair;
   memorylimits?: kv_pair;
   gpu?: kv_pair;
-  gpumemory?: kv_pair;
+  // gpumemory?: kv_pair;
 };
 
 interface DataPoint {
   metric: {
     namespace: string; // Adjust this type accordingly
+    exported_namespace: string;
   };
   value: [number, string]; // Adjust this type accordingly
 }
@@ -151,11 +152,11 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       label: 'GPU',
       sortable: sortFunction,
     },
-    {
-      field: 'gpumemory',
-      label: 'GPU Memory',
-      sortable: sortFunction,
-    },
+    // {
+    //   field: 'gpumemory',
+    //   label: 'GPU Memory',
+    //   sortable: sortFunction,
+    // },
   ];
   const appwrapperSummaryData: QuotaData[] = [];
   for (const appWrapper of Object.values(Data.appwrappers)) {
@@ -170,7 +171,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       cpulimits: tableData?.cpulimits?.[metadata.namespace],
       memorylimits: tableData?.memorylimits?.[metadata.namespace],
       gpu: tableData?.gpu?.[metadata.namespace],
-      gpumemory: tableData?.gpumemory?.[metadata.namespace],
+      // gpumemory: tableData?.gpumemory?.[metadata.namespace],
     };
     appwrapperSummaryData.push(quota);
   }
@@ -179,7 +180,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
     const formatData = (data: DataPoint[]) => {
       const formattedData: { [key: string]: number } = {};
       for (const dataPoint of data) {
-        formattedData[dataPoint.metric.namespace] =
+        formattedData[dataPoint.metric.namespace ? dataPoint.metric.namespace : dataPoint.metric.exported_namespace] =
           Math.round(parseFloat(dataPoint.value[1]) * 100) / 100;
       }
       return formattedData;
@@ -225,7 +226,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       cpulimits: tableData?.cpulimits?.[namespace],
       memorylimits: tableData?.memorylimits?.[namespace],
       gpu: tableData?.gpu?.[namespace],
-      gpumemory: tableData?.gpumemory?.[namespace],
+      // gpumemory: tableData?.gpumemory?.[namespace],
     }),
   );
 
@@ -310,9 +311,9 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
               <Td dataLabel={appwrappersInNamespace.gpu?.toString() || '-'}>
                 {appwrappersInNamespace.gpu?.toString() || '-'}
               </Td>
-              <Td dataLabel={appwrappersInNamespace.gpumemory?.toString() || '-'}>
+              {/* <Td dataLabel={appwrappersInNamespace.gpumemory?.toString() || '-'}>
                 {appwrappersInNamespace.gpumemory?.toString() || '-'}
-              </Td>
+              </Td> */}
             </Tr>
           )}
           toolbarContent={
