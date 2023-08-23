@@ -69,5 +69,6 @@ jobs:
           ORIGIN_REPO: ${{ steps.origin.outputs.IMAGE_REPOSITORY }}
           TARGET_REPO: ${{ steps.target.outputs.VERSION_TAG }}
         run: |
+          docker pull ${{ env.ORIGIN_REPO }}
           docker tag ${{ env.ORIGIN_REPO }} ${{ env.TARGET_REPO }}
           docker push ${{ env.TARGET_REPO }}
