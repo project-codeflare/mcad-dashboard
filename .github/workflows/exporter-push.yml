@@ -26,7 +26,7 @@ jobs:
       - name: Get image tag
         run: echo "GITHUB_SHA=$GITHUB_SHA" > .env.local
       - name: Set release repo
-        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad-exporter:$GITHUB_SHA" >> .env.local
+        run: echo "EXPORTER_IMAGE_TAG=ghcr.io/${{ github.repository_owner }}/mcad-exporter:$GITHUB_SHA" >> .env.local
       - name: Set container builder
         run: echo "CONTAINER_BUILDER=docker" >> .env.local
       - name: Build image
@@ -60,7 +60,7 @@ jobs:
         run: echo "GITHUB_SHA=$GITHUB_SHA" >> $GITHUB_OUTPUT
       - name: Set origin image tag
         id: origin
-        run: echo "IMAGE_REPOSITORY=ghcr.io/${{ github.repository_owner }}/mcad-exporter:$GITHUB_SHA" >> $GITHUB_OUTPUT
+        run: echo "EXPORTER_IMAGE_TAG=ghcr.io/${{ github.repository_owner }}/mcad-exporter:$GITHUB_SHA" >> $GITHUB_OUTPUT
       - name: Set version image tag # TODO make version dynamic
         id: target
         run: echo "VERSION_TAG=ghcr.io/${{ github.repository_owner }}/mcad-exporter:v0.1.0" >> $GITHUB_OUTPUT
