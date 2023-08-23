@@ -43,6 +43,11 @@ push:
 	echo "Pushing ${IMAGE_REPOSITORY}"
 	${CONTAINER_BUILDER} push ${IMAGE_REPOSITORY}
 
+.PHONY: push-exporter
+push-exporter:
+	echo "Pushing ${EXPORTER_IMAGE_TAG}"
+	${CONTAINER_BUILDER} push ${EXPORTER_IMAGE_TAG}
+
 ##################################
 
 .PHONY: login
