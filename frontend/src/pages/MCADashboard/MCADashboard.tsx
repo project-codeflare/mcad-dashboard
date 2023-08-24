@@ -14,8 +14,9 @@ import './MCADashboard.css';
 import fetchData from './app-wrapper-data';
 import { Data } from './types';
 import MetricsCards from './Metrics/MetricsCards';
+import DonutMetricsCards from './Metrics/DonutMetricsCards';
 // import { convertRangeToTime } from './Metrics/metrics-utils';
-import { availableResourceQueries } from './Metrics/queries';
+import { availableResourceQueries, totalResourceQueries } from './Metrics/queries';
 import { getNamespacesFromAppwrappers } from './Metrics/metrics-utils';
 
 //const description = `A Dashboard for Multi-Cluster App Dispatcher`;
@@ -119,11 +120,19 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
           /> */}
         </div>
         {isAdmin && (
-          <MetricsCards
-            queries={availableResourceQueries}
-            name={'Cluster Available Resources'}
-            refreshRate={refreshRate}
-          />
+          <div>
+            <DonutMetricsCards
+              totalQueries={totalResourceQueries}
+              queries={availableResourceQueries}
+              name={'Cluster Utilized/ Available Resources'}
+              refreshRate={refreshRate}
+            />
+            <MetricsCards
+              queries={availableResourceQueries}
+              name={'Cluster Available Resources'}
+              refreshRate={refreshRate}
+            />
+          </div>
         )}
         <StatusSummaryTable data={data ? data : emptyDataObject} />
         <AppWrapperSummaryTable data={data ? data : emptyDataObject} />

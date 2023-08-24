@@ -1,4 +1,39 @@
-import { Query, Unit } from './types';
+import { Query, Unit, TotalQuery } from './types';
+
+export const totalResourceQueries: TotalQuery[] = [
+  {
+    name: 'Total Utilized CPU %',
+    query: 'sum(cluster:capacity_cpu_cores:sum{cluster=""})',
+    totalUnit: "Cores",
+  },
+  {
+    name: 'Total Utilized GPU',
+    query: 'count(DCGM_FI_PROF_GR_ENGINE_ACTIVE)',
+    totalUnit: "GPUs",
+  },
+  {
+    name: 'Utilized CPU (Cores)',
+    query: 'sum(cluster:capacity_cpu_cores:sum{cluster=""})',
+    totalUnit: "Cores",
+  },
+  {
+    name: 'Total Utilized Memory %',
+    query:
+      'sum(cluster:capacity_memory_bytes:sum{cluster=""}) / 1048576',
+    totalUnit: "MiB",
+  },
+  {
+    name: 'Total Utilized GPU Memory %',
+    query: 'count(DCGM_FI_PROF_GR_ENGINE_ACTIVE)',
+    totalUnit: "MB",
+  },
+  {
+    name: 'Utilized Memory (Mebibytes)',
+    query:
+      'sum(cluster:capacity_memory_bytes:sum{cluster=""}) / 1048576',
+    totalUnit: "MiB",
+  },
+];
 
 export const availableResourceQueries: Query[] = [
   {
@@ -11,9 +46,9 @@ export const availableResourceQueries: Query[] = [
     query: 'count(count by (UUID,GPU_I_ID) (DCGM_FI_PROF_GR_ENGINE_ACTIVE{exported_pod=~".+"})) or vector(0)',
   },
   {
-    name: 'Available CPU (Cores)',
+    name: 'Utilized CPU (Cores)',
     query:
-      'sum(cluster:capacity_cpu_cores:sum{cluster=""}) - sum(cluster:cpu_usage_cores:sum{cluster=""})',
+      'sum(cluster:cpu_usage_cores:sum{cluster=""})',
   },
   {
     name: 'Total Utilized Memory %',
@@ -21,14 +56,14 @@ export const availableResourceQueries: Query[] = [
     unit: Unit.PERCENT,
   },
   {
-    name: 'Total Utilized GPU Memory',
+    name: 'Total Utilized GPU Memory %',
     query: 'count(count by (UUID,GPU_I_ID) (DCGM_FI_DEV_MEM_COPY_UTIL))',
     unit: Unit.PERCENT,
   },
   {
-    name: 'Available Memory (Mebibytes)',
+    name: 'Utilized Memory (Mebibytes)',
     query:
-      '(sum(cluster:capacity_memory_bytes:sum{cluster=""}) - sum(cluster:memory_usage_bytes:sum{cluster=""})) / 1048576',
+      '(sum(cluster:memory_usage_bytes:sum{cluster=""})) / 1048576',
   },
 ];
 
