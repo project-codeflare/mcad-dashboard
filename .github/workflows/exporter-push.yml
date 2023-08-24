@@ -66,7 +66,7 @@ jobs:
         run: echo "VERSION_TAG=ghcr.io/${{ github.repository_owner }}/mcad-exporter:v0.1.0" >> $GITHUB_OUTPUT
       - name: Tag and push image
         env: 
-          ORIGIN_REPO: ${{ steps.origin.outputs.IMAGE_REPOSITORY }}
+          ORIGIN_REPO: ${{ steps.origin.outputs.EXPORTER_IMAGE_TAG }}
           TARGET_REPO: ${{ steps.target.outputs.VERSION_TAG }}
         run: |
           docker pull ${{ env.ORIGIN_REPO }}
