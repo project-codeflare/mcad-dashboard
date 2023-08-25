@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardBody, CardHeader } from '@patternfly/react-core';
 import { ChartDonutThreshold, ChartDonutUtilization } from '@patternfly/react-charts';
 import { getMetricData } from './api/metricsData';
-
+import { convertBytesToBestUnit } from './metrics-utils';
 import { Unit } from './types';
 
 interface DataMap {
@@ -64,18 +64,26 @@ const DonutMetricCard: React.FC<MetricCardProps> = ({
         >
           <ChartDonutUtilization
             data={{
-              x: name, y: totalClusterResources[name]
-                ? `${Math.round((percentage * 100) / Number(totalClusterResources[name][0]) * 100) / 100}`
-                : `0%`
+              x: name, y: (totalClusterResources[name] && totalClusterResources[name][0] !== '0')
+                ? Math.round((percentage * 100) / Number(totalClusterResources[name][0]) * 100) / 100
+                : 0
             }}
             labels={({ datum }) => datum.x ? `${datum.x}: ${datum.y}%` : null}
-            subTitle={totalClusterResources[name]
-              ? `of ${Math.round(Number(totalClusterResources[name][0]))} ${totalClusterResources[name][1]}`
-              : 'of -'}
+            subTitle={
+              noGpu === ''
+                ? (totalClusterResources[name]
+                  ? (totalClusterResources[name][1] === 'B'
+                    ? `of ${convertBytesToBestUnit(Number(totalClusterResources[name][0]))}`
+                    : `of ${Math.round(Number(totalClusterResources[name][0]))} ${totalClusterResources[name][1]}`)
+                  : 'of -')
+                : `${noGpu}`}
             title={
-              unit
+              unit === Unit.PERCENT
                 ? `${percentage}${unit}`
-                : `${percentage}`
+                : (unit === Unit.BYTES
+                  ? `${convertBytesToBestUnit(percentage)}`
+                  : `${percentage}`
+                )
             }
             thresholds={[{ value: 60 }, { value: 90 }]}
           />

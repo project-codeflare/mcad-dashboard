@@ -127,11 +127,11 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
               name={'Cluster Utilized/ Available Resources'}
               refreshRate={refreshRate}
             />
-            <MetricsCards
+            {/* <MetricsCards
               queries={availableResourceQueries}
               name={'Cluster Available Resources'}
               refreshRate={refreshRate}
-            />
+            /> */}
           </div>
         )}
         <StatusSummaryTable data={data ? data : emptyDataObject} />

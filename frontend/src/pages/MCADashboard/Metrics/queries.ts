@@ -19,8 +19,8 @@ export const totalResourceQueries: TotalQuery[] = [
   {
     name: 'Total Utilized Memory %',
     query:
-      'sum(cluster:capacity_memory_bytes:sum{cluster=""}) / 1048576',
-    totalUnit: "MiB",
+      'sum(cluster:capacity_memory_bytes:sum{cluster=""})',
+    totalUnit: "B",
   },
   {
     name: 'Total Utilized GPU Memory %',
@@ -28,10 +28,10 @@ export const totalResourceQueries: TotalQuery[] = [
     totalUnit: "MB",
   },
   {
-    name: 'Utilized Memory (Mebibytes)',
+    name: 'Utilized Memory',
     query:
-      'sum(cluster:capacity_memory_bytes:sum{cluster=""}) / 1048576',
-    totalUnit: "MiB",
+      'sum(cluster:capacity_memory_bytes:sum{cluster=""})',
+    totalUnit: "B",
   },
 ];
 
@@ -61,10 +61,12 @@ export const availableResourceQueries: Query[] = [
     unit: Unit.PERCENT,
   },
   {
-    name: 'Utilized Memory (Mebibytes)',
+    name: 'Utilized Memory',
     query:
-      '(sum(cluster:memory_usage_bytes:sum{cluster=""})) / 1048576',
+      '(sum(cluster:memory_usage_bytes:sum{cluster=""}))',
+    unit: Unit.BYTES,
   },
+  // / 1048576 - convert bytes to MIB
 ];
 
 export const statusSummaryQueries: Query[] = [

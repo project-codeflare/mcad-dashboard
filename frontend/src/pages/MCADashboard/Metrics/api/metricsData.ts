@@ -1,6 +1,4 @@
 import axios from 'axios';
-// import { PrometheusQueryResponse } from '~/types';
-// import React from 'react';
 import { timeStringToSeconds } from '~/pages/MCADashboard/Metrics/metrics-utils';
 import { TotalQuery } from '../types';
 
@@ -13,7 +11,11 @@ export const getTotalClusterResourcesData = async (queries: TotalQuery[]) => {
   const requests = queries.map(async (query) => {
     try {
       const res = await axios.post('/api/metrics-data', { query: query.query });
-      dataMap[query.name] = [res.data[0].value[1], query.totalUnit];
+      if (res.data.length !== 0) {
+        dataMap[query.name] = [res.data[0].value[1], query.totalUnit];
+      } else {
+        dataMap[query.name] = ["0", query.totalUnit];
+      }
     } catch (error) {
       console.error(`Error fetching data for query: ${query}`, error);
     }
