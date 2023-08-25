@@ -1,7 +1,31 @@
 import axios from 'axios';
-// import { PrometheusQueryResponse } from '~/types';
-// import React from 'react';
 import { timeStringToSeconds } from '~/pages/MCADashboard/Metrics/metrics-utils';
+import { TotalQuery } from '../types';
+
+interface DataMap {
+  [key: string]: [string, string];
+}
+
+export const getTotalClusterResourcesData = async (queries: TotalQuery[]) => {
+  const dataMap: DataMap = {};
+  const requests = queries.map(async (query) => {
+    try {
+      const res = await axios.post('/api/metrics-data', { query: query.query });
+      if (res.data.length !== 0) {
+        dataMap[query.name] = [res.data[0].value[1], query.totalUnit];
+      } else {
+        dataMap[query.name] = ["0", query.totalUnit];
+      }
+    } catch (error) {
+      console.error(`Error fetching data for query: ${query}`, error);
+    }
+  });
+
+  await Promise.all(requests);
+
+  return dataMap;
+};
+
 
 export const getMetricData = async (query: string) => {
   const noGpu = 'No GPUs Detected';
