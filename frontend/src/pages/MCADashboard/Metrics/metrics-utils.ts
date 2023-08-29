@@ -54,6 +54,19 @@ export const getNamespacesFromAppwrappers = (data: { appwrappers: any }): string
   return Array.from(namespaces);
 };
 
+export const convertBytesToBestUnit = (bytes: number): string => {
+  const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB'];
+  let unitIndex = 0;
+  let size = bytes;
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+  //return [size.toFixed(2), units[unitIndex]];
+  return `${size.toFixed(2)}${units[unitIndex]}`;
+}
+
 export const formatUnitString = (value: number, unit?: Unit): string => {
   const round = (num: number) => {
     return (Math.round(num * 100) / 100).toString();
@@ -104,7 +117,7 @@ export const formatUnitStringOnAxis = (value: number, maxVal: number, unit?: Uni
 export const filterData = (data: any[], validNamespaces: Set<string> | undefined) => {
   if (data && validNamespaces) {
     const filteredData = data.filter((dataPoint) => {
-      return validNamespaces.has(dataPoint.metric.namespace ? dataPoint.metric.namespace: dataPoint.metric.exported_namespace);
+      return validNamespaces.has(dataPoint.metric.namespace ? dataPoint.metric.namespace : dataPoint.metric.exported_namespace);
     });
     return filteredData;
   } else {

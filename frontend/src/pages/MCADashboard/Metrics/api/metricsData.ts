@@ -1,7 +1,31 @@
 import axios from 'axios';
-// import { PrometheusQueryResponse } from '~/types';
-// import React from 'react';
 import { timeStringToSeconds } from '~/pages/MCADashboard/Metrics/metrics-utils';
+import { TotalQuery } from '../types';
+
+interface DataMap {
+  [key: string]: [string, string];
+}
+
+export const getTotalClusterResourcesData = async (queries: TotalQuery[]) => {
+  const dataMap: DataMap = {};
+  const requests = queries.map(async (query) => {
+    try {
+      const res = await axios.post('/api/metrics-data', { query: query.query });
+      if (res.data.length !== 0) {
+        dataMap[query.name] = [res.data[0].value[1], query.totalUnit];
+      } else {
+        dataMap[query.name] = ["0", query.totalUnit];
+      }
+    } catch (error) {
+      console.error(`Error fetching data for query: ${query}`, error);
+    }
+  });
+
+  await Promise.all(requests);
+
+  return dataMap;
+};
+
 
 export const getMetricData = async (query: string) => {
   const noGpu = 'No GPUs Detected';
@@ -13,13 +37,13 @@ export const getMetricData = async (query: string) => {
     if (query === utilizedGPUQuery) { // since vector(0) in query, even if no gpu in cluster returns 0
       const gpubody = { query: utilizedGPUMemoryQuery }; // use the utilizedGPUMemoryQuery to verify gpu is present in the cluster
       const gpures: { data: { value: [string, number] }[] } = await axios.post('/api/metrics-data', gpubody);
-      if (gpures.data && gpures.data[0] && gpures.data[0].value && gpures.data[0].value[1] !== undefined) {
+      if (gpures && gpures.data && gpures.data[0] && gpures.data[0].value && gpures.data[0].value[1] !== undefined) {
         return res.data[0].value[1];
       } else {
         return noGpu;
       }
     } else {
-      if (res.data && res.data[0] && res.data[0].value && res.data[0].value[1] !== undefined) {
+      if (res && res.data && res.data[0] && res.data[0].value && res.data[0].value[1] !== undefined) {
         return res.data[0].value[1];
       } else {
         if (query === utilizedGPUMemoryQuery) {

@@ -4,6 +4,12 @@ export type Query = {
   unit?: Unit;
 };
 
+export type TotalQuery = {
+  name: string;
+  query: string;
+  totalUnit: string;
+};
+
 export type MetricData = {
   metric: {
     exported_pod: string;
