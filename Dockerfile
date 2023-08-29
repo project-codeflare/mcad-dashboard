@@ -44,7 +44,7 @@ RUN cd backend && npm cache clean --force && npm ci --omit=dev --omit=optional &
 WORKDIR /usr/src/app/backend
 
 # TEMPORARY add sh scripts 
-RUN wget "http://stedolan.github.io/jq/download/linux64/jq"
+RUN wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
 RUN chmod 777 ./jq
 COPY --chown=default:root /backend/src/routes/api/appwrappers/appwrapper_puller.sh ./src/routes/api/appwrappers/appwrapper_puller.sh
 COPY --chown=default:root /backend/src/routes/api/mcad-prometheus/get-route.sh ./src/routes/api/mcad-prometheus/get-route.sh
