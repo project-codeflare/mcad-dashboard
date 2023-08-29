@@ -6,6 +6,6 @@ else # if oc does not exist
 	TOKEN=$(cat ${SERVICEACCOUNT}/token)
 	CACERT=${SERVICEACCOUNT}/ca.crt
 	curl --silent --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET \
-	${APISERVER}/apis/route.openshift.io/v1/namespaces/openshift-monitoring/routes | ./jq \
+	${APISERVER}/apis/route.openshift.io/v1/namespaces/openshift-monitoring/routes | ./jq -r \
 	'.items[] | select(.metadata.name=="prometheus-k8s") | .spec.host'
 fi
