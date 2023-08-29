@@ -43,6 +43,11 @@ RUN cd backend && npm cache clean --force && npm ci --omit=dev --omit=optional &
 
 WORKDIR /usr/src/app/backend
 
+# TEMPORARY add sh scripts 
+COPY --chown=default:root /backend/src/routes/api/appwrappers/appwrapper_puller.sh ./src/routes/api/appwrappers/appwrapper_puller.sh
+COPY --chown=default:root /backend/src/routes/api/mcad-prometheus/get-route.sh ./src/routes/api/mcad-prometheus/get-route.sh
+COPY --chown=default:root /backend/src/routes/api/metrics-data/get-route.sh ./src/routes/api/metrics-data/get-route.sh
+
 CMD ["npm", "run", "start"]
 
 LABEL io.opendatahub.component="mcad-dashboard" \
