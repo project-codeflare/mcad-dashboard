@@ -1,5 +1,11 @@
 if [[ $(command -v oc) ]] ; then
 	oc get route prometheus-portal -n odh -o jsonpath="{.spec.host}" 
 else 
-	echo "prometheus-operated.odh.svc.cluster.local:9090"
+	APISERVER=https://kubernetes.default.svc
+	SERVICEACCOUNT=/var/run/secrets/kubernetes.io/serviceaccount
+	TOKEN=$(cat ${SERVICEACCOUNT}/token)
+	CACERT=${SERVICEACCOUNT}/ca.crt
+	curl --silent --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET \
+	${APISERVER}/apis/route.openshift.io/v1/namespaces/odh/routes | ./jq \
+	'.items[] | select(.metadata.name=="prometheus-portal") | .spec.host'
 fi
