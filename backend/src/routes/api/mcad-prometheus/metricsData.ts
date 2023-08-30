@@ -34,7 +34,7 @@ const fetchPrometheusDataRange = async (
     step: step.toString(),
     query: query,
   });
-  const url = `https://${host}/api/v1/query_range?${params.toString()}`;
+  const url = `http://${host}/api/v1/query_range?${params.toString()}`;
   return axiosInstance
     .get(url)
     .then((res) => {
