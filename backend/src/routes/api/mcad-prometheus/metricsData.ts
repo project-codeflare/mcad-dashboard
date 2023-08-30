@@ -3,6 +3,9 @@ import { exec } from 'child_process';
 import { OauthFastifyRequest, KubeFastifyInstance } from '../../../types';
 import { getDirectCallOptions } from '../../../utils/directCallUtils';
 
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+
+
 const fetchPrometheusData = async (host: string, query: string, axiosInstance: AxiosInstance) => {
   const params = new URLSearchParams({
     query: query,
@@ -103,7 +106,7 @@ const metricsData = async (
   const axiosInstance = axios.create({
     headers: {
       //Authorization: auth,
-      rejectUnauthorized: false,
+      //rejectUnauthorized: false,
     },
   });
   if (!range) {
