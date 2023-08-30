@@ -34,7 +34,7 @@ const fetchPrometheusDataRange = async (
     step: step.toString(),
     query: query,
   });
-  const url = `http://${host}/api/v1/query_range?${params.toString()}`;
+  const url = `https://${host}/api/v1/query_range?${params.toString()}`;
   return axiosInstance
     .get(url)
     .then((res) => {
@@ -103,7 +103,7 @@ const metricsData = async (
   const axiosInstance = axios.create({
     headers: {
       //Authorization: auth,
-      //rejectUnauthorized: false,
+      rejectUnauthorized: false,
     },
   });
   if (!range) {
