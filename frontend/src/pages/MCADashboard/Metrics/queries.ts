@@ -120,7 +120,7 @@ export const graphQueries: Query[] = [
     unit: Unit.BYTES,
   },
   {
-    name: 'Network Usage (by Appwrapper) - Rate of Transmitted Packets Over the Last 5 Minutes',
+    name: 'Network Usage (by Appwrapper) - Rate of Transmitted Packets',
     query:
       'sum(irate(container_network_transmit_packets_total{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", namespace=~".+"}[5m])) by (pod, namespace)',
     unit: Unit.PPS,
