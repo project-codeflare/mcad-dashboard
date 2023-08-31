@@ -4,6 +4,7 @@ WORKDIR /usr/src/app
 
 COPY exporter .
 
+RUN apk --no-cache add curl
 RUN npm install
 
 EXPOSE 9101
