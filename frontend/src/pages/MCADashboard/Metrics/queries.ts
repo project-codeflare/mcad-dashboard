@@ -120,6 +120,12 @@ export const graphQueries: Query[] = [
     unit: Unit.BYTES,
   },
   {
+    name: 'Network Usage (by Appwrapper) - Rate of Transmitted Packets Over the Last 5 Minutes',
+    query:
+      'sum(irate(container_network_transmit_packets_total{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", namespace=~".+"}[5m])) by (pod, namespace)',
+    unit: Unit.PPS,
+  },
+  {
     name: 'CPU Request (by Namespace)',
     query:
       'sum by (namespace) (kube_pod_container_resource_requests{job="kube-state-metrics", cluster="", resource="cpu"})',
@@ -165,6 +171,11 @@ export const tableQueries = [
     name: 'memorylimits',
     query:
       'sum(namespace_memory:kube_pod_container_resource_limits:sum{cluster=""}) by (namespace)',
+  },
+  {
+    name: 'rateoftransmittedpackets',
+    query:
+      'sum(irate(container_network_transmit_packets_total{job="kubelet", metrics_path="/metrics/cadvisor", cluster="", namespace=~".+"}[5m])) by (namespace)',
   },
   {
     name: 'gpu',

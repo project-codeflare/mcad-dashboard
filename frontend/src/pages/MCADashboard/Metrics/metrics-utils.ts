@@ -72,8 +72,17 @@ export const formatUnitString = (value: number, unit?: Unit): string => {
     return (Math.round(num * 100) / 100).toString();
   };
 
-  if (unit != Unit.BYTES) {
+  if (unit !== Unit.BYTES && unit !== Unit.PPS) {
     return round(value).toString();
+  }
+  if (unit === Unit.PPS) {
+    if (value < 1000) {
+      return round(value).toString() + 'pps';
+    }
+    value /= 1000;
+    if (value < 1000) {
+      return round(value).toString() + 'kpps';
+    }
   }
   if (value < 1000) {
     return round(value).toString() + 'B';
@@ -95,8 +104,17 @@ export const formatUnitStringOnAxis = (value: number, maxVal: number, unit?: Uni
     return (Math.round(num * 100) / 100).toString();
   };
   const maxValString = formatUnitString(maxVal, unit);
-  if (maxValString.length <= 1 || maxValString.charAt(maxValString.length - 1) !== 'B') {
+  if (maxValString.length <= 1 || (maxValString.charAt(maxValString.length - 1) !== 'B' && maxValString.charAt(maxValString.length - 1) !== 's')) {
     return round(value).toString();
+  }
+  if (maxValString.charAt(maxValString.length - 1) === 's') {
+    const post = maxValString.charAt(maxValString.length - 4);
+    switch (post) {
+      case 'k':
+        return round(value / 1000).toString() + 'kpps';
+      default:
+        return round(value).toString() + 'pps';
+    }
   }
   if (maxValString.length < 3) {
     return round(value).toString();
