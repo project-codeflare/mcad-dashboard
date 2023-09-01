@@ -134,6 +134,7 @@ class AllAppwrappers {
       headers: headers,
       body: allNamespacesJson,
     };
+    console.log(response)
 
     return response;
   }

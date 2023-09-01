@@ -23,13 +23,13 @@ const appwrapperStatus = new Gauge({
 async function getAppwrapperStatus(status: string) {
     switch(status) {
         case "Running": {
-            return 1;
+            return 3;
         }
         case "Pending": {
             return 2;
         }
         case "Failed": {
-            return 3;
+            return 1;
         }
         default: {
             return 0;
@@ -43,17 +43,16 @@ async function collectStats() {
         const response = await new AllAppwrappers().get();
         const pullerJson = JSON.parse(response.body);
 
-        const counts = pullerJson.stats.status_counts;
+        const counts = pullerJson.stats.statusCounts;
         for (const status in counts) {
             //console.log(status, ":", counts[status])
             appwrapperCount.labels(status).set(counts[status]);
         }
-        console.log("appwrapperCount", appwrapperCount)
 
         const appwrappers = pullerJson.appwrappers;
         for (const appwrapper in appwrappers) {
             const appwrapperInfo = appwrappers[appwrapper]
-            console.log(appwrapper, appwrapperInfo)
+            //console.log(appwrapper, appwrapperInfo)
             var state = getAppwrapperStatus(appwrapperInfo.status.state)
             appwrapperStatus.labels(appwrapperInfo.metadata.name, appwrapperInfo.metadata.namespace).set(await state)
         }
