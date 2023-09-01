@@ -65,7 +65,9 @@ const DonutMetricCard: React.FC<MetricCardProps> = ({
           <ChartDonutUtilization
             data={{
               x: name, y: (totalClusterResources[name] && totalClusterResources[name][0] !== '0')
-                ? Math.round((percentage * 100) / Number(totalClusterResources[name][0]) * 100) / 100
+                ? (unit !== Unit.PERCENT
+                  ? Math.round((percentage * 100) / Number(totalClusterResources[name][0]) * 100) / 100
+                  : percentage)
                 : 0
             }}
             labels={({ datum }) => datum.x ? `${datum.x}: ${datum.y}%` : null}

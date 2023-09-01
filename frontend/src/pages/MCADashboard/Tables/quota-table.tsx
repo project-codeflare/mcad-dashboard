@@ -28,6 +28,7 @@ interface QuotaData {
   memoryrequests?: number;
   cpulimits?: number;
   memorylimits?: number;
+  rateoftransmittedpackets?: number;
   gpu?: number;
   // gpumemory?: number;
   [key: string]: number | string | undefined; // Index signature
@@ -58,6 +59,7 @@ type TableData = {
   memoryrequests?: kv_pair;
   cpulimits?: kv_pair;
   memorylimits?: kv_pair;
+  rateoftransmittedpackets?: kv_pair;
   gpu?: kv_pair;
   // gpumemory?: kv_pair;
 };
@@ -148,6 +150,11 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       sortable: sortFunction,
     },
     {
+      field: 'rateoftransmittedpackets',
+      label: 'Rate of Transmitted Packets',
+      sortable: sortFunction,
+    },
+    {
       field: 'gpu',
       label: 'GPU',
       sortable: sortFunction,
@@ -170,6 +177,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       memoryrequests: tableData?.memoryrequests?.[metadata.namespace],
       cpulimits: tableData?.cpulimits?.[metadata.namespace],
       memorylimits: tableData?.memorylimits?.[metadata.namespace],
+      rateoftransmittedpackets: tableData?.rateoftransmittedpackets?.[metadata.namespace],
       gpu: tableData?.gpu?.[metadata.namespace],
       // gpumemory: tableData?.gpumemory?.[metadata.namespace],
     };
@@ -225,6 +233,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
       memoryrequests: tableData?.memoryrequests?.[namespace],
       cpulimits: tableData?.cpulimits?.[namespace],
       memorylimits: tableData?.memorylimits?.[namespace],
+      rateoftransmittedpackets: tableData?.rateoftransmittedpackets?.[namespace],
       gpu: tableData?.gpu?.[namespace],
       // gpumemory: tableData?.gpumemory?.[namespace],
     }),
@@ -306,6 +315,11 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
               <Td dataLabel={appwrappersInNamespace.memorylimits?.toString() || '-'}>
                 {appwrappersInNamespace.memorylimits
                   ? formatUnitString(appwrappersInNamespace.memorylimits, Unit.BYTES)
+                  : '-'}
+              </Td>
+              <Td dataLabel={appwrappersInNamespace.rateoftransmittedpackets?.toString() || '-'}>
+                {appwrappersInNamespace.rateoftransmittedpackets
+                  ? formatUnitString(appwrappersInNamespace.rateoftransmittedpackets, Unit.PPS)
                   : '-'}
               </Td>
               <Td dataLabel={appwrappersInNamespace.gpu?.toString() || '-'}>
