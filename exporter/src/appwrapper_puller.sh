@@ -1,3 +1,4 @@
+#!/bin/sh
 
 if [[ $(command -v kubectl) ]] ; then
 	if kubectl get appwrapper --all-namespaces &>/dev/null; then
@@ -10,7 +11,7 @@ if [[ $(command -v kubectl) ]] ; then
 	  done
 	# Non-Admin User
 	else
-	  NAMESPACES=($(kubectl get projects --no-headers | awk '{print $1}'))
+	  NAMESPACES=$(kubectl get projects --no-headers | awk '{print $1}')
 	  for namespace in "${NAMESPACES[@]}"; do
 	    output=$(kubectl get appwrapper -n $namespace --no-headers | awk '{print $1}')
 	    if [[ -z "$output" ]]; then
