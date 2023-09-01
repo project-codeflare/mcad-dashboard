@@ -1,6 +1,7 @@
 import express from 'express';
 import { Gauge, register } from 'prom-client';
 import axios from 'axios';
+import { AllAppwrappers } from './appwrapper-utils';
 
 const app = express();
 const PORT = 9101;
@@ -39,8 +40,8 @@ async function getAppwrapperStatus(status: string) {
 // Define a function to collect stats and update Prometheus metrics
 async function collectStats() {
     try {
-        const response = await axios.get('http://mcad-dashboard-json-puller-route-default.mcad-dev-us-south-1-bx2-4-d9216b613387d80bef1a9d1d5bfb1331-0000.us-south.containers.appdomain.cloud/all_namespaces');
-        const pullerJson = response.data;
+        const response = await new AllAppwrappers().get();
+        const pullerJson = JSON.parse(response.body);
 
         const counts = pullerJson.stats.status_counts;
         for (const status in counts) {
