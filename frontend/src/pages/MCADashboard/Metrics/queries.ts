@@ -193,9 +193,11 @@ export const mcadPromQueries: Query[] = [
   {
     name: 'Total Appwrapper Count by Status',
     query: 'appwrapper_count',
+    unit: Unit.APPWRAPPERS
   },
   {
     name: 'Appwrapper Status',
     query: 'appwrapper_status',
+    unit: Unit.STATUS
   },
 ];
