@@ -44,6 +44,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
   };
 
   const handleTimeRangeSelection = (item: string) => {
+    console.log("time ", item)
     setSpan(item);
   };
 

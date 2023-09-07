@@ -2,44 +2,75 @@
 import { Unit } from './types';
 
 export const convertRangeToTime = (timeRange: string) => {
-  switch (timeRange) {
-    case 'Custom Time Range':
-      return '5m';
-    case 'Last 5 minutes':
-      return '5m';
-    case 'Last 10 minutes':
-      return '10m';
-    case 'Last 30 minutes':
-      return '30m';
-    case 'Last 1 hour':
-      return '1h';
-    case 'Last 2 hours':
-      return '2h';
-    case 'Last 1 day':
-      return '1d';
-    case 'Last 2 days':
-      return '2d';
-    case 'Last 1 week':
-      return '1w';
-    case 'Last 2 weeks':
-      return '2w';
-    default:
-      throw new Error('invalid input');
+  const unitChar = timeRange.charAt(0);
+  if (unitChar !== 'L') {
+    const parts = timeRange.split(' ');
+    switch (parts[1]) {
+      case 'minutes':
+        return parts[0] + 'm';
+      case 'hours':
+        return parts[0] + 'h';
+      case 'days':
+        return parts[0] + 'd';
+      case 'weeks':
+        return parts[0] + 'w';
+      case 'months':
+        return parts[0] + 'mo';
+      case 'years':
+        return parts[0] + 'y';
+      default:
+        throw new Error('invalid input');
+    }
+  } else {
+    switch (timeRange) {
+      case 'Custom Time Range':
+        return '5m';
+      case 'Last 5 minutes':
+        return '5m';
+      case 'Last 10 minutes':
+        return '10m';
+      case 'Last 30 minutes':
+        return '30m';
+      case 'Last 1 hour':
+        return '1h';
+      case 'Last 2 hours':
+        return '2h';
+      case 'Last 1 day':
+        return '1d';
+      case 'Last 2 days':
+        return '2d';
+      case 'Last 1 week':
+        return '1w';
+      case 'Last 2 weeks':
+        return '2w';
+      default:
+        throw new Error('invalid input');
+    }
   }
 };
 
 export const timeStringToSeconds = (timeString: string) => {
   const value: number = parseInt(timeString.substring(0, timeString.length - 1));
   const unit = timeString.charAt(timeString.length - 1).toLowerCase();
+  const secsInMin = 60;
+  const minInHour = 60;
+  const hoursInDay = 30;
+  const daysInWeeks = 7;
+  const daysInMonth = 30;
+  const daysInYear = 365;
   switch (unit) {
     case 'm':
-      return value * 60;
+      return value * secsInMin;
     case 'h':
-      return value * 60 * 60;
+      return value * minInHour * secsInMin;
     case 'd':
-      return value * 24 * 60 * 60;
+      return value * hoursInDay * minInHour * secsInMin;
     case 'w':
-      return value * 7 * 24 * 60 * 60;
+      return value * daysInWeeks * hoursInDay * minInHour * secsInMin;
+    case 'o': // month - mo (last char - o)
+      return value * daysInMonth * hoursInDay * minInHour * secsInMin;
+    case 'y':
+      return value * daysInYear * hoursInDay * minInHour * secsInMin;
     default:
       throw new Error('Invalid time unit');
   }
@@ -72,15 +103,9 @@ export const formatUnitString = (value: number, unit?: Unit): string => {
     return (Math.round(num * 100) / 100).toString();
   };
 
-  if (unit === Unit.APPWRAPPERS || Unit.STATUS) {
+  if (unit === Unit.APPWRAPPERS || unit === Unit.STATUS) { // case of appwrappers or appwrapper status
     return formatStringOnAxis(value, unit);
-  }
-
-  if (unit !== Unit.BYTES && unit !== Unit.PPS) {
-    return round(value).toString();
-  }
-  
-  if (unit === Unit.PPS) {
+  } else if (unit === Unit.PPS) { // case of network
     if (value < 1000) {
       return round(value).toString() + 'pps';
     }
@@ -88,20 +113,27 @@ export const formatUnitString = (value: number, unit?: Unit): string => {
     if (value < 1000) {
       return round(value).toString() + 'kpps';
     }
+  } else if (unit === Unit.BYTES) { // case of network
+    if (value < 1000) {
+      return round(value).toString() + 'B';
+    }
+    value /= 1024;
+    if (value < 1000) {
+      return round(value).toString() + 'KiB';
+    }
+    value /= 1024;
+    if (value < 1000) {
+      return round(value).toString() + 'MiB';
+    }
+    value /= 1024;
+    return round(value).toString() + 'GiB';
   }
-  if (value < 1000) {
-    return round(value).toString() + 'B';
-  }
-  value /= 1024;
-  if (value < 1000) {
-    return round(value).toString() + 'KiB';
-  }
-  value /= 1024;
-  if (value < 1000) {
-    return round(value).toString() + 'MiB';
-  }
-  value /= 1024;
-  return round(value).toString() + 'GiB';
+  return round(value).toString()
+
+  // if (unit !== Unit.BYTES && unit !== Unit.PPS) { // case for no unit assigned
+  //   return round(value).toString();
+  // }
+
 };
 
 export const formatUnitStringOnAxis = (value: number, maxVal: number, unit?: Unit): string => {
