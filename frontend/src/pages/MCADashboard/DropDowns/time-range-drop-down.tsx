@@ -65,6 +65,11 @@ const TimeRangeDropDown: React.FunctionComponent<TimeRangeDropDownProps> = ({
     setIsOpenCustomTime(!isOpenCustomTime);
   }
 
+  const handleModalCancelToggle = (_event: KeyboardEvent | React.MouseEvent) => {
+    setModalOpen(!isModalOpen);
+    setIsOpen(!isOpen); // To close Time Range dropdown after custom time set in modal
+  };
+
   const handleModalToggle = (_event: KeyboardEvent | React.MouseEvent) => {
     setModalOpen(!isModalOpen);
   };
@@ -131,11 +136,12 @@ const TimeRangeDropDown: React.FunctionComponent<TimeRangeDropDownProps> = ({
                 description="Enter custom time in the format specified"
                 isOpen={isModalOpen}
                 // onClose={handleModalToggle}
+                showClose={false}
                 actions={[
                   <Button key="set" variant="primary" form="modal-with-form-form" onClick={handleModalSetToggle}>
                     Set
                   </Button>,
-                  <Button key="cancel" variant="link" onClick={handleModalToggle}>
+                  <Button key="cancel" variant="link" onClick={handleModalCancelToggle}>
                     Cancel
                   </Button>
                 ]}
