@@ -72,9 +72,14 @@ export const formatUnitString = (value: number, unit?: Unit): string => {
     return (Math.round(num * 100) / 100).toString();
   };
 
+  if (unit === Unit.APPWRAPPERS || Unit.STATUS) {
+    return formatStringOnAxis(value, unit);
+  }
+
   if (unit !== Unit.BYTES && unit !== Unit.PPS) {
     return round(value).toString();
   }
+  
   if (unit === Unit.PPS) {
     if (value < 1000) {
       return round(value).toString() + 'pps';
@@ -131,6 +136,33 @@ export const formatUnitStringOnAxis = (value: number, maxVal: number, unit?: Uni
       return round(value).toString() + 'B';
   }
 };
+
+export const formatStringOnAxis = (value: number, unit?: Unit): string => {
+  const post = value.toString();
+  if (unit === Unit.APPWRAPPERS) {
+    switch (post) {
+      case '1':
+        return '1 Job';
+      default:
+        return value.toString() + ' Jobs'
+    }
+  } else if (unit === Unit.STATUS) {
+    switch (post) {
+      case '0':
+        return '';
+      case '1':
+        return 'Failed';
+      case '2':
+        return 'Pending';
+      case '3':
+        return 'Running';
+      default:
+        return value.toString();
+    }
+  } else {
+    return value.toString();
+  }
+}
 
 export const filterData = (data: any[], validNamespaces: Set<string> | undefined) => {
   if (data && validNamespaces) {

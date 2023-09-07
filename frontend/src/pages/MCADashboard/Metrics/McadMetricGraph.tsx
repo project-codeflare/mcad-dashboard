@@ -2,6 +2,8 @@ import React from 'react';
 
 import * as _ from 'lodash-es';
 
+import { Unit } from './types';
+
 import {
   ExpandableSection,
   TextContent,
@@ -23,7 +25,7 @@ import { getMCADMetricDataRange } from './api/metricsData';
 import './Metrics.scss';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
-import { formatUnitStringOnAxis, timeStringToSeconds } from './metrics-utils';
+import { timeStringToSeconds, formatStringOnAxis } from './metrics-utils';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
@@ -50,7 +52,7 @@ type LegendDataItem = {
   name: string;
 };
 
-const formatSeriesValues = (values: any[], samples: number, span: number) => {
+const formatSeriesValues = (values: any[], samples: number, span: number, unit?: Unit) => {
   const newValues = values;
 
   // The data may have missing values, so we fill those gaps with nulls so that the graph correctly
@@ -264,8 +266,8 @@ const Graph: React.FC<GraphProps> = ({
           crossAxis={false}
           dependentAxis
           showGrid
-          tickFormat={(tick) => formatUnitStringOnAxis(Number(tick), maxVal, query.unit)}
-          tickCount={6}
+          tickFormat={(tick) => formatStringOnAxis(Number(tick), query.unit)}
+          tickCount={4}
         />
         <ChartGroup>
           {Array.isArray(metricData) &&
@@ -284,6 +286,7 @@ const Graph: React.FC<GraphProps> = ({
                     })),
                     0,
                     timeStringToSeconds(time),
+                    query.unit
                   )}
                   style={style}
                 />
