@@ -25,10 +25,10 @@ resources:
 images:
 - name: odh-dashboard
   newName: ghcr.io/maia-iyer/mcad-dashboard
-  newTag: 25bfe168db01f3024020054b4373a09f0e8253df 
+  newTag: 49fd8802d8a13802907b6866b6b98b8d8da95547
 - name: oauth-proxy
   newName: registry.redhat.io/openshift4/ose-oauth-proxy
   digest: sha256:ab112105ac37352a2a4916a39d6736f5db6ab4c29bad4467de8d613e80e9bb33
 - name: mcad-exporter
-  newName: ghcr.io/project-codeflare/mcad-exporter
-  newTag: v0.1.0
+  newName: ghcr.io/maia-iyer/mcad-exporter
+  newTag: 49fd8802d8a13802907b6866b6b98b8d8da95547

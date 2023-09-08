@@ -15,6 +15,7 @@ spec:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: mcad-exporter
     spec:
+      serviceAccount: mcad-exporter
       containers:
         - name: mcad-exporter
           image: mcad-exporter
@@ -81,3 +82,63 @@ spec:
     matchLabels:
       app.kubernetes.io/component: exporter
       app.kubernetes.io/name: mcad-exporter
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mcad-exporter
+rules:
+  - verbs:
+      - get
+      - list
+    apiGroups:
+      - mcad.ibm.com
+    resources:
+      - appwrappers
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mcad-exporter
+rules:
+  - verbs:
+      - get
+      - list
+    apiGroups:
+      - mcad.ibm.com
+    resources:
+      - appwrappers
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: mcad-exporter
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"mcad-exporter"}}'
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mcad-exporter
+subjects:
+  - kind: ServiceAccount
+    name: mcad-exporter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mcad-exporter
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mcad-exporter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mcad-exporter
+subjects:
+  - kind: ServiceAccount
+    name: mcad-exporter
+
