@@ -80,23 +80,31 @@ Run storybook a11y tests and interaction tests.
 
 For in-depth testing guidance review the [contribution guidelines](./CONTRIBUTING.md#Testing)
 
-## Deploying the ODH Dashbard
+## Deploying the MCAD Dashbard
 
 ### Official Image Builds
 
-odh-dashboard images are automatically built and pushed to [quay.io](https://quay.io/repository/opendatahub/odh-dashboard) after every commit to the `main` branch. The image tag name format for each image is `main-<COMMIT SHORT HASH>`.
+`mcad-dashboard` images are automatically built and pushed to [ghcr.io](https://github.com/orgs/project-codeflare/packages?repo_name=mcad-dashboard) after every commit to the `main` branch. The image tag name format for each image is `<COMMIT HASH>`. 
 
-Example: The `main` branch is updated with commit `f76e3952834f453b1d085e8627f9c17297c2f64c`.  The CI system will automatically build an odh-dashboard image based on that code and push the new image to `odh-dashboard:main-f76e395` and updated `odh-dashboard:main` to point to the same image hash.
+The same naming scheme is true for the `mcad-exporter` images. 
 
-The [nightly](https://quay.io/opendatahub/odh-dashboard:nightly) tag is a floating tag that is updated nightly and points to the most recent `main-<HASH>` commit from the previous day.
+Example: The `main` branch is updated with commit `f76e3952834f453b1d085e8627f9c17297c2f64c`.  The CI system will automatically build an mcad-dashboard image based on that code and push the new image to `mcad-dashboard:main-f76e395` and updated `mcad-dashboard:main` to point to the same image hash.
+
+### Deployment requirements
+
+Deploying the MCAD Dashboard and exporter requires the installation of the ODH operator on your K8s cluster. Then, login using `make login` or an `oc login` command to your cluster. 
+
+### Deploy using make (recommended)
+
+One can deploy all the relevant components using `make deploy`, which executes a series of `kustomize` commands from the `manifests/` folder in the repo. In the same manner, the relevant components can be removed from your cluster. 
 
 ### Deploy using kustomize
 
-The [manifests](./manifests) folder contains a [kustomize](https://kustomize.io) manifest that can be used with `kustomize build`.
+Alternatively, the [manifests](./manifests) folder contains a [kustomize](https://kustomize.io) manifest that can be used with `kustomize build` directly.
 
 ### Deploy using a kfdef
 
-The [manifests/kfdef](./manifests/kfdef) folder contains an example kfdef to deploy ODH Dashboard with the Notebook Controller backend is located in [odh-dashboard-kfnbc-test.yaml](manifests/kfdef/odh-dashboard-kfnbc-test.yaml).
+Alternatively, the [manifests/kfdef](./manifests/kfdef) folder contains an example kfdef to deploy ODH Dashboard with the Notebook Controller backend is located in [odh-dashboard-kfnbc-test.yaml](manifests/kfdef/odh-dashboard-kfnbc-test.yaml).
 
 ## Contributing
 
