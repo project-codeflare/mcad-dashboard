@@ -176,7 +176,11 @@ export const formatStringOnAxis = (value: number, unit?: Unit): string => {
       case '1':
         return '1 Job';
       default:
-        return value.toString() + ' Jobs'
+        if (post.includes('.')) {
+          return '';
+        } else {
+          return post + ' Jobs';
+        }
     }
   } else if (unit === Unit.STATUS) {
     switch (post) {
@@ -189,7 +193,7 @@ export const formatStringOnAxis = (value: number, unit?: Unit): string => {
       case '3':
         return 'Running';
       default:
-        return value.toString();
+        return "";
     }
   } else {
     return value.toString();
@@ -225,7 +229,7 @@ export const filterDataByAppwrappers = (data: any[], validAppwrappers: Set<strin
 };
 
 export const formatTickValues = (data: MetricData[]): Number[] => {
-let tickValues: Number[] = [];
-console.log("data", data)
-return tickValues;
+  let tickValues: Number[] = [];
+  console.log("data", data)
+  return tickValues;
 }
