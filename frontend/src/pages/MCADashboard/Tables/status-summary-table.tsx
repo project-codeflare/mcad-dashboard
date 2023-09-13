@@ -103,8 +103,8 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
           <div className="status-summary-container">
             <div className="chart-donut-status-summary">
               <ChartDonut
-                ariaDesc="Average number of pets"
-                ariaTitle="Donut chart example"
+                ariaDesc="Appwrappers Status Summary"
+                ariaTitle="Appwrappers Status Summary"
                 constrainToVisibleArea
                 data={pieChartData}
                 labels={({ datum }) => `${datum.x}: ${datum.y}`}
@@ -124,7 +124,7 @@ export const StatusSummaryTable: React.FunctionComponent<{ data: Data }> = ({ da
                   right: 140, // Adjusted to accommodate legend
                   top: 20,
                 }}
-                subTitle="App Warappers"
+                subTitle="Appwrappers"
                 title={totalAppWrappers.toString()}
                 themeColor={ChartThemeColor.multiOrdered}
                 width={350}

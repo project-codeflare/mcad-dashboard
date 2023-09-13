@@ -23,7 +23,7 @@ import { getMetricDataRange } from './api/metricsData';
 import './Metrics.scss';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
-import { formatUnitStringOnAxis, timeStringToSeconds, filterData } from './metrics-utils';
+import { formatUnitStringOnAxis, timeStringToSeconds, filterData, filterDataByAppwrappers } from './metrics-utils';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
@@ -43,6 +43,7 @@ type MetricGraphProps = {
   activeTabKey: number;
   refreshRate: number;
   validNamespaces?: Set<string>;
+  validAppwrappers?: Set<string>;
 };
 
 const formatSeriesValues = (values: any[], samples: number, span: number) => {
@@ -69,6 +70,7 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
   activeTabKey,
   refreshRate,
   validNamespaces,
+  validAppwrappers,
 }: MetricGraphProps): React.ReactElement => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
   const [metricData, setMetricData] = React.useState<MetricData[]>();
@@ -104,7 +106,11 @@ const MetricGraph: React.FC<MetricGraphProps> = ({
     const response = await getMetricDataRange(query.query, time);
     if (response.data) {
       const data: MetricData[] = response.data;
-      setMetricData(filterData(data, validNamespaces));
+      if (query.name.includes("Appwrapper")) {
+        setMetricData(filterDataByAppwrappers(data, validAppwrappers));
+      } else {
+        setMetricData(filterData(data, validNamespaces));
+      }
     }
   };
   React.useEffect(() => {

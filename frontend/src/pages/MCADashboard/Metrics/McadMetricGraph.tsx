@@ -25,7 +25,7 @@ import { getMCADMetricDataRange } from './api/metricsData';
 import './Metrics.scss';
 import { MetricData, Query } from './types';
 import { graphContainer } from './tooltip';
-import { timeStringToSeconds, formatStringOnAxis } from './metrics-utils';
+import { timeStringToSeconds, formatStringOnAxis, formatTickValues } from './metrics-utils';
 
 const LegendContainer = ({ children }: { children?: React.ReactNode }) => {
   // The first child should be a <rect> with a `width` prop giving the legend's content width
@@ -268,6 +268,7 @@ const Graph: React.FC<GraphProps> = ({
           showGrid
           tickFormat={(tick) => formatStringOnAxis(Number(tick), query.unit)}
           tickCount={4}
+          // tickValues={formatTickValues(metricData)}
         />
         <ChartGroup>
           {Array.isArray(metricData) &&

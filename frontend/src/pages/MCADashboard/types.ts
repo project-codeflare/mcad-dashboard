@@ -1,19 +1,23 @@
+export interface Appwrapper {
+  metadata: {
+    namespace: string;
+    name: string;
+    calculatedTimeSpent: string;
+    creationTimestamp: string;
+  };
+  status: {
+    state: string;
+    constructedMessage: string;
+    numRequeuings: number;
+    systempriority: number;
+    rephrased_state: string;
+  };
+}
+
 export interface Data {
   appwrappers: {
     [key: string]: {
-      metadata: {
-        namespace: string;
-        name: string;
-        calculatedTimeSpent: string;
-        creationTimestamp: string;
-      };
-      status: {
-        state: string;
-        constructedMessage: string;
-        numRequeuings: number;
-        systempriority: number;
-        rephrased_state: string;
-      };
+      Appwrapper: Appwrapper
     };
   };
   stats: {

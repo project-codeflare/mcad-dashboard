@@ -4,7 +4,7 @@ import RefreshRateDropDown from '~/pages/MCADashboard/DropDowns/refresh-rate-dro
 import TimeRangeDropDown from '~/pages/MCADashboard/DropDowns/time-range-drop-down';
 import ApplicationsPage from '~/pages/ApplicationsPage';
 import QuotaTable from '~/pages/MCADashboard/Tables/quota-table';
-import { Data } from '~/pages/MCADashboard/types';
+import { Data, Appwrapper } from '~/pages/MCADashboard/types';
 import '~/pages/MCADashboard/MCADashboard.css';
 import { statusSummaryQueries, graphQueries } from './queries';
 import MetricsCards from './MetricsCards';
@@ -39,6 +39,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
   const [refreshRate, setRefreshRate] = React.useState<number>(30000);
   const [span, setSpan] = React.useState<string>('30m');
   const [validNamespaces, setValidNamespaces] = React.useState<Set<string>>();
+  const [validAppwrappers, setValidAppwrappers] = React.useState<Set<string>>();
   const handleRefreshSelection = (selectedItemId: number) => {
     setRefreshRate(selectedItemId);
   };
@@ -62,6 +63,25 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
 
     return () => {
       window.removeEventListener('data_stored', getValidNamespaces);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const getValidAppwrappers = async () => {
+      const appwrappersFromStorage = sessionStorage.getItem('appwrapper-data');
+      if (appwrappersFromStorage) {
+        const appwrapperMetadata: Data = JSON.parse(appwrappersFromStorage).appwrappers;
+        const appWrapperArray: string[] = Object.values(appwrapperMetadata).map((appwrapper: Appwrapper) => appwrapper.metadata.name);
+        setValidAppwrappers(new Set<string>(appWrapperArray));
+      }
+    };
+
+    getValidAppwrappers();
+
+    window.addEventListener('data_stored', getValidAppwrappers);
+
+    return () => {
+      window.removeEventListener('data_stored', getValidAppwrappers);
     };
   }, []);
 
@@ -132,6 +152,7 @@ const Metrics: React.FC<MetricsProps> = ({ activeTabKey }: MetricsProps): React.
               activeTabKey={activeTabKey}
               refreshRate={refreshRate}
               validNamespaces={validNamespaces}
+              validAppwrappers={validAppwrappers}
             />
           );
         })}

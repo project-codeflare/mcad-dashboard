@@ -1,5 +1,5 @@
 // import fetchData from '../app-wrapper-data';
-import { Unit } from './types';
+import { Unit, MetricData } from './types';
 
 export const convertRangeToTime = (timeRange: string) => {
   const unitChar = timeRange.charAt(0);
@@ -206,3 +206,26 @@ export const filterData = (data: any[], validNamespaces: Set<string> | undefined
     return undefined;
   }
 };
+
+export const filterDataByAppwrappers = (data: any[], validAppwrappers: Set<string> | undefined) => {
+  if (data && validAppwrappers) {
+    const filteredData = data.filter((dataPoint) => {
+      return Array.from(validAppwrappers).some((appwrapper) => {
+        if (dataPoint.metric.pod !== undefined) {
+          return dataPoint.metric.pod.includes(appwrapper);
+        } else {
+          return dataPoint.metric.exported_pod.includes(appwrapper);
+        }
+      });
+    });
+    return filteredData;
+  } else {
+    return undefined;
+  }
+};
+
+export const formatTickValues = (data: MetricData[]): Number[] => {
+let tickValues: Number[] = [];
+console.log("data", data)
+return tickValues;
+}
