@@ -3,7 +3,7 @@ import { exec } from 'child_process';
 import { OauthFastifyRequest, KubeFastifyInstance } from '../../../types';
 import { getDirectCallOptions } from '../../../utils/directCallUtils';
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'; // TODO need better way to accept http connection
 
 const fetchPrometheusData = async (host: string, query: string, axiosInstance: AxiosInstance) => {
   const params = new URLSearchParams({
