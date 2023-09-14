@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: odh-dashboard
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       deployment: odh-dashboard
@@ -31,13 +31,6 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
-        resources:
-          requests:
-            cpu: 500m
-            memory: 1Gi
-          limits:
-            cpu: 1000m
-            memory: 2Gi
         livenessProbe:
           tcpSocket:
             port: 8080
@@ -101,13 +94,6 @@ spec:
           periodSeconds: 5
           successThreshold: 1
           failureThreshold: 3
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 2Gi
-          requests:
-            cpu: 500m
-            memory: 1Gi
         volumeMounts:
           - mountPath: /etc/tls/private
             name: proxy-tls

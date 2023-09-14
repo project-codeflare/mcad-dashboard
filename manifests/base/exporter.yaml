@@ -1,0 +1,144 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata: 
+  name: mcad-exporter
+  namespace: odh
+spec:
+  replicas: 1
+  selector: 
+    matchLabels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: mcad-exporter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: exporter
+        app.kubernetes.io/name: mcad-exporter
+    spec:
+      serviceAccount: mcad-exporter
+      containers:
+        - name: mcad-exporter
+          image: mcad-exporter
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 9101
+              protocol: TCP
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+---
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/name: mcad-exporter
+  name: mcad-exporter
+  namespace: odh
+spec:
+  clusterIP: None
+  clusterIPs:
+  - None
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 9101
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/name: mcad-exporter
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/component: exporter
+    app.kubernetes.io/name: mcad-exporter
+    team: opendatahub
+  name: mcad-exporter
+  namespace: odh
+spec:
+  endpoints:
+  - interval: 90s
+    path: /metrics
+    port: http
+    scrapeTimeout: 90s
+  namespaceSelector:
+    matchNames:
+    - odh
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: exporter
+      app.kubernetes.io/name: mcad-exporter
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mcad-exporter
+rules:
+  - verbs:
+      - get
+      - list
+    apiGroups:
+      - workload.codeflare.dev
+    resources:
+      - appwrappers
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mcad-exporter
+rules:
+  - verbs:
+      - get
+      - list
+    apiGroups:
+      - workload.codeflare.dev
+    resources:
+      - appwrappers
+---
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: mcad-exporter
+  annotations:
+    serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"mcad-exporter"}}'
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mcad-exporter
+subjects:
+  - kind: ServiceAccount
+    name: mcad-exporter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mcad-exporter
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mcad-exporter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: mcad-exporter
+subjects:
+  - kind: ServiceAccount
+    name: mcad-exporter
+

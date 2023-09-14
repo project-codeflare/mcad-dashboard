@@ -3,6 +3,9 @@ import { exec } from 'child_process';
 import { OauthFastifyRequest, KubeFastifyInstance } from '../../../types';
 import { getDirectCallOptions } from '../../../utils/directCallUtils';
 
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'; // TODO need a better way to accept http curl
+
+
 const fetchPrometheusData = async (host: string, query: string, axiosInstance: AxiosInstance) => {
   const params = new URLSearchParams({
     query: query,

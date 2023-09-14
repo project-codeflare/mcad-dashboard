@@ -4,9 +4,13 @@ WORKDIR /usr/src/app
 
 COPY exporter .
 
+RUN apk --no-cache add curl
 RUN npm install
 
 EXPOSE 9101
+
+RUN curl --location -o jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+RUN chmod 777 ./jq
 
 CMD ["npm", "run", "start:dev"]
 #ENTRYPOINT npm run start:dev
