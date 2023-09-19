@@ -46,7 +46,6 @@ WORKDIR /usr/src/app/backend
 # TEMPORARY add sh scripts 
 RUN curl --location -o jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
 RUN chmod 777 ./jq
-COPY --chown=default:root /backend/src/routes/api/appwrappers/appwrapper_puller.sh ./src/routes/api/appwrappers/appwrapper_puller.sh
 COPY --chown=default:root /backend/src/routes/api/mcad-prometheus/get-route.sh ./src/routes/api/mcad-prometheus/get-route.sh
 COPY --chown=default:root /backend/src/routes/api/metrics-data/get-route.sh ./src/routes/api/metrics-data/get-route.sh
 
