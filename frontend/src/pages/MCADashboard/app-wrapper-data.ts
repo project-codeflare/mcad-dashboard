@@ -25,7 +25,7 @@ const callK8sApi = async () => {
     // get appwrappers in each namespace
     for (let i = 0; i < projectsList.length; i++) {
       let projectName = projectsList[i].metadata.name;
-      let apiCall = '/api/k8s/apis/mcad.ibm.com/v1beta1/namespaces/'.concat(projectName, '/appwrappers');
+      let apiCall = '/api/k8s/apis/workload.codeflare.dev/v1beta1/namespaces/'.concat(projectName, '/appwrappers');
       let response = await fetch(apiCall);
       if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -34,11 +34,11 @@ const callK8sApi = async () => {
       // add to running list of appwrappers
       appwrappersList = appwrappersList.concat(appwrapperData.items);
     }
-    const finalJson = { apiVersion: 'mcad.ibm.com/v1beta1', kind: 'AppWrapperList', items: appwrappersList };
+    const finalJson = { apiVersion: 'workload.codeflare.dev/v1beta1', kind: 'AppWrapperList', items: appwrappersList };
     return finalJson;
   } catch (error) {
     console.log('Error: ', error);
-    return { apiVersion: 'mcad.ibm.com/v1beta1', kind: 'AppWrapperList', items: [] };
+    return { apiVersion: 'workload.codeflare.dev/v1beta1', kind: 'AppWrapperList', items: [] };
   }
 }
 
