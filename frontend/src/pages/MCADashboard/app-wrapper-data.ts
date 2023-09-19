@@ -31,6 +31,7 @@ const callK8sApi = async () => {
           throw new Error(`HTTP error! status: ${response.status}`);
       }
       let appwrapperData = await response.json();
+      // add to running list of appwrappers
       appwrappersList = appwrappersList.concat(appwrapperData.items);
     }
     const finalJson = { apiVersion: 'mcad.ibm.com/v1beta1', kind: 'AppWrapperList', items: appwrappersList };
