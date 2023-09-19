@@ -8,7 +8,6 @@ export const fetchData = async () => {
     }
     const jsonData = await response.json();
     const jsonBody = JSON.parse(jsonData.body);
-    //console.log('fetchData call: ', jsonBody);
     return jsonBody;
   } catch (error) {
     console.log('Error:', error);
@@ -17,17 +16,28 @@ export const fetchData = async () => {
 
 const callK8sApi = async () => {
   try {
-    const response = await fetch('/api/k8s/apis/mcad.ibm.com/v1beta1/namespaces/brain/appwrappers?limit=500');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    // Get available namespaces
+    const projectResp = await fetch('/api/k8s/apis/project.openshift.io/v1/projects');
+    const projectsData = await projectResp.json();
+    const projectsList = projectsData.items;
+    let appwrappersList: any[] = []; //TODO there's probably some type that already does this...
+
+    // get appwrappers in each namespace
+    for (let i = 0; i < projectsList.length; i++) {
+      let projectName = projectsList[i].metadata.name;
+      let apiCall = '/api/k8s/apis/mcad.ibm.com/v1beta1/namespaces/'.concat(projectName, '/appwrappers');
+      let response = await fetch(apiCall);
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      let appwrapperData = await response.json();
+      appwrappersList = appwrappersList.concat(appwrapperData.items);
     }
-    const jsonData = await response.json();
-    //console.log('successful k8s call: ', jsonData);
-    return jsonData;
-    
+    const finalJson = { apiVersion: 'mcad.ibm.com/v1beta1', kind: 'AppWrapperList', items: appwrappersList };
+    return finalJson;
   } catch (error) {
     console.log('Error: ', error);
-    return ""
+    return { apiVersion: 'mcad.ibm.com/v1beta1', kind: 'AppWrapperList', items: [] };
   }
 }
 
