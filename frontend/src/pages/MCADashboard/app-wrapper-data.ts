@@ -1,4 +1,5 @@
 import { AppwrapperList } from './types';
+import { useUser } from '~/redux/selectors';
 
 export const fetchData = async () => {
   try {
@@ -14,10 +15,22 @@ export const fetchData = async () => {
   }
 };
 
-const callK8sApi = async () => {
+const callK8sApi = async (isAdmin: boolean) => {
   try {
+    // if isAdmin, we can get all appwrappers from all namespaces
+    if (isAdmin) {
+      const response = await fetch('/api/k8s/apis/workload.codeflare.dev/v1beta1/appwrappers');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const jsonData = await response.json();
+      return { apiVersion: 'workload.codeflare.dev/v1beta1', kind: 'AppWrapperList', items: jsonData.items };
+    }
     // Get available namespaces
     const projectResp = await fetch('/api/k8s/apis/project.openshift.io/v1/projects');
+    if (!projectResp.ok) {
+      throw new Error(`HTTP error! status: ${projectResp.status}`);
+    }
     const projectsData = await projectResp.json();
     const projectsList = projectsData.items;
     let appwrappersList: any[] = []; //TODO there's probably some type that already does this...
@@ -42,10 +55,10 @@ const callK8sApi = async () => {
   }
 }
 
-export const getAppwrappers = async() => {
+export const getAppwrappers = async( isAdmin: boolean ) => {
   const dtNow = new Date(Date.now());
 
-  const appwrappersJson: AppwrapperList = await callK8sApi();
+  const appwrappersJson: AppwrapperList = await callK8sApi( isAdmin );
   const statusCounts = { Dispatched: 0, Queued: 0, 'Re-enqueued': 0, Failed: 0, Other: 0 };
   const stats: { statusCounts: {
     Dispatched: number | string;

@@ -63,7 +63,7 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
 
     React.useEffect(() => {
       const initialFetch = async () => {
-        const newData = await getAppwrappers();
+        const newData = await getAppwrappers( isAdmin );
         if (newData && newData.stats && newData.appwrappers) {
           setData(newData);
           sessionStorage.setItem('appwrapper-data', JSON.stringify(newData));
