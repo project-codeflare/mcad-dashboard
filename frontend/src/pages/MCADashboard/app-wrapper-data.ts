@@ -2,7 +2,7 @@ import { AppwrapperList } from './types';
 
 const callK8sApi = async (isAdmin: boolean) => {
   try {
-    // if isAdmin, we can get all appwrappers from all namespaces
+    // isAdmin - get all appwrappers from all namespaces
     if (isAdmin) {
       const response = await fetch('/api/k8s/apis/workload.codeflare.dev/v1beta1/appwrappers');
       if (!response.ok) {
