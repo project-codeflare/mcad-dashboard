@@ -8,6 +8,9 @@ For more detailed current features of the MCAD dashboard:
  
 - [MCAD Dashboard Features](/FEATURES.md)
 
+For deployment of MCAD Dashboard:
+
+- [MCAD Dashboard Deployment](/docs/openshift_deploy_example.md)
 
 ODH Dashboard Installation and Components:
 - Shows what's installed

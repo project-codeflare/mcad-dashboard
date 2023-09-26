@@ -2,12 +2,15 @@
 
 This document outlines the step-by-step instructions to deploying the MCAD dashboard via the manifests in this repo. 
 
-## 0. Requirements
+## Requirements
 
 MCAD requires the following tools to deploy onto Openshift:
 
 - [kustomize](https://github.com/kubernetes-sigs/kustomize)
 - [OpenShift CLI](https://docs.openshift.com/container-platform/4.12/cli_reference/openshift_cli/getting-started-cli.html)
+
+
+## Steps for Deployment
 
 ## 1. Log in to your Openshift Cluster
 
