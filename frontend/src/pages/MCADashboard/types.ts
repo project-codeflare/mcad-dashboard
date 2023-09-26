@@ -16,9 +16,7 @@ export interface Appwrapper {
 
 export interface Data {
   appwrappers: {
-    [key: string]: {
-      Appwrapper: Appwrapper
-    };
+    [key: string]: Appwrapper;
   };
   stats: {
     statusCounts: {
@@ -29,6 +27,12 @@ export interface Data {
       Other: number | string;
     };
   };
+}
+
+export interface AppwrapperList {
+  apiVersion: string;
+  kind: string;
+  items: any[];
 }
 
 export type StatusKey = keyof Data['stats']['statusCounts'];

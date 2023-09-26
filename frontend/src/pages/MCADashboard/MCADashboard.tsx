@@ -11,7 +11,7 @@ import StatusSummaryTable from './Tables/status-summary-table';
 // import TimeRangeDropDown from './DropDowns/time-range-drop-down';
 import RefreshRateDropDown from './DropDowns/refresh-rate-drop-down';
 import './MCADashboard.css';
-import fetchData from './app-wrapper-data';
+import { getAppwrappers} from './app-wrapper-data';
 import { Data } from './types';
 import MetricsCards from './Metrics/MetricsCards';
 import DonutMetricsCards from './Metrics/DonutMetricsCards';
@@ -63,7 +63,7 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
 
     React.useEffect(() => {
       const initialFetch = async () => {
-        const newData = await fetchData();
+        const newData = await getAppwrappers( isAdmin );
         if (newData && newData.stats && newData.appwrappers) {
           setData(newData);
           sessionStorage.setItem('appwrapper-data', JSON.stringify(newData));

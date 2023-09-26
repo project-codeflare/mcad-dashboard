@@ -2,10 +2,7 @@ name: ghcr.push
 # This GitHub action builds an image
 
 run-name: Push image to ghcr
-on:
-  push:
-    branches:
-      - '*'
+on: [push, workflow_dispatch]
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
