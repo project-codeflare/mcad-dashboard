@@ -1,4 +1,3 @@
-// import fetchData from '../app-wrapper-data';
 import { Unit, MetricData } from './types';
 
 export const convertRangeToTime = (timeRange: string) => {
@@ -230,6 +229,5 @@ export const filterDataByAppwrappers = (data: any[], validAppwrappers: Set<strin
 
 export const formatTickValues = (data: MetricData[]): Number[] => {
   let tickValues: Number[] = [];
-  console.log("data", data)
   return tickValues;
 }
