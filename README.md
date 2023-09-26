@@ -4,6 +4,12 @@ A dashboard for Multi-Cluster App Dispatcher and Open Data Hub components.
 
 ![Status Summary](docs/rsrc/MCAD-dashboard/status_summary.png)
 
+MCAD/ ODH Dashboard Installation and Components:
+- Shows what's installed
+- Show's what's available for installation
+- Links to component UIs
+- Links to component documentation
+
 For more detailed current features of the MCAD dashboard:
  
 - [MCAD Dashboard Features](/FEATURES.md)
@@ -11,12 +17,6 @@ For more detailed current features of the MCAD dashboard:
 For deployment of MCAD Dashboard:
 
 - [MCAD Dashboard Deployment](/docs/openshift_deploy_example.md)
-
-ODH Dashboard Installation and Components:
-- Shows what's installed
-- Show's what's available for installation
-- Links to component UIs
-- Links to component documentation
 
 ## Requirements
 
@@ -41,7 +41,7 @@ ODH requires the following to run:
    1. Clone the repository
 
       ``` bash
-      git clone https://github.com/opendatahub-io/odh-dashboard
+      git clone https://github.com/project-codeflare/mcad-dashboard
       ```
 
    2. Within the repo context, install project dependencies
