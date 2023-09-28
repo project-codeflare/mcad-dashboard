@@ -33,6 +33,8 @@ export default async (fastify: KubeFastifyInstance): Promise<void> => {
               url,
               {
                 headers: {
+                  // This usage of toString is fine for internal dev flows
+                  // eslint-disable-next-line no-restricted-properties
                   Authorization: `Basic ${Buffer.from(
                     `${DEV_IMPERSONATE_USER}:${DEV_IMPERSONATE_PASSWORD}`,
                   ).toString('base64')}`,

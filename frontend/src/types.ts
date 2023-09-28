@@ -114,12 +114,12 @@ export enum ContainerResourceAttributes {
 
 export type ContainerResources = {
   requests?: {
-    cpu?: string;
+    cpu?: string | number;
     memory?: string;
     'nvidia.com/gpu'?: GPUCount;
   };
   limits?: {
-    cpu?: string;
+    cpu?: string | number;
     memory?: string;
     'nvidia.com/gpu'?: GPUCount;
   };
@@ -284,6 +284,7 @@ type K8sMetadata = {
   uid?: string;
   labels?: { [key: string]: string };
   annotations?: { [key: string]: string };
+  creationTimestamp?: string;
 };
 
 /**

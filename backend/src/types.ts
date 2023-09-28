@@ -872,12 +872,12 @@ export type GPUCount = string | number;
 
 export type ContainerResources = {
   requests?: {
-    cpu?: string;
+    cpu?: string | number;
     memory?: string;
     'nvidia.com/gpu'?: GPUCount;
   };
   limits?: {
-    cpu?: string;
+    cpu?: string | number;
     memory?: string;
     'nvidia.com/gpu'?: GPUCount;
   };
@@ -901,8 +901,10 @@ export type ServingRuntime = K8sResourceCommon & {
       image: string;
       name: string;
       resources: ContainerResources;
+      volumeMounts?: VolumeMount[];
     }[];
     supportedModelFormats: SupportedModelFormats[];
     replicas: number;
+    volumes?: Volume[];
   };
 };
