@@ -1,10 +1,55 @@
 import express from 'express';
 import { Gauge, register } from 'prom-client';
 import axios from 'axios';
+import http from 'http'
 import { AllAppwrappers } from './appwrapper-utils';
+import * as k8s from '@kubernetes/client-node';
 
 const app = express();
 const PORT = 9101;
+const kc = new k8s.KubeConfig();
+kc.loadFromDefault();
+const k8sApi = kc.makeApiClient(k8s.CustomObjectsApi);
+
+interface AppwrapperObject extends k8s.KubernetesObject {
+    status: {
+        state: string;
+        queuejobstate: string;
+    };
+}
+
+async function listFn(): Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }>{
+    const list = await k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
+    let k8sBody = list.body as k8s.KubernetesListObject<AppwrapperObject>;
+    let value = {response: list.response, body: k8sBody};
+    let returnedPromise: Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }> = new Promise((resolve, reject) => {
+        resolve(value);
+    })
+    return returnedPromise
+}
+//const listFn = () => getappwrapper();
+/*let x = listFn();
+console.log('testing listfn with x', x);
+x.then(function(result) {
+    console.log(result);
+    console.log(result.body)
+})*/
+const informer = k8s.makeInformer(kc, '/apis/workload.codeflare.dev/v1beta1/appwrappers', listFn);
+informer.on('change', (obj) => {
+    console.log(`hello ch!`);
+    console.log(`changed: ${obj.metadata!.name}`);
+    console.log(`kind: ${obj.kind}`)
+    console.log(obj.status.state);
+});
+informer.on('error', (err) => {
+    console.log(`hello e!`);
+    console.log(`errord: ${err}`);
+});
+informer.on('connect', (err) => {
+    console.log(`hello c!`);
+    console.log(`connected: ${err}`);
+});
+informer.start();
 
 // Define a custom metric for appwrapper count
 const appwrapperCount = new Gauge({
