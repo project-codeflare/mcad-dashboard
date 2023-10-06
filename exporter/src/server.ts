@@ -1,9 +1,7 @@
 import express from 'express';
 import { Gauge, register } from 'prom-client';
 import http from 'http'
-import { AllAppwrappers } from './appwrapper-utils';
 import * as k8s from '@kubernetes/client-node';
-import * as fs from 'fs';
 
 const app = express();
 const PORT = 9101;
@@ -12,19 +10,13 @@ const PORT = 9101;
 const isRunningInKubernetes = process.env.KUBERNETES_SERVICE_HOST;
 const kc = new k8s.KubeConfig();
 if (isRunningInKubernetes) {
-    const token = fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/token', 'utf8');
     kc.loadFromCluster();
+    console.log(`Connected to k8s api via cluster credentials`);
 } else {
     kc.loadFromDefault();
+    console.log(`Connected to k8s api via local kubeconfig`);
 }
 const k8sApi = kc.makeApiClient(k8s.CustomObjectsApi);
-console.log(`connected to kubernetes... testing appwrapper call`);
-// test k8s
-const list = k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
-list.then((res) => {
-    console.log(`test resuld: ${res}`)
-})
-console.log(`finished kubernetes connection test`);
 
 interface AppwrapperObject extends k8s.KubernetesObject {
     metadata: {
@@ -71,7 +63,7 @@ function getAppwrapperStatus(status: string) {
 }
 
 // initialize count metrics
-console.log(`initializing prometheus metrics`);
+console.log(`Initializing Prometheus metrics`);
 appwrapperCountMetric.labels("Running").set(0);
 appwrapperCountMetric.labels("Pending").set(0);
 appwrapperCountMetric.labels("Failed").set(0);
@@ -80,7 +72,12 @@ appwrapperCountMetric.labels("Other").set(0);
 /** END initialize prometheus metrics **/
 
 /** initialize informer **/
-console.log(`initializing informer`)
+// need to store previous state for each appwrapper so that upon change we can update labels
+// the key is `<appwrapper_namespace>,<appwrapper_name>` as a string
+// this assumes commas are not included in namespaces names or appwrapper names
+const previousAppwrapperStates: Map<string, string> = new Map();
+
+console.log(`Initializing informer`)
 async function listFn(): Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }>{
     const list = await k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
     let k8sBody = list.body as k8s.KubernetesListObject<AppwrapperObject>;
@@ -88,48 +85,63 @@ async function listFn(): Promise<{ response: http.IncomingMessage; body: k8s.Kub
     let returnedPromise: Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }> = new Promise((resolve, reject) => {
         resolve(value);
     })
-    console.log(`listFN called: `)
-    console.log(list.response)
-    console.log(k8sBody)
-    console.log(value)
-    console.log(returnedPromise);
-    console.log(`listFN called: ${returnedPromise}, ${value}, ${list.response}, ${k8sBody}`);
     return returnedPromise
 }
 
 const informer = k8s.makeInformer(kc, '/apis/workload.codeflare.dev/v1beta1/appwrappers', listFn);
-informer.on('change', (obj) => {
-    //console.log(`hello ch!`);
-    //console.log(`changed: ${obj.metadata.name}`);
+informer.on('add', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
     let appwrapperStatus = obj.status.state;
+    console.log(`add received: ${appwrapperName}, ${appwrapperNamespace}, ${appwrapperStatus}`)
     appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(getAppwrapperStatus(appwrapperStatus))
+    appwrapperCountMetric.labels(appwrapperStatus).inc(1);
+    // set previous state
+    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName}`, appwrapperStatus);
 });
-informer.on('delete', (obj) => {
-    //console.log(`hello de!`);
-    //console.log(`deled: ${obj.metadata.name}`);
+informer.on('update', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
-    //let metricName = `appwrapper_status{appwrapper_name="${appwrapperName}",appwrapper_namespace="${appwrapperNamespace}"}`;
-    //metricName = `appwrapper_status{appwrapper_name="0001-aw-generic-deployment-3-5",appwrapper_namespace="test1"}`;
-    //console.log(metricName)
-    //register.removeSingleMetric(metricName);
+    let appwrapperStatus = obj.status.state;
+    console.log(`update received: ${appwrapperName}, ${appwrapperNamespace}, ${appwrapperStatus}`);
+    console.log(informer.get(appwrapperName, appwrapperNamespace))
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(getAppwrapperStatus(appwrapperStatus))
+    // decrement count of previous state
+    let previousState = previousAppwrapperStates.get(`${appwrapperNamespace},${appwrapperName}`);
+    if (!previousState) {
+        console.log(`error: update received but no previous state recorded`)
+        return;
+    }
+    appwrapperCountMetric.labels(previousState).dec(1);
+    appwrapperCountMetric.labels(appwrapperStatus).inc(1);
+    // set previous state
+    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName}`, appwrapperStatus);
+});
+informer.on('delete', (obj) => {
+    let appwrapperName: string = obj.metadata.name;
+    let appwrapperNamespace = obj.metadata.namespace;
+    let appwrapperStatus = obj.status.state;
+    // Prometheus does not support removing a single tagged series
+    // Instead, we set to NaN to effectively end the series, as shown in Prometheus charts
+    // NOTE: Consequently, when querying Prometheus, if one appwrapper is added and deleted with same 
+    // name and namespace multiple times, a query may get information for both
     appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(NaN)
-
+    appwrapperCountMetric.labels(appwrapperStatus).dec(1);
+    // set previous state
+    previousAppwrapperStates.delete(`${appwrapperNamespace},${appwrapperName}`);
 });
 informer.on('error', (err) => {
-    console.log(`hello e!`);
-    console.log(`errord: ${err}`);
+    console.log(`Informer errored: ${err}`);
+    console.log(`NOTE: if the above error says "forbidden" check you or the relevant deployment has permission to "watch" appwrappers`);
+
 });
 informer.on('connect', (err) => {
-    console.log(`hello c!`);
-    console.log(`connected: ${err}`);
+    console.log(`Informer connected!`);
 });
 
 // start informer
 informer.start();
-console.log(`informer started...`);
+console.log(`Informer started watching...`);
 
 /** end initialize informer **/
 
