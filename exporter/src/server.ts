@@ -18,12 +18,13 @@ if (isRunningInKubernetes) {
     kc.loadFromDefault();
 }
 const k8sApi = kc.makeApiClient(k8s.CustomObjectsApi);
+console.log(`connected to kubernetes... testing appwrapper call`);
 // test k8s
 const list = k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
 list.then((res) => {
     console.log(res)
 })
-console.log(list);
+console.log(`finished kubernetes connection test`);
 
 interface AppwrapperObject extends k8s.KubernetesObject {
     metadata: {
@@ -70,6 +71,7 @@ function getAppwrapperStatus(status: string) {
 }
 
 // initialize count metrics
+console.log(`initializing prometheus metrics`);
 appwrapperCountMetric.labels("Running").set(0);
 appwrapperCountMetric.labels("Pending").set(0);
 appwrapperCountMetric.labels("Failed").set(0);
@@ -78,7 +80,7 @@ appwrapperCountMetric.labels("Other").set(0);
 /** END initialize prometheus metrics **/
 
 /** initialize informer **/
-
+console.log(`initializing informer`)
 async function listFn(): Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }>{
     const list = await k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
     let k8sBody = list.body as k8s.KubernetesListObject<AppwrapperObject>;
@@ -86,6 +88,7 @@ async function listFn(): Promise<{ response: http.IncomingMessage; body: k8s.Kub
     let returnedPromise: Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }> = new Promise((resolve, reject) => {
         resolve(value);
     })
+    console.log(`listFN called: ${returnedPromise}`);
     return returnedPromise
 }
 
@@ -99,8 +102,8 @@ informer.on('change', (obj) => {
     appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(getAppwrapperStatus(appwrapperStatus))
 });
 informer.on('delete', (obj) => {
-    console.log(`hello de!`);
-    console.log(`deled: ${obj.metadata.name}`);
+    //console.log(`hello de!`);
+    //console.log(`deled: ${obj.metadata.name}`);
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
     //let metricName = `appwrapper_status{appwrapper_name="${appwrapperName}",appwrapper_namespace="${appwrapperNamespace}"}`;
@@ -121,6 +124,7 @@ informer.on('connect', (err) => {
 
 // start informer
 informer.start();
+console.log(`informer started...`);
 
 /** end initialize informer **/
 
