@@ -88,7 +88,7 @@ async function listFn(): Promise<{ response: http.IncomingMessage; body: k8s.Kub
     let returnedPromise: Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }> = new Promise((resolve, reject) => {
         resolve(value);
     })
-    console.log(`listFN called: ${returnedPromise}, ${value}`);
+    console.log(`listFN called: ${returnedPromise}, ${value}, ${list.response}, ${k8sBody}`);
     return returnedPromise
 }
 
