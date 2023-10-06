@@ -19,7 +19,10 @@ if (isRunningInKubernetes) {
 }
 const k8sApi = kc.makeApiClient(k8s.CustomObjectsApi);
 // test k8s
-const list = await k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
+const list = k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
+list.then((res) => {
+    console.log(res)
+})
 console.log(list);
 
 interface AppwrapperObject extends k8s.KubernetesObject {
