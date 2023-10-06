@@ -93,7 +93,6 @@ informer.on('add', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
     let appwrapperStatus = obj.status.state;
-    console.log(`add received: ${appwrapperName}, ${appwrapperNamespace}, ${appwrapperStatus}`)
     appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(getAppwrapperStatus(appwrapperStatus))
     appwrapperCountMetric.labels(appwrapperStatus).inc(1);
     // set previous state
@@ -103,8 +102,7 @@ informer.on('update', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
     let appwrapperStatus = obj.status.state;
-    console.log(`update received: ${appwrapperName}, ${appwrapperNamespace}, ${appwrapperStatus}`);
-    console.log(informer.get(appwrapperName, appwrapperNamespace))
+    //console.log(`update received: ${appwrapperName}, ${appwrapperNamespace}, ${appwrapperStatus}`);
     appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(getAppwrapperStatus(appwrapperStatus))
     // decrement count of previous state
     let previousState = previousAppwrapperStates.get(`${appwrapperNamespace},${appwrapperName}`);
