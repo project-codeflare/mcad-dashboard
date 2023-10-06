@@ -22,7 +22,7 @@ console.log(`connected to kubernetes... testing appwrapper call`);
 // test k8s
 const list = k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
 list.then((res) => {
-    console.log(res)
+    console.log(`test resuld: ${res}`)
 })
 console.log(`finished kubernetes connection test`);
 
@@ -88,7 +88,7 @@ async function listFn(): Promise<{ response: http.IncomingMessage; body: k8s.Kub
     let returnedPromise: Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }> = new Promise((resolve, reject) => {
         resolve(value);
     })
-    console.log(`listFN called: ${returnedPromise}`);
+    console.log(`listFN called: ${returnedPromise}, ${value}`);
     return returnedPromise
 }
 
