@@ -1,71 +1,52 @@
 import express from 'express';
 import { Gauge, register } from 'prom-client';
-import axios from 'axios';
 import http from 'http'
 import { AllAppwrappers } from './appwrapper-utils';
 import * as k8s from '@kubernetes/client-node';
+import * as fs from 'fs';
 
 const app = express();
 const PORT = 9101;
+
+/** configure kube connection **/
+const isRunningInKubernetes = process.env.KUBERNETES_SERVICE_HOST;
 const kc = new k8s.KubeConfig();
-kc.loadFromDefault();
+if (isRunningInKubernetes) {
+    const token = fs.readFileSync('/var/run/secrets/kubernetes.io/serviceaccount/token', 'utf8');
+    kc.loadFromCluster();
+} else {
+    kc.loadFromDefault();
+}
 const k8sApi = kc.makeApiClient(k8s.CustomObjectsApi);
 
 interface AppwrapperObject extends k8s.KubernetesObject {
+    metadata: {
+        name: string;
+        namespace: string;
+    }
     status: {
         state: string;
         queuejobstate: string;
     };
 }
 
-async function listFn(): Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }>{
-    const list = await k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
-    let k8sBody = list.body as k8s.KubernetesListObject<AppwrapperObject>;
-    let value = {response: list.response, body: k8sBody};
-    let returnedPromise: Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }> = new Promise((resolve, reject) => {
-        resolve(value);
-    })
-    return returnedPromise
-}
-//const listFn = () => getappwrapper();
-/*let x = listFn();
-console.log('testing listfn with x', x);
-x.then(function(result) {
-    console.log(result);
-    console.log(result.body)
-})*/
-const informer = k8s.makeInformer(kc, '/apis/workload.codeflare.dev/v1beta1/appwrappers', listFn);
-informer.on('change', (obj) => {
-    console.log(`hello ch!`);
-    console.log(`changed: ${obj.metadata!.name}`);
-    console.log(`kind: ${obj.kind}`)
-    console.log(obj.status.state);
-});
-informer.on('error', (err) => {
-    console.log(`hello e!`);
-    console.log(`errord: ${err}`);
-});
-informer.on('connect', (err) => {
-    console.log(`hello c!`);
-    console.log(`connected: ${err}`);
-});
-informer.start();
+/** BEGIN initialize Prometheus metrics **/
 
 // Define a custom metric for appwrapper count
-const appwrapperCount = new Gauge({
+const appwrapperCountMetric = new Gauge({
     name: 'appwrapper_count',
     help: 'Shows number of appwrappers in each state',
     labelNames: ['status'],
 });
 
 // Define a custom metric for appwrapper status - for future metric
-const appwrapperStatus = new Gauge({
+const appwrapperStatusMetric = new Gauge({
     name: 'appwrapper_status',
     help: 'Shows status of appwrapper by int',
     labelNames: ['appwrapper_name', 'appwrapper_namespace'],
 });
 
-async function getAppwrapperStatus(status: string) {
+function getAppwrapperStatus(status: string) {
     switch(status) {
         case "Running": {
             return 3;
@@ -76,43 +57,66 @@ async function getAppwrapperStatus(status: string) {
         case "Failed": {
             return 1;
         }
-        default: {
+        default: { // unknown state
             return 0;
         }
     }
 }
 
-// Define a function to collect stats and update Prometheus metrics
-async function collectStats() {
-    try {
-        const response = await new AllAppwrappers().get();
-        const pullerJson = JSON.parse(response.body);
+// initialize count metrics
+appwrapperCountMetric.labels("Running").set(0);
+appwrapperCountMetric.labels("Pending").set(0);
+appwrapperCountMetric.labels("Failed").set(0);
+appwrapperCountMetric.labels("Other").set(0);
 
-        const counts = pullerJson.stats.statusCounts;
-        for (const status in counts) {
-            //console.log(status, ":", counts[status])
-            appwrapperCount.labels(status).set(counts[status]);
-        }
+/** END initialize prometheus metrics **/
 
-        const appwrappers = pullerJson.appwrappers;
-        for (const appwrapper in appwrappers) {
-            const appwrapperInfo = appwrappers[appwrapper]
-            //console.log(appwrapper, appwrapperInfo)
-            var state = getAppwrapperStatus(appwrapperInfo.status.state)
-            appwrapperStatus.labels(appwrapperInfo.metadata.name, appwrapperInfo.metadata.namespace).set(await state)
-        }
-    } catch (error) {
-        console.error('Error fetching data:', (error as Error).message);
-    }
+/** initialize informer **/
+
+async function listFn(): Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }>{
+    const list = await k8sApi.listClusterCustomObject('workload.codeflare.dev', 'v1beta1', 'appwrappers');
+    let k8sBody = list.body as k8s.KubernetesListObject<AppwrapperObject>;
+    let value = {response: list.response, body: k8sBody};
+    let returnedPromise: Promise<{ response: http.IncomingMessage; body: k8s.KubernetesListObject<AppwrapperObject>;  }> = new Promise((resolve, reject) => {
+        resolve(value);
+    })
+    return returnedPromise
 }
 
-// Define a function to periodically collect stats
-function scheduleStatsCollection() {
-    setInterval(collectStats, 30000); // Collect every 30 seconds
-}
+const informer = k8s.makeInformer(kc, '/apis/workload.codeflare.dev/v1beta1/appwrappers', listFn);
+informer.on('change', (obj) => {
+    //console.log(`hello ch!`);
+    //console.log(`changed: ${obj.metadata.name}`);
+    let appwrapperName: string = obj.metadata.name;
+    let appwrapperNamespace = obj.metadata.namespace;
+    let appwrapperStatus = obj.status.state;
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(getAppwrapperStatus(appwrapperStatus))
+});
+informer.on('delete', (obj) => {
+    console.log(`hello de!`);
+    console.log(`deled: ${obj.metadata.name}`);
+    let appwrapperName: string = obj.metadata.name;
+    let appwrapperNamespace = obj.metadata.namespace;
+    //let metricName = `appwrapper_status{appwrapper_name="${appwrapperName}",appwrapper_namespace="${appwrapperNamespace}"}`;
+    //metricName = `appwrapper_status{appwrapper_name="0001-aw-generic-deployment-3-5",appwrapper_namespace="test1"}`;
+    //console.log(metricName)
+    //register.removeSingleMetric(metricName);
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(NaN)
 
-// Start collecting stats
-scheduleStatsCollection();
+});
+informer.on('error', (err) => {
+    console.log(`hello e!`);
+    console.log(`errord: ${err}`);
+});
+informer.on('connect', (err) => {
+    console.log(`hello c!`);
+    console.log(`connected: ${err}`);
+});
+
+// start informer
+informer.start();
+
+/** end initialize informer **/
 
 // Expose metrics endpoint for Prometheus scraping
 app.get('/metrics', async (req, res) => {
