@@ -22,6 +22,7 @@ interface AppwrapperObject extends k8s.KubernetesObject {
     metadata: {
         name: string;
         namespace: string;
+        uid: string;
     }
     status: {
         state: string;
@@ -42,7 +43,7 @@ const appwrapperCountMetric = new Gauge({
 const appwrapperStatusMetric = new Gauge({
     name: 'appwrapper_status',
     help: 'Shows status of appwrapper by int',
-    labelNames: ['appwrapper_name', 'appwrapper_namespace'],
+    labelNames: ['appwrapper_name', 'appwrapper_namespace', 'appwrapper_UID'],
 });
 
 function getAppwrapperStatus(status: string) {
@@ -92,20 +93,22 @@ const informer = k8s.makeInformer(kc, '/apis/workload.codeflare.dev/v1beta1/appw
 informer.on('add', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
+    let appwrapperUID = obj.metadata.uid;
     let appwrapperStatus = obj.status.state;
-    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(getAppwrapperStatus(appwrapperStatus))
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(getAppwrapperStatus(appwrapperStatus))
     appwrapperCountMetric.labels(appwrapperStatus).inc(1);
     // set previous state
-    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName}`, appwrapperStatus);
+    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`, appwrapperStatus);
 });
 informer.on('update', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
+    let appwrapperUID = obj.metadata.uid;
     let appwrapperStatus = obj.status.state;
     //console.log(`update received: ${appwrapperName}, ${appwrapperNamespace}, ${appwrapperStatus}`);
-    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(getAppwrapperStatus(appwrapperStatus))
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(getAppwrapperStatus(appwrapperStatus))
     // decrement count of previous state
-    let previousState = previousAppwrapperStates.get(`${appwrapperNamespace},${appwrapperName}`);
+    let previousState = previousAppwrapperStates.get(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`);
     if (!previousState) {
         console.log(`error: update received but no previous state recorded`)
         return;
@@ -113,20 +116,21 @@ informer.on('update', (obj) => {
     appwrapperCountMetric.labels(previousState).dec(1);
     appwrapperCountMetric.labels(appwrapperStatus).inc(1);
     // set previous state
-    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName}`, appwrapperStatus);
+    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`, appwrapperStatus);
 });
 informer.on('delete', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
+    let appwrapperUID = obj.metadata.uid;
     let appwrapperStatus = obj.status.state;
     // Prometheus does not support removing a single tagged series
     // Instead, we set to NaN to effectively end the series, as shown in Prometheus charts
     // NOTE: Consequently, when querying Prometheus, if one appwrapper is added and deleted with same 
     // name and namespace multiple times, a query may get information for both
-    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace).set(NaN)
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(NaN)
     appwrapperCountMetric.labels(appwrapperStatus).dec(1);
     // set previous state
-    previousAppwrapperStates.delete(`${appwrapperNamespace},${appwrapperName}`);
+    previousAppwrapperStates.delete(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`);
 });
 informer.on('error', (err) => {
     console.log(`Informer errored: ${err}`);
