@@ -40,3 +40,8 @@
   margin-left: 10px;
   margin-bottom: 20px;
 }
+
+.progress-tracker-appwrapper-dropdown .pf-c-context-selector__toggle{
+  margin-bottom: 50px;
+  width: auto !important;
+}
