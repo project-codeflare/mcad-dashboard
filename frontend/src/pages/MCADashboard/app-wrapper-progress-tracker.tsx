@@ -12,6 +12,7 @@ import {
   ContextSelectorItem
 } from '@patternfly/react-core';
 import PendingIcon from '@patternfly/react-icons/dist/esm/icons/pending-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import useTableColumnSort from '~/pages/MCADashboard/components/table/useTableColumnSort';
 import { SortableData } from '~/pages/MCADashboard/components/table/useTableColumnSort';
 import { Data } from '~/pages/MCADashboard/types';
@@ -22,6 +23,11 @@ interface AppWrapperStateData {
   name: string;
   namespace: string;
   state: string;
+}
+
+interface ProgressStep {
+  variant: "pending" | "default" | "success" | "info" | "warning" | "danger" | undefined;
+  isCurrent: boolean;
 }
 
 type AppWrapperViewProps = {
@@ -53,10 +59,11 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
     appwrapperStateData.push(repository);
     appwrapperNameData.push(metadata.name);
   }
-  
+
+
   const firstItemText = "Select an Appwrapper";
   const [isOpen, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState(firstItemText);
+  const [selectedAppwrapper, setSelectedAppwrapper] = React.useState(firstItemText);
   const [searchValue, setSearchValue] = React.useState('');
   const [filteredItems, setFilteredItems] = React.useState(appwrapperNameData);
 
@@ -65,7 +72,7 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
   };
 
   const onSelectDropDown = (event: any, value: React.ReactNode) => {
-    setSelected(value as string);
+    setSelectedAppwrapper(value as string);
     setOpen(!isOpen);
   };
 
@@ -78,15 +85,65 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
       searchValue === ''
         ? appwrapperNameData
         : appwrapperNameData.filter(item => {
-            const str = typeof item === 'string' ? item : item;
-            return str.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1;
-          });
+          const str = typeof item === 'string' ? item : item;
+          return str.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1;
+        });
 
     setFilteredItems(filtered || []);
   };
 
-  
+  let progressTrackerVariantUpdate: { [key: string]: ProgressStep } =
+  {
+    submitted: { variant: "pending", isCurrent: false },
+    pending: { variant: "pending", isCurrent: false },
+    running: { variant: "pending", isCurrent: false },
+    queued: { variant: "pending", isCurrent: false },
+    failed: { variant: "pending", isCurrent: false },
+    completed: { variant: "pending", isCurrent: false }
+  };
+  console.log("selectedAppwrapper", selectedAppwrapper)
+  console.log("appwrapperStateData", appwrapperStateData)
+  // Find the selected appwrapper in the appwrapperStateData array
+  const selectedAppwrapperData = appwrapperStateData.find(appwrapper => appwrapper.name === selectedAppwrapper);
+  console.log("selectedAppwrapperData", selectedAppwrapperData)
+  if (selectedAppwrapperData) {
+    // Update the state of the selected appwrapper based on its progress state
+    const progressStep = progressTrackerVariantUpdate[selectedAppwrapperData.state.toLowerCase()];
 
+    // submitted state
+    if (selectedAppwrapperData.state.toLowerCase() === "") {
+      progressTrackerVariantUpdate["submitted"].variant = "info";
+      progressStep.isCurrent = true;
+    }
+
+    if (progressStep) {
+      if (selectedAppwrapperData.state.toLowerCase() === "pending") { // queued state
+        progressStep.variant = "info";
+        progressStep.isCurrent = true;
+        progressTrackerVariantUpdate["submitted"].variant = "success";
+      } else if (selectedAppwrapperData.state.toLowerCase() === "running") { // running state
+        progressStep.variant = "info";
+        progressStep.isCurrent = true;
+        progressTrackerVariantUpdate["submitted"].variant = "success";
+        progressTrackerVariantUpdate["pending"].variant = "success";
+      } else if (selectedAppwrapperData.state.toLowerCase() === "queued") {
+        progressStep.variant = "warning";
+        progressStep.isCurrent = true;
+        progressTrackerVariantUpdate["submitted"].variant = "success";
+        progressTrackerVariantUpdate["pending"].variant = "success";
+      } else if (selectedAppwrapperData.state.toLowerCase() === "failed") {
+        progressStep.variant = "danger";
+        progressStep.isCurrent = true;
+        progressTrackerVariantUpdate["submitted"].variant = "success";
+      } else if (selectedAppwrapperData.state.toLowerCase() === "completed") {
+        progressStep.variant = "success";
+        progressStep.isCurrent = true;
+        progressTrackerVariantUpdate["submitted"].variant = "success";
+        progressTrackerVariantUpdate["pending"].variant = "success";
+        progressTrackerVariantUpdate["running"].variant = "success";
+      }
+    }
+  }
   return (
     <ExpandableSection
       displaySize={'large'}
@@ -103,7 +160,7 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
       <PageSection isFilled data-id="page-content">
         <div className='progress-tracker-appwrapper-dropdown'>
           <ContextSelector
-            toggleText={selected}
+            toggleText={selectedAppwrapper}
             onSearchInputChange={onSearchInputChangeDropDown}
             isOpen={isOpen}
             searchInputValue={searchValue}
@@ -126,7 +183,8 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
         <div>
           <ProgressStepper aria-label="Appwrapper progress tracker">
             <ProgressStep
-              variant="success"
+              variant={progressTrackerVariantUpdate.submitted.variant}
+              isCurrent={progressTrackerVariantUpdate.submitted.isCurrent}
               id="submitted"
               titleId="submitted"
               aria-label="submitted"
@@ -134,7 +192,8 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               Submitted
             </ProgressStep>
             <ProgressStep
-              variant="success"
+              variant={progressTrackerVariantUpdate.pending.variant}
+              isCurrent={progressTrackerVariantUpdate.pending.isCurrent}
               id="pending"
               titleId="pending"
               aria-label="pending"
@@ -142,8 +201,8 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               Pending
             </ProgressStep>
             <ProgressStep
-              variant="info"
-              isCurrent
+              variant={progressTrackerVariantUpdate.running.variant}
+              isCurrent={progressTrackerVariantUpdate.running.isCurrent}
               id="running"
               titleId="running"
               aria-label="running"
@@ -151,7 +210,8 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               Running
             </ProgressStep>
             <ProgressStep
-              variant="pending"
+              variant={progressTrackerVariantUpdate.queued.variant}
+              isCurrent={progressTrackerVariantUpdate.queued.isCurrent}
               icon={<PendingIcon />}
               id="queued"
               titleId="queued"
@@ -160,7 +220,9 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               Queued
             </ProgressStep>
             <ProgressStep
-              variant="danger"
+              variant={progressTrackerVariantUpdate.failed.variant}
+              isCurrent={progressTrackerVariantUpdate.failed.isCurrent}
+              icon={<ExclamationCircleIcon />}
               id="failed"
               titleId="failed"
               aria-label="failed"
@@ -168,7 +230,8 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               Failed
             </ProgressStep>
             <ProgressStep
-              variant="pending"
+              variant={progressTrackerVariantUpdate.completed.variant}
+              isCurrent={progressTrackerVariantUpdate.completed.isCurrent}
               id="completed"
               titleId="completed"
               aria-label="completed"
