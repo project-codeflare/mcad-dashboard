@@ -102,11 +102,8 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
     failed: { variant: "pending", isCurrent: false },
     completed: { variant: "pending", isCurrent: false }
   };
-  console.log("selectedAppwrapper", selectedAppwrapper)
-  console.log("appwrapperStateData", appwrapperStateData)
   // Find the selected appwrapper in the appwrapperStateData array
   const selectedAppwrapperData = appwrapperStateData.find(appwrapper => appwrapper.name === selectedAppwrapper);
-  console.log("selectedAppwrapperData", selectedAppwrapperData)
   if (selectedAppwrapperData) {
     // Update the state of the selected appwrapper based on its progress state
     const progressStep = progressTrackerVariantUpdate[selectedAppwrapperData.state.toLowerCase()];
