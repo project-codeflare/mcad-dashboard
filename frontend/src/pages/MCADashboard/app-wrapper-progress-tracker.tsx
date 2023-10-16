@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback } from 'react';
 import {
   ToolbarItem,
   PageSection,
@@ -80,7 +81,7 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
     setSearchValue(value);
   };
 
-  const onSearchButtonClickDropDown = () => {
+  const onSearchButtonClickDropDown = useCallback(() => {
     const filtered =
       searchValue === ''
         ? appwrapperNameData
@@ -90,14 +91,14 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
         });
 
     setFilteredItems(filtered || []);
-  };
+  }, [appwrapperNameData]);
 
+  //onSearchButtonClickDropDown();
   let progressTrackerVariantUpdate: { [key: string]: ProgressStep } =
   {
     submitted: { variant: "pending", isCurrent: false },
     pending: { variant: "pending", isCurrent: false },
     running: { variant: "pending", isCurrent: false },
-    queued: { variant: "pending", isCurrent: false },
     failed: { variant: "pending", isCurrent: false },
     completed: { variant: "pending", isCurrent: false }
   };
@@ -126,16 +127,11 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
         progressStep.isCurrent = true;
         progressTrackerVariantUpdate["submitted"].variant = "success";
         progressTrackerVariantUpdate["pending"].variant = "success";
-      } else if (selectedAppwrapperData.state.toLowerCase() === "queued") {
-        progressStep.variant = "warning";
-        progressStep.isCurrent = true;
-        progressTrackerVariantUpdate["submitted"].variant = "success";
-        progressTrackerVariantUpdate["pending"].variant = "success";
-      } else if (selectedAppwrapperData.state.toLowerCase() === "failed") {
+      } else if (selectedAppwrapperData.state.toLowerCase() === "failed") { // failed state
         progressStep.variant = "danger";
         progressStep.isCurrent = true;
         progressTrackerVariantUpdate["submitted"].variant = "success";
-      } else if (selectedAppwrapperData.state.toLowerCase() === "completed") {
+      } else if (selectedAppwrapperData.state.toLowerCase() === "runningholdcompletion") { // completed with running pods
         progressStep.variant = "success";
         progressStep.isCurrent = true;
         progressTrackerVariantUpdate["submitted"].variant = "success";
@@ -194,11 +190,12 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
             <ProgressStep
               variant={progressTrackerVariantUpdate.pending.variant}
               isCurrent={progressTrackerVariantUpdate.pending.isCurrent}
+              icon={<PendingIcon />}
               id="pending"
               titleId="pending"
               aria-label="pending"
             >
-              Pending
+              Queued
             </ProgressStep>
             <ProgressStep
               variant={progressTrackerVariantUpdate.running.variant}
@@ -208,16 +205,6 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               aria-label="running"
             >
               Running
-            </ProgressStep>
-            <ProgressStep
-              variant={progressTrackerVariantUpdate.queued.variant}
-              isCurrent={progressTrackerVariantUpdate.queued.isCurrent}
-              icon={<PendingIcon />}
-              id="queued"
-              titleId="queued"
-              aria-label="queued"
-            >
-              Queued
             </ProgressStep>
             <ProgressStep
               variant={progressTrackerVariantUpdate.failed.variant}
@@ -236,7 +223,7 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               titleId="completed"
               aria-label="completed"
             >
-              Completed
+              Completed [With Running Pods]
             </ProgressStep>
           </ProgressStepper>
         </div>
