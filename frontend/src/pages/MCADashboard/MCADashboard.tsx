@@ -7,6 +7,7 @@ import QuickStarts from '~/app/QuickStarts';
 import { fireTrackingEvent } from '~/utilities/segmentIOUtils';
 import { useUser } from '~/redux/selectors';
 import AppWrapperSummaryTable from './Tables/app-wrapper-summary-table';
+import AppWrapperProgressTracker from './app-wrapper-progress-tracker';
 import StatusSummaryTable from './Tables/status-summary-table';
 // import TimeRangeDropDown from './DropDowns/time-range-drop-down';
 import RefreshRateDropDown from './DropDowns/refresh-rate-drop-down';
@@ -135,6 +136,7 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
           </div>
         <StatusSummaryTable data={data ? data : emptyDataObject} />
         <AppWrapperSummaryTable data={data ? data : emptyDataObject} />
+        <AppWrapperProgressTracker data={data ? data : emptyDataObject} />
       </ApplicationsPage>
     );
   },
