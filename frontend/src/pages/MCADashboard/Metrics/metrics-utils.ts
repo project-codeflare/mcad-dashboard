@@ -216,8 +216,10 @@ export const filterDataByAppwrappers = (data: any[], validAppwrappers: Set<strin
       return Array.from(validAppwrappers).some((appwrapper) => {
         if (dataPoint.metric.pod !== undefined) {
           return dataPoint.metric.pod.includes(appwrapper);
-        } else {
+        } else if (dataPoint.metric.exported_pod !== undefined){
           return dataPoint.metric.exported_pod.includes(appwrapper);
+        } else {
+          return;
         }
       });
     });
