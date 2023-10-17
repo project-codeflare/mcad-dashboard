@@ -94,7 +94,6 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
   }, [appwrapperNameData]);
 
   //onSearchButtonClickDropDown();
-  console.log("appwrapperStateData", appwrapperStateData)
   let progressTrackerVariantUpdate: { [key: string]: ProgressStep } =
   {
     submitted: { variant: "pending", isCurrent: false },
