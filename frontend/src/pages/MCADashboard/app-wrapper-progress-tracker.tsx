@@ -205,6 +205,15 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               Running
             </ProgressStep>
             <ProgressStep
+              variant={progressTrackerVariantUpdate.completed.variant}
+              isCurrent={progressTrackerVariantUpdate.completed.isCurrent}
+              id="completed"
+              titleId="completed"
+              aria-label="completed"
+            >
+              Completed
+            </ProgressStep>
+            <ProgressStep
               variant={progressTrackerVariantUpdate.failed.variant}
               isCurrent={progressTrackerVariantUpdate.failed.isCurrent}
               icon={<ExclamationCircleIcon />}
@@ -213,15 +222,6 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               aria-label="failed"
             >
               Failed
-            </ProgressStep>
-            <ProgressStep
-              variant={progressTrackerVariantUpdate.completed.variant}
-              isCurrent={progressTrackerVariantUpdate.completed.isCurrent}
-              id="completed"
-              titleId="completed"
-              aria-label="completed"
-            >
-              Completed
             </ProgressStep>
           </ProgressStepper>
         </div>
