@@ -94,6 +94,7 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
   }, [appwrapperNameData]);
 
   //onSearchButtonClickDropDown();
+  console.log("appwrapperStateData", appwrapperStateData)
   let progressTrackerVariantUpdate: { [key: string]: ProgressStep } =
   {
     submitted: { variant: "pending", isCurrent: false },
@@ -128,7 +129,7 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
         progressStep.variant = "danger";
         progressStep.isCurrent = true;
         progressTrackerVariantUpdate["submitted"].variant = "success";
-      } else if (selectedAppwrapperData.state.toLowerCase() === "runningholdcompletion") { // completed with running pods
+      } else if (selectedAppwrapperData.state.toLowerCase() === "runningholdcompletion" || "completed") { // completed with running pods
         progressStep.variant = "success";
         progressStep.isCurrent = true;
         progressTrackerVariantUpdate["submitted"].variant = "success";
@@ -220,7 +221,7 @@ export const AppWrapperProgressTracker: React.FunctionComponent<AppWrapperViewPr
               titleId="completed"
               aria-label="completed"
             >
-              Completed [With Running Pods]
+              Completed
             </ProgressStep>
           </ProgressStepper>
         </div>
