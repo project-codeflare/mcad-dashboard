@@ -26,6 +26,7 @@ const callK8sApi = async (isAdmin: boolean) => {
       let apiCall = '/api/k8s/apis/workload.codeflare.dev/v1beta1/namespaces/'.concat(projectName, '/appwrappers');
       let response = await fetch(apiCall);
       if (!response.ok) {
+          console.log("Set proper permissions for namespace [view] and resource Appwrapper [appwrappers-list]")
           throw new Error(`HTTP error! status: ${response.status}`);
       }
       let appwrapperData = await response.json();
