@@ -63,7 +63,7 @@ export const MCADTabs: React.FunctionComponent = () => {
         >
           <MCADashboard />
         </Tab>
-        {/* {isAdmin && ( */}
+        {isAdmin && (
           <Tab
             key="appwrapperMetrics"
             eventKey={1}
@@ -80,7 +80,8 @@ export const MCADTabs: React.FunctionComponent = () => {
             {/* Place holder */}
             <Resources activeTabKey={Number(activeTabKey)} />
           </Tab>
-        {/* {isAdmin && ( */}
+        )}
+        {isAdmin && (
           <Tab
             key="clusterResources"
             eventKey={2}
@@ -97,6 +98,7 @@ export const MCADTabs: React.FunctionComponent = () => {
             {/* Place holder */}
             <Metrics activeTabKey={Number(activeTabKey)} />
           </Tab>
+        )}
         {/* {isAdmin && (
           <Tab
             key="Server"

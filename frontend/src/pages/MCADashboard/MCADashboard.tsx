@@ -120,7 +120,7 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
             dateFormatter={convertRangeToTime}
           /> */}
         </div>
-        {/* {isAdmin && ( */}
+        {isAdmin && (
           <div>
             <DonutMetricsCards
               totalQueries={totalResourceQueries}
@@ -134,6 +134,7 @@ export const MCADashboardInner: React.FC<MCADashboardInnerProps> = React.memo(
               refreshRate={refreshRate}
             /> */}
           </div>
+        )}
         <StatusSummaryTable data={data ? data : emptyDataObject} />
         <AppWrapperSummaryTable data={data ? data : emptyDataObject} />
         <AppWrapperProgressTracker data={data ? data : emptyDataObject} />
