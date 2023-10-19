@@ -127,7 +127,7 @@ informer.on('delete', (obj) => {
     // Instead, we set to NaN to effectively end the series, as shown in Prometheus charts
     // NOTE: Consequently, when querying Prometheus, if one appwrapper is added and deleted with same 
     // name and namespace multiple times, a query may get information for both
-    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(NaN)
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(-1)
     appwrapperCountMetric.labels(appwrapperStatus).dec(1);
     // set previous state
     previousAppwrapperStates.delete(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`);
