@@ -5,7 +5,7 @@ import { ChartVoronoiContainer } from '@patternfly/react-charts';
 import { formatUnitString } from './metrics-utils';
 import { Unit } from './types';
 
-const TOOLTIP_MAX_ENTRIES = 15;
+const TOOLTIP_MAX_ENTRIES = 1000;
 const TOOLTIP_MAX_WIDTH = 400;
 const TOOLTIP_MAX_HEIGHT = 400;
 const TOOLTIP_MAX_LEFT_JUT_OUT = 85;
