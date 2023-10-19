@@ -183,6 +183,8 @@ export const formatStringOnAxis = (value: number, unit?: Unit): string => {
     }
   } else if (unit === Unit.STATUS) {
     switch (post) {
+      case '-1': 
+        return 'Deleted';
       case '0':
         return '';
       case '1':

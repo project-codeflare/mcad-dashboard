@@ -91,6 +91,7 @@ rules:
   - verbs:
       - get
       - list
+      - watch
     apiGroups:
       - workload.codeflare.dev
     resources:
@@ -105,6 +106,7 @@ rules:
   - verbs:
       - get
       - list
+      - watch
     apiGroups:
       - workload.codeflare.dev
     resources:
