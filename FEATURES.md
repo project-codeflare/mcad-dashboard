@@ -74,24 +74,24 @@ There is a search feature within the appwrapper summary table, the table is sear
 - Namespace
 - Date Created On
 
-#### Appwrapper Progress Tracker
+### 4. Appwrapper Progress Tracker
 ![Appwrapper Progress Tracker](docs/rsrc/MCAD-dashboard/appwrapper-progress-tracker.png)
 
-#### 4. Appwrapper Metrics
+#### Appwrapper Metrics
 
 This feature is under the appwrapper metrics tab, which shows the appwrapper mcad specific metrics from promethues:
 
-- Total Appwrapper Count by Status
+#### 5. Total Appwrapper Count by Status
 
 ![Total Appwrapper Count by Status](docs/rsrc/MCAD-dashboard/total-appwrapper-count-by-status.png)
 
-- Appwrapper Status
+#### 6. Appwrapper Status
 
 ![Appwrapper Status](docs/rsrc/MCAD-dashboard/appwrapper-status.png)
 
-#### 5. Cluster Status Summary Metrics
+#### 7. Cluster Status Summary Metrics
 
-This feature is under the metrucs tab, which shows the cluster resources summary such as:
+This feature is under the metrics tab, which shows the cluster resources summary such as:
 
 - CPU Utilization %
 - Memory Utilization %
@@ -102,7 +102,7 @@ This feature is under the metrucs tab, which shows the cluster resources summary
 
 ![Cluster Status Summary Metrics](docs/rsrc/MCAD-dashboard/metrics_cluster_status_summary.png)
 
-#### 6. Appwrapper Quota Summary Metrics
+#### 8. Appwrapper Quota Summary Metrics
 
 This section displays a table of appwrapper quota sumary by namespace, it shows namespace specific information such as:
 
@@ -117,38 +117,45 @@ This section displays a table of appwrapper quota sumary by namespace, it shows 
 
 ![Appwrapper Quota Summary Metrics](docs/rsrc/MCAD-dashboard/metrics_appwrapper_quota-summary.png)
 
-#### 7. CPU Usage by Appwrapper
+#### 9. CPU Usage by Appwrapper
 
 The following graph shows CPU usage per appwrapper through a given time, the time range can be changed by using the Time Range drop down on top of the dashboard. 
 
 ![CPU Usage (by Appwrapper) Metrics](docs/rsrc/MCAD-dashboard/metrics_cpu_usage_by_appwrapper.png)
 
-#### 8. Memory Usage by Appwrapper
+#### 10. Memory Usage by Appwrapper
 
 The following graph shows Memory usage per appwrapper through a given time, the time range can be changed by using the Time Range drop down on top of the dashboard. 
 
 ![Memory Usage (by Appwrapper) Metrics](docs/rsrc/MCAD-dashboard/metrics_memory_usage_by_appwrapper.png)
 
-#### 9. CPU Request by Namespace
+#### 11. CPU Request by Namespace
 
 The following graph shows CPU Request per namespace through a given time, the time range can be changed by using the Time Range drop down on top of the dashboard. 
 
 ![CPU Request (by Namespace) Metrics](docs/rsrc/MCAD-dashboard/metrics_cpu_request_by_namespace.png)
 
-#### 10. Memory Request by Namespace
+#### 12. Memory Request by Namespace
 
 The following graph shows Memory request per namespace through a given time, the time range can be changed by using the Time Range drop down on top of the dashboard. 
 
 ![Memory Request (by Namespace) Metrics](docs/rsrc/MCAD-dashboard/metrics_memory_request_by_namespace.png)
 
-#### 11. Refresh Rate
+#### 13. Refresh Rate
 
 The refresh rate to retrive data from server can be changed using the dropdown on top of the dashboard
 
 ![Refresh Rate](docs/rsrc/MCAD-dashboard/refresh_rate.png)
 
-#### 12. Time Range
+#### 14. Time Range
 
 The time range can be changed by using the Time Range drop down on top of the dashboard. 
 
 ![Time Range](docs/rsrc/MCAD-dashboard/time_range.png)
+
+
+#### 15. Custom Time Range
+
+The custom time range can be selected by using the Time Range drop down on top of the dashboard, and clicking on Custom Time Range.  
+
+![Time Range](docs/rsrc/MCAD-dashboard/custom-time-range.png)
