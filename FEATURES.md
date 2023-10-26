@@ -3,25 +3,25 @@
 ## Features
 
 ### Dashboard Tab
-- [1: Cluster Avaiable Resources](#cluster-avaiable-resources)
-- [2: Status Summary](#status-summary)
-- [3: Appwrapper Summary](#appwrapper-summary)
-- [4: Appwrapper Progress Tracker](#appwrapper-progress-tracker)
+- [1: Cluster Avaiable Resources](#1-cluster-avaiable-resources)
+- [2: Status Summary](#2-status-summary)
+- [3: Appwrapper Summary](#3-appwrapper-summary)
+- [4: Appwrapper Progress Tracker](#4-appwrapper-progress-tracker)
 
 ### Appwrapper Metrics Tab
-- [5: Total Appwrapper Count by Status](#total-appwrapper-count-by-status)
-- [6: Appwrapper Status](#appwrapper-status)
+- [5: Total Appwrapper Count by Status](#5-total-appwrapper-count-by-status)
+- [6: Appwrapper Status](#6-appwrapper-status)
 
 ### Cluster Resources Tab
-- [7: Cluster Status Summary Metrics](#cluster-status-summary-metrics)
-- [8: Appwrapper Quota Summary](#appwrapper-quota-summary-metrics)
-- [9: CPU Usage by Appwrapper](#cpu-usage-by-appwrapper)
-- [10: Memory Usage by Appwrapper](#memory-usage-by-appwrapper)
-- [11: CPU Request by Namespace](#cpu-request-by-namespace)
-- [12: Memory Request by Namespace](#memory-request-by-namespace)
-- [13: Refresh Rate](#refresh-rate)
-- [14: Time Range](#time-range)
-- [15: Custom Time Range](#custom-time-range)
+- [7: Cluster Status Summary Metrics](#7-cluster-status-summary-metrics)
+- [8: Appwrapper Quota Summary](#8-appwrapper-quota-summary-metrics)
+- [9: CPU Usage by Appwrapper](#9-cpu-usage-by-appwrapper)
+- [10: Memory Usage by Appwrapper](#10-memory-usage-by-appwrapper)
+- [11: CPU Request by Namespace](#11-cpu-request-by-namespace)
+- [12: Memory Request by Namespace](#12-memory-request-by-namespace)
+- [13: Refresh Rate](#13-refresh-rate)
+- [14: Time Range](#14-time-range)
+- [15: Custom Time Range](#15-custom-time-range)
 
 
 #### 1. Cluster Avaiable Resources
