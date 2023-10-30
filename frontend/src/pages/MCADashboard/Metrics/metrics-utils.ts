@@ -183,9 +183,9 @@ export const formatStringOnAxis = (value: number, unit?: Unit): string => {
     }
   } else if (unit === Unit.STATUS) {
     switch (post) {
-      case '-1': 
+      case '0': 
         return 'Deleted';
-      case '0':
+      case '-1':
         return '';
       case '1':
         return 'Failed';
