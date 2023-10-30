@@ -49,16 +49,16 @@ const appwrapperStatusMetric = new Gauge({
 function getAppwrapperStatus(status: string) {
     switch(status) {
         case "Running": {
-            return 3;
+            return 4;
         }
         case "Pending": {
-            return 2;
+            return 3;
         }
         case "Failed": {
-            return 1;
+            return 2;
         }
         default: { // unknown state
-            return -1;
+            return 0;
         }
     }
 }
@@ -127,7 +127,7 @@ informer.on('delete', (obj) => {
     // Instead, we set to NaN to effectively end the series, as shown in Prometheus charts
     // NOTE: Consequently, when querying Prometheus, if one appwrapper is added and deleted with same 
     // name and namespace multiple times, a query may get information for both
-    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(0)
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(1)
     appwrapperCountMetric.labels(appwrapperStatus).dec(1);
     // set previous state
     previousAppwrapperStates.delete(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`);
