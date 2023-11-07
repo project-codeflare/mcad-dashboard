@@ -116,7 +116,7 @@ export const QuotaTable: React.FunctionComponent<QuotaViewProps> = ({
     },
     {
       field: 'numberofappwrappers',
-      label: '# of Appwrappers',
+      label: 'Appwrappers',
       sortable: true,
     },
     {
