@@ -132,14 +132,14 @@ export const getNavBarData = (
       });
     }
   }
+  // MCAD dashboard
+  navItems.push({ id: 'mcad', label: 'MCAD Dashboard', href: '/mcad' }); 
 
   if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableModelServing)) {
     navItems.push({ id: 'modelServing', label: 'Model Serving', href: '/modelServing' });
   }
 
   navItems.push({ id: 'resources', label: 'Resources', href: '/resources' });
-
-  navItems.push({ id: 'mcad', label: 'MCAD Dashboard', href: '/mcad' }); // path created for MCAD dashboard
   
   const settingsNav = getSettingsNav(isAdmin, dashboardConfig);
   if (settingsNav) {

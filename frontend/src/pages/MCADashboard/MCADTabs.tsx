@@ -1,10 +1,11 @@
 import React from 'react';
 import { Tabs, Tab, TabTitleText, TabTitleIcon } from '@patternfly/react-core';
-import UsersIcon from '@patternfly/react-icons/dist/esm/icons/users-icon';
+//import UsersIcon from '@patternfly/react-icons/dist/esm/icons/users-icon';
 // import BoxIcon from '@patternfly/react-icons/dist/esm/icons/box-icon';
 import DatabaseIcon from '@patternfly/react-icons/dist/esm/icons/database-icon';
 // import ServerIcon from '@patternfly/react-icons/dist/esm/icons/server-icon';
 // import LaptopIcon from '@patternfly/react-icons/dist/esm/icons/laptop-icon';
+import DeezerIcon from '@patternfly/react-icons/dist/esm/icons/deezer-icon';
 import ProjectDiagramIcon from '@patternfly/react-icons/dist/esm/icons/project-diagram-icon';
 import { useWatchComponents } from '~/utilities/useWatchComponents';
 import ApplicationsPage from '~/pages/ApplicationsPage';
@@ -54,9 +55,9 @@ export const MCADTabs: React.FunctionComponent = () => {
           title={
             <>
               <TabTitleIcon>
-                <UsersIcon />
+                <DeezerIcon />
               </TabTitleIcon>
-              <TabTitleText>Dashboard</TabTitleText>
+              <TabTitleText>Appwrapper Summary</TabTitleText>
             </>
           }
           aria-label="mcad-dashboard-tab"
