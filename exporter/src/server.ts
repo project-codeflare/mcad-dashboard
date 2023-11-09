@@ -57,6 +57,7 @@ function getAppwrapperStatus(status: string) {
         case "Failed": {
             return 2;
         }
+        // 1 is for deleted appwrappers
         default: { // unknown state
             return 0;
         }
@@ -94,19 +95,27 @@ informer.on('add', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
     let appwrapperUID = obj.metadata.uid;
-    let appwrapperStatus = obj.status.state;
-    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(getAppwrapperStatus(appwrapperStatus))
-    appwrapperCountMetric.labels(appwrapperStatus).inc(1);
+    let appwrapperStatus = obj.status;
+    let appwrapperState = "Other"
+    if (appwrapperStatus) {
+        appwrapperState = appwrapperStatus.state;
+    }
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(getAppwrapperStatus(appwrapperState))
+    appwrapperCountMetric.labels(appwrapperState).inc(1);
     // set previous state
-    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`, appwrapperStatus);
+    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`, appwrapperState);
 });
 informer.on('update', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
     let appwrapperUID = obj.metadata.uid;
-    let appwrapperStatus = obj.status.state;
+    let appwrapperStatus = obj.status;
+    let appwrapperState = "Other"
+    if (appwrapperStatus) {
+        appwrapperState = appwrapperStatus.state;
+    }
     //console.log(`update received: ${appwrapperName}, ${appwrapperNamespace}, ${appwrapperStatus}`);
-    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(getAppwrapperStatus(appwrapperStatus))
+    appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(getAppwrapperStatus(appwrapperState))
     // decrement count of previous state
     let previousState = previousAppwrapperStates.get(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`);
     if (!previousState) {
@@ -114,21 +123,25 @@ informer.on('update', (obj) => {
         return;
     }
     appwrapperCountMetric.labels(previousState).dec(1);
-    appwrapperCountMetric.labels(appwrapperStatus).inc(1);
+    appwrapperCountMetric.labels(appwrapperState).inc(1);
     // set previous state
-    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`, appwrapperStatus);
+    previousAppwrapperStates.set(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`, appwrapperState);
 });
 informer.on('delete', (obj) => {
     let appwrapperName: string = obj.metadata.name;
     let appwrapperNamespace = obj.metadata.namespace;
     let appwrapperUID = obj.metadata.uid;
-    let appwrapperStatus = obj.status.state;
+    let appwrapperStatus = obj.status;
+    let appwrapperState = "Other"
+    if (appwrapperStatus) {
+        appwrapperState = appwrapperStatus.state;
+    }
     // Prometheus does not support removing a single tagged series
     // Instead, we set to NaN to effectively end the series, as shown in Prometheus charts
     // NOTE: Consequently, when querying Prometheus, if one appwrapper is added and deleted with same 
     // name and namespace multiple times, a query may get information for both
     appwrapperStatusMetric.labels(appwrapperName, appwrapperNamespace, appwrapperUID).set(1)
-    appwrapperCountMetric.labels(appwrapperStatus).dec(1);
+    appwrapperCountMetric.labels(appwrapperState).dec(1);
     // set previous state
     previousAppwrapperStates.delete(`${appwrapperNamespace},${appwrapperName},${appwrapperUID}`);
 });
