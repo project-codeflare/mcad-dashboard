@@ -49,7 +49,7 @@ module.exports = merge(
       },
       onListening: (devServer) => {
         if (devServer) {
-          console.log(`\x1b[32m✓ ODH Dashboard available at: \x1b[4mhttp://localhost:${devServer.server.address().port}\x1b[0m`);
+          console.log(`\x1b[32m✓ MCAD Dashboard available at: \x1b[4mhttp://localhost:${devServer.server.address().port}\x1b[0m`);
         }
       },
     },
