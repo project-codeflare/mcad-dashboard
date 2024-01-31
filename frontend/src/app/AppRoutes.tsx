@@ -34,9 +34,9 @@ const GroupSettingsPage = React.lazy(() => import('../pages/groupSettings/GroupS
 const MCADashboard = React.lazy(() => import('../pages/MCADashboard/MCADTabs'));
 const NotFound = React.lazy(() => import('../pages/NotFound'));
 
-const DependencyMissingPage = React.lazy(
-  () => import('../pages/dependencies/DependencyMissingPage'),
-);
+// const DependencyMissingPage = React.lazy(
+//   () => import('../pages/dependencies/DependencyMissingPage'),
+// );
 
 const AppRoutes: React.FC = () => {
   const { isAdmin, isAllowed } = useUser();
@@ -56,7 +56,7 @@ const AppRoutes: React.FC = () => {
       <Routes>
         <Route path="/" element={<MCADashboard />} />
         {/* <Route path="/mcad" element={<MCADashboard />} /> */}
-        <Route path="/dependency-missing/:area" element={<DependencyMissingPage />} />
+        {/* <Route path="/dependency-missing/:area" element={<DependencyMissingPage />} /> */}
         {/* <Route path="/" element={<InstalledApplications />} /> */}
         {/* <Route path="/explore" element={<ExploreApplications />} />
         <Route path="/resources" element={<LearningCenterPage />} /> */}
