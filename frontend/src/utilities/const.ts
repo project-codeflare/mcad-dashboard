@@ -10,7 +10,9 @@ const DOC_LINK = process.env.DOC_LINK;
 const COMMUNITY_LINK = process.env.COMMUNITY_LINK;
 const SUPPORT_LINK = process.env.SUPPORT_LINK;
 const ODH_LOGO = process.env.ODH_LOGO || 'odh-logo.svg';
+const MCAD_LOGO = process.env.MCAD_LOGO || 'mcad-logo.png';
 const ODH_PRODUCT_NAME = process.env.ODH_PRODUCT_NAME;
+const MCAD_PRODUCT_NAME = process.env.MCAD_PRODUCT_NAME;
 const ODH_NOTEBOOK_REPO = process.env.ODH_NOTEBOOK_REPO;
 const DASHBOARD_CONFIG = process.env.DASHBOARD_CONFIG || 'odh-dashboard-config';
 
@@ -23,6 +25,8 @@ export {
   COMMUNITY_LINK,
   SUPPORT_LINK,
   ODH_LOGO,
+  MCAD_PRODUCT_NAME,
+  MCAD_LOGO,
   ODH_PRODUCT_NAME,
   ODH_NOTEBOOK_REPO,
   DASHBOARD_CONFIG,

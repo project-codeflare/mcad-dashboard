@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { BarsIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
-import { ODH_LOGO, ODH_PRODUCT_NAME } from '~/utilities/const';
+import { MCAD_LOGO, MCAD_PRODUCT_NAME } from '~/utilities/const';
 import { useUser } from '~/redux/selectors';
 import HeaderTools from './HeaderTools';
 
@@ -33,8 +33,10 @@ const Header: React.FC<HeaderProps> = ({ onNotificationsClick }) => {
         <MastheadBrand component={(props) => <Link {...props} to="/" />}>
           <Brand
             className="odh-dashboard__brand"
-            src={`${window.location.origin}/images/${ODH_LOGO}`}
-            alt={`${ODH_PRODUCT_NAME} Logo`}
+            src={`${window.location.origin}/images/${MCAD_LOGO}`}
+            alt={`${MCAD_PRODUCT_NAME} Logo`}
+            // widths={{ default: '100000px', md: '900px', xl: '900px' }}
+            // heights={{ default: '900px', md: '900px', xl: '900px' }}
           />
         </MastheadBrand>
       </MastheadMain>

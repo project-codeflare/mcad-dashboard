@@ -37,32 +37,32 @@ const getSettingsNav = (
   }
 
   const settingsNavs: NavDataHref[] = [];
-  if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableBYONImageStream)) {
-    settingsNavs.push({
-      id: 'settings-notebook-images',
-      label: 'Notebook images',
-      href: '/notebookImages',
-    });
-  }
+  // if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableBYONImageStream)) {
+  //   settingsNavs.push({
+  //     id: 'settings-notebook-images',
+  //     label: 'Notebook images',
+  //     href: '/notebookImages',
+  //   });
+  // }
 
-  if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableClusterManager)) {
-    settingsNavs.push({
-      id: 'settings-cluster-settings',
-      label: 'Cluster settings',
-      href: '/clusterSettings',
-    });
-  }
+  // if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableClusterManager)) {
+  //   settingsNavs.push({
+  //     id: 'settings-cluster-settings',
+  //     label: 'Cluster settings',
+  //     href: '/clusterSettings',
+  //   });
+  // }
 
-  if (
-    featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableCustomServingRuntimes) &&
-    featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableModelServing)
-  ) {
-    settingsNavs.push({
-      id: 'settings-custom-serving-runtimes',
-      label: 'Serving runtimes',
-      href: '/servingRuntimes',
-    });
-  }
+  // if (
+  //   featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableCustomServingRuntimes) &&
+  //   featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableModelServing)
+  // ) {
+  //   settingsNavs.push({
+  //     id: 'settings-custom-serving-runtimes',
+  //     label: 'Serving runtimes',
+  //     href: '/servingRuntimes',
+  //   });
+  // }
 
   if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableUserManagement)) {
     settingsNavs.push({
@@ -89,57 +89,57 @@ export const getNavBarData = (
 ): NavDataItem[] => {
   const navItems: NavDataItem[] = [];
 
-  navItems.push({
-    id: 'applications',
-    group: { id: 'apps', title: 'Applications' },
-    children: [
-      { id: 'apps-installed', label: 'Enabled', href: '/' },
-      { id: 'apps-explore', label: 'Explore', href: '/explore' },
-    ],
-  });
+  // navItems.push({
+  //   id: 'applications',
+  //   group: { id: 'apps', title: 'Applications' },
+  //   children: [
+  //     { id: 'apps-installed', label: 'Enabled', href: '/' },
+  //     { id: 'apps-explore', label: 'Explore', href: '/explore' },
+  //   ],
+  // });
 
-  if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableProjects)) {
-    navItems.push({ id: 'dsg', label: 'Data Science Projects', href: '/projects' });
-  }
+  // if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableProjects)) {
+  //   navItems.push({ id: 'dsg', label: 'Data Science Projects', href: '/projects' });
+  // }
 
-  if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disablePipelines)) {
-    const operatorAvailable =
-      dashboardConfig.status.dependencyOperators.redhatOpenshiftPipelines.available;
+  // if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disablePipelines)) {
+  //   const operatorAvailable =
+  //     dashboardConfig.status.dependencyOperators.redhatOpenshiftPipelines.available;
 
-    if (operatorAvailable) {
-      navItems.push({
-        id: 'pipelines',
-        group: { id: 'pipelines', title: 'Data Science Pipelines' },
-        children: [
-          { id: 'global-pipelines', label: 'Pipelines', href: '/pipelines' },
-          { id: 'global-pipeline-runs', label: 'Runs', href: '/pipelineRuns' },
-        ],
-      });
-    } else {
-      navItems.push({
-        id: 'pipelines',
-        label: (
-          <Split hasGutter>
-            <SplitItem>Data Science Pipelines</SplitItem>
-            <SplitItem>
-              <Icon status="danger" isInline>
-                <ExclamationCircleIcon />
-              </Icon>
-            </SplitItem>
-          </Split>
-        ),
-        href: `/dependency-missing/pipelines`,
-      });
-    }
-  }
+  //   if (operatorAvailable) {
+  //     navItems.push({
+  //       id: 'pipelines',
+  //       group: { id: 'pipelines', title: 'Data Science Pipelines' },
+  //       children: [
+  //         { id: 'global-pipelines', label: 'Pipelines', href: '/pipelines' },
+  //         { id: 'global-pipeline-runs', label: 'Runs', href: '/pipelineRuns' },
+  //       ],
+  //     });
+  //   } else {
+  //     navItems.push({
+  //       id: 'pipelines',
+  //       label: (
+  //         <Split hasGutter>
+  //           <SplitItem>Data Science Pipelines</SplitItem>
+  //           <SplitItem>
+  //             <Icon status="danger" isInline>
+  //               <ExclamationCircleIcon />
+  //             </Icon>
+  //           </SplitItem>
+  //         </Split>
+  //       ),
+  //       href: `/dependency-missing/pipelines`,
+  //     });
+  //   }
+  // }
   // MCAD dashboard
-  navItems.push({ id: 'mcad', label: 'MCAD Dashboard', href: '/mcad' }); 
+  // navItems.push({ id: 'mcad', label: 'MCAD Dashboard', href: '/mcad' }); 
 
-  if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableModelServing)) {
-    navItems.push({ id: 'modelServing', label: 'Model Serving', href: '/modelServing' });
-  }
+  // if (featureFlagEnabled(dashboardConfig.spec.dashboardConfig.disableModelServing)) {
+  //   navItems.push({ id: 'modelServing', label: 'Model Serving', href: '/modelServing' });
+  // }
 
-  navItems.push({ id: 'resources', label: 'Resources', href: '/resources' });
+  // navItems.push({ id: 'resources', label: 'Resources', href: '/resources' });
   
   const settingsNav = getSettingsNav(isAdmin, dashboardConfig);
   if (settingsNav) {
